@@ -8,20 +8,18 @@ public class Chunk
     GameManager manager { get { return ChunkGen.currentWorld.manager; } }
     Tilemap map { get { return ChunkGen.currentWorld.map; } }
     Tilemap floor { get { return ChunkGen.currentWorld.floor; } }
-    Tile[] walls { get { return ChunkGen.currentWorld.walls; } }
-    Tile[] floors { get { return ChunkGen.currentWorld.floors; } }
-    Tile empty { get { return ChunkGen.currentWorld.empty; } }
+    Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
     int mapz { get { return ChunkGen.currentWorld.mapz; } }
     int floorz { get { return ChunkGen.currentWorld.floorz; } }
     int width { get { return ChunkGen.currentWorld.chunkWidth; } }
     int height { get { return ChunkGen.currentWorld.chunkHeight; } }
     int randomFillPercent { get { return ChunkGen.currentWorld.randomFillPercent; } }
-    int randomBiomePercent { get { return ChunkGen.currentWorld.randomBiomePercent; } }
     int smooths { get { return ChunkGen.currentWorld.smooths; } }
-    int biomeSmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
+    int biomesmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
     byte[,] blocks;
     byte[,] biomes;
     int seed;
+    int biomeseed;
     System.Random random;
     public bool generated = false;
     public Vector2Int chunkPos;
@@ -31,6 +29,7 @@ public class Chunk
         chunkPos = pos;
         seed = ChunkGen.currentWorld.seed;
         seed -= pos.ToString().GetHashCode();
+        biomeseed = ChunkGen.currentWorld.biomeseed;
         blocks = new byte[width, height];
         biomes = new byte[width, height];
     }
@@ -46,7 +45,7 @@ public class Chunk
         {
             SmoothMap(i);
         }
-        for (int i = 0; i < biomeSmooths; i++)
+        for (int i = 0; i < biomesmooths;i++)
         {
             SmoothBiomes();
         }
@@ -69,8 +68,19 @@ public class Chunk
                 else
                 {
                     blocks[x, y] = (byte)((random.Next(0, 100) < randomFillPercent) ? 1 : 0);
-                    biomes[x, y] = (byte)((random.Next(0, 100) < randomBiomePercent) ? 0 : 1);
                 }
+                float strongestWeight = 0f;
+                byte strongestBiomeIndex = 0;
+                for (int i = 0; i < biomeScripts.Length;i++)
+                {
+                    float weight = biomeScripts[i].weight*Noise.Get2DPerlin(new Vector2Int(chunkPos.x * width + x, chunkPos.y * height + y), biomeseed, biomeScripts[i].scale);
+                    if (weight > strongestWeight)
+                    {
+                        strongestWeight = weight;
+                        strongestBiomeIndex = (byte)i;
+                    }
+                }
+                biomes[x, y] = strongestBiomeIndex;
             }
         }
     }
@@ -100,15 +110,12 @@ public class Chunk
             newgridY = 0;
         }
         int blockFillVal = randomFillPercent;
-        int biomeFillVal = randomBiomePercent;
         if (ChunkGen.currentWorld.ChunkGenerated(relPos))
         {
             /*blocks[gridX, gridY] = ChunkGen.currentWorld.AdjacentChunk(relPos).GetBlock(newgridx, newgridY);
             biomes[gridX,gridY] = ChunkGen.currentWorld.AdjacentChunk(relPos).GetBiome(newgridx, newgridY);*/
             byte block = ChunkGen.currentWorld.GetChunk(relPos).GetBlock(newgridx, newgridY);
-            byte biome = ChunkGen.currentWorld.GetChunk(relPos).GetBiome(newgridx, newgridY);
             blockFillVal += (block == 1) ? 10 : -10;
-            biomeFillVal += (biome == 0) ? 10 : -10;
         }
         /*else
         {
@@ -116,7 +123,6 @@ public class Chunk
             biomes[gridX, gridY] = (byte)((random.Next(0, 100) < randomBiomePercent) ? 0 : 1);
         }*/
         blocks[gridX, gridY] = (byte)((random.Next(0, 100) < blockFillVal) ? 1 : 0);
-        biomes[gridX, gridY] = (byte)((random.Next(0, 100) < biomeFillVal) ? 0 : 1);
     }
     void SmoothMap(int i)
     {
@@ -273,10 +279,6 @@ public class Chunk
                             return (byte)(5 * adjacentChunk.GetBiome(newgridX, newgridY));
                         }
                     }
-                    else
-                    {
-                        biomeCount += (byte)((random.Next(0, 100) < randomFillPercent) ? 1 : 0);
-                    }
                 }
                 else if (x != gridX || y != gridY)
                 {
@@ -297,13 +299,13 @@ public class Chunk
                 floorPos.z = floorz;
                 if (blocks[x, y] == 1)
                 {
-                    map.SetTile(pos, walls[biomes[x, y]]);
+                    map.SetTile(pos, biomeScripts[biomes[x,y]].biomeBlocks[0].tile);
                 }
                 else
                 {
-                    map.SetTile(pos, empty);
+                    map.SetTile(pos, biomeScripts[biomes[x, y]].emptyBlocks[0].tile);
                 }
-                floor.SetTile(floorPos, floors[biomes[x, y]]);
+                floor.SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.tile);
             }
         }
     }

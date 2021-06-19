@@ -969,22 +969,20 @@ MonoBehaviour:
   floor: {fileID: 0}
   mapz: 0
   floorz: 0
-  walls:
-  - {fileID: 11400000, guid: 9fae24e24cb9f044b9d9b2f73c6ce8dd, type: 2}
-  - {fileID: 11400000, guid: a206400c46f8e4e48a5237b5434b654b, type: 2}
-  floors:
-  - {fileID: 11400000, guid: 90f324eb42d6a1a489135d0a360a2be1, type: 2}
-  - {fileID: 11400000, guid: 7e32bc00966842e4c8aadd4ca227bca6, type: 2}
-  empty: {fileID: 11400000, guid: 78ac530b103e0a641b0e39bdc966f5a0, type: 2}
+  biomes:
+  - {fileID: 6165474613466220417, guid: 710165ecf998c894ab09d3f177bb9ba3, type: 3}
+  - {fileID: 7743079818505399243, guid: 9a7479a76ccb59449915646c2facd4ec, type: 3}
   playerMovement: {fileID: 668468346}
   chunkWidth: 64
   chunkHeight: 64
   seed: 150
   randomSeed: 1
+  biomeseed: 1000000
+  randomBiomeSeed: 1
   randomFillPercent: 51
   randomBiomePercent: 55
   smooths: 5
-  biomesmooths: 5
+  biomesmooths: 1
 --- !u!1 &271272727
 GameObject:
   m_ObjectHideFlags: 0

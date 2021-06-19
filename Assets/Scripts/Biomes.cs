@@ -8,17 +8,8 @@ public class Biomes : MonoBehaviour
     public string biomeName;
     public List<Blocks> biomeBlocks = new List<Blocks>();
     public float chance;
-    public List<Blocks> floorBlocks = new List<Blocks>();
+    public List<Blocks> emptyBlocks = new List<Blocks>();
     public Blocks baseFloor;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    public float scale;
+    public float weight;
 }
