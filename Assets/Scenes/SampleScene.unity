@@ -655,7 +655,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 173665707}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f64bc31330cedca44ba40c875406666f, type: 3}
   m_Name: 
@@ -881,6 +881,7 @@ GameObject:
   - component: {fileID: 197893051}
   - component: {fileID: 197893050}
   - component: {fileID: 197893052}
+  - component: {fileID: 197893053}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -951,6 +952,39 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 836b0d085ea92e04c98d6cdf1b0c5cd9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &197893053
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197893049}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e888798acbbc34190f9a8051e522db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 197893050}
+  map: {fileID: 0}
+  floor: {fileID: 0}
+  mapz: 0
+  floorz: 0
+  walls:
+  - {fileID: 11400000, guid: 9fae24e24cb9f044b9d9b2f73c6ce8dd, type: 2}
+  - {fileID: 11400000, guid: a206400c46f8e4e48a5237b5434b654b, type: 2}
+  floors:
+  - {fileID: 11400000, guid: 90f324eb42d6a1a489135d0a360a2be1, type: 2}
+  - {fileID: 11400000, guid: 7e32bc00966842e4c8aadd4ca227bca6, type: 2}
+  empty: {fileID: 11400000, guid: 78ac530b103e0a641b0e39bdc966f5a0, type: 2}
+  playerMovement: {fileID: 668468346}
+  chunkWidth: 64
+  chunkHeight: 64
+  seed: 150
+  randomSeed: 1
+  randomFillPercent: 51
+  randomBiomePercent: 55
+  smooths: 5
+  biomesmooths: 5
 --- !u!1 &271272727
 GameObject:
   m_ObjectHideFlags: 0
@@ -2909,7 +2943,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &686716646
 MonoBehaviour:
   m_ObjectHideFlags: 0
