@@ -20,14 +20,14 @@ public class ChunkGen : MonoBehaviour
     Vector2Int currentChunk = Vector2Int.zero;
     int currentHash;
     Hashtable chunks = new Hashtable();
-    public Tile[] walls;
-    public Tile[] floors;
-    public Tile empty;
+    public Biomes[] biomes;
     public FreePlayerMove playerMovement;
     public int chunkWidth;
     public int chunkHeight;
     public int seed;
     public bool randomSeed;
+    public int biomeseed;
+    public bool randomBiomeSeed;
     [Range(0, 100)]
     public int randomFillPercent;
     [Range(0, 100)]
@@ -43,6 +43,8 @@ public class ChunkGen : MonoBehaviour
         floorz = manager.floorz;
         if (randomSeed)
             seed = Random.Range(0, int.MaxValue);
+        if (randomBiomeSeed)
+            biomeseed = Random.Range(0, 1000000);
         for (int x = -1; x <= 1; x++)
         {
             for (int y = -1; y <=1;y++)
