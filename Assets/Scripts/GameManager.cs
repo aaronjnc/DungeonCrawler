@@ -43,8 +43,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    private static GameManager _instance;
-    public static GameManager Instance => _instance;
+    public static GameManager Instance;
     public GameObject invObject;
     public GameObject Astar;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
@@ -53,12 +52,9 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        Instance = this;
         if (!spawnEnemies)
             Astar.SetActive(false);
-        if (_instance != null && _instance != this)
-            Destroy(this.gameObject);
-        else
-            _instance = this;
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
