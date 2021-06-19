@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7743079818505399242
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7743079818505399244}
+  - component: {fileID: 7743079818505399243}
+  m_Layer: 0
+  m_Name: Wet
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7743079818505399244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7743079818505399242}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 358.04105, y: 198.59152, z: -1017.8874}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7743079818505399243
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7743079818505399242}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 366b510abc1dfa74f8b86ab36bcc9421, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  biomeID: 1
+  biomeName: Wet
+  biomeBlocks:
+  - {fileID: 2773417132913332512, guid: 473d40bb3dc60b34799c443d18d20126, type: 3}
+  - {fileID: 7708136233793523187, guid: 355f274df7f11dc438729f6e5999f20d, type: 3}
+  chance: 0.2
+  floorBlocks:
+  - {fileID: 7305457819448165391, guid: 12921bcf12c74a44db4e0b5a92a08e29, type: 3}
+  - {fileID: 5242018764825017894, guid: 7db953448bdfe2743bc2da0a3389be51, type: 3}
+  baseFloor: {fileID: 7305457819448165391, guid: 12921bcf12c74a44db4e0b5a92a08e29, type: 3}
