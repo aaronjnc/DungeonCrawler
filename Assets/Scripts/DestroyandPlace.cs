@@ -36,16 +36,16 @@ public class DestroyandPlace : MonoBehaviour
         {
             ResetPrev();
         }
-        if (manager.placing && map.GetTile(mapPos).name == "Empty")
+        if (manager.placing && map.GetTile(mapPos) == null)
         {
             prevtileName = "Empty";
-            map.SetTile(mapPos, manager.GetTile(manager.tileName));
+            map.SetTile(mapPos, manager.GetTile(manager.currentTileID));
             map.GetTile<Tile>(mapPos).color = new Color(255, 255, 255, 100);
             map.GetTile<Tile>(mapPos).colliderType = Tile.ColliderType.None;
             map.RefreshTile(mapPos);
             prevmapPos = mapPos;
         }
-        else if (!manager.placing && map.GetTile(mapPos).name != "Empty" && manager.breakable(mapPos))
+        else if (!manager.placing && map.GetTile(mapPos) != null && manager.breakable(mapPos))
         {
             prevtileName = map.GetTile(mapPos).name;
             prevspriteName = map.GetSprite(mapPos).name;
@@ -62,24 +62,28 @@ public class DestroyandPlace : MonoBehaviour
     {
         if (manager.placing)
         {
-            map.SetTile(prevmapPos, manager.GetTile("Empty"));
+            map.SetTile(prevmapPos, null);
         }
-        map.GetTile<Tile>(prevmapPos).color = new Color(255, 255, 255,255);
-        map.RefreshTile(prevmapPos);
+        else
+        {
+            map.GetTile<Tile>(prevmapPos).color = new Color(255, 255, 255, 255);
+            map.RefreshTile(prevmapPos);
+        }
         prevmapPos = Vector3Int.zero;
     }
     void ReplaceTile(CallbackContext ctx)
     {
         if (manager.blockplacing && !manager.inv.gameObject.activeInHierarchy)
         {
-            if (!manager.placing)
+            if (!manager.placing && prevtileName != "Empty")
             {
-                if (prevtileName != "Empty" && map.GetTile<Tile>(mapPos).color.b != 255)
+                if (map.GetTile<Tile>(mapPos).color.b != 255)
                 {
                     manager.inv.reduceDurability(new Vector2Int(swapRotators.current,swapRotators.chosen));
                     manager.inv.AddItem(prevtileName);
-                    map.SetTile(mapPos, manager.GetTile("Empty"));
+                    map.SetTile(mapPos, null);
                     map.RefreshTile(mapPos);
+                    ChunkGen.currentWorld.UpdateByte(new Vector2Int(mapPos.x, mapPos.y), 0);
                     if (manager.spawnEnemies)
                         AstarPath.active.Scan(AstarPath.active.graphs[0]);
                 }
@@ -87,8 +91,9 @@ public class DestroyandPlace : MonoBehaviour
             else if (manager.placing && map.GetTile<Tile>(mapPos).color.a != 255)
             {
                 manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
-                map.SetTile(mapPos, manager.GetTile(manager.tileName));
+                map.SetTile(mapPos, manager.GetTile(manager.currentTileID));
                 map.GetTile<Tile>(mapPos).color = new Color(255, 255, 255, 255);
+                ChunkGen.currentWorld.UpdateByte(new Vector2Int(mapPos.x, mapPos.y), manager.currentTileID);
                 if (manager.Solid(mapPos))
                     map.GetTile<Tile>(mapPos).colliderType = Tile.ColliderType.Grid;
                 map.RefreshTile(mapPos);

@@ -49,6 +49,7 @@ public class Chunk
         {
             SmoothBiomes();
         }
+        DetermineBlock();
         DrawMap();
         generated = true;
     }
@@ -180,10 +181,10 @@ public class Chunk
                     if (ChunkGen.currentWorld.ChunkGenerated(relPos))
                     {
                         Chunk adjacentChunk = ChunkGen.currentWorld.GetChunk(relPos);
-                        wallCount += adjacentChunk.GetBlock(newgridX, newgridY);
+                        wallCount += GetType(adjacentChunk.GetBlock(newgridX, newgridY));
                         if (calc && i == 1)
                         {
-                            return (byte)((adjacentChunk.GetBlock(newgridX, newgridY) == 1) ? 5 : 0);
+                            return (byte)((GetType(adjacentChunk.GetBlock(newgridX, newgridY)) == 1) ? 5 : 0);
                         }
                     }
                     else
@@ -288,6 +289,50 @@ public class Chunk
         }
         return biomeCount;
     }
+    void DetermineBlock()
+    {
+        for (int x = 0; x < width;x++)
+        {
+            for (int y = 0; y < height;y++)
+            {
+                if (!presetTiles.Contains(new Vector2Int(x,y)))
+                {
+                    if (blocks[x, y] == 1)
+                    {
+                        float maxWeight = 0f;
+                        byte maxBlockIndex = 0;
+                        List<Blocks> biomeBlocks = biomeScripts[biomes[x, y]].biomeBlocks;
+                        for (int i = 0; i < biomeBlocks.Count; i++)
+                        {
+                            float weight = biomeBlocks[i].weight * Noise.Get2DPerlin(new Vector2Int(x, y), biomeseed, biomeBlocks[i].scale);
+                            if (weight > maxWeight)
+                            {
+                                maxWeight = weight;
+                                maxBlockIndex = (byte)i;
+                            }
+                        }
+                        blocks[x, y] = biomeBlocks[maxBlockIndex].index;
+                    }
+                    else
+                    {
+                        float maxWeightEmpty = 0f;
+                        byte maxEmptyIndex = 0;
+                        List<Blocks> emptyBlocks = biomeScripts[biomes[x, y]].emptyBlocks;
+                        for (int i = 0; i < emptyBlocks.Count; i++)
+                        {
+                            float weight = emptyBlocks[i].weight * Noise.Get2DPerlin(new Vector2Int(x, y), biomeseed, emptyBlocks[i].scale);
+                            if (weight > maxWeightEmpty)
+                            {
+                                maxWeightEmpty = weight;
+                                maxEmptyIndex = (byte)i;
+                            }
+                        }
+                        blocks[x, y] = emptyBlocks[maxEmptyIndex].index;
+                    }
+                }
+            }
+        }
+    }
     void DrawMap()
     {
         for (int x = 0; x < width; x++)
@@ -297,17 +342,26 @@ public class Chunk
                 Vector3Int pos = new Vector3Int(x + (chunkPos.x * width), y + (chunkPos.y * height), mapz);
                 Vector3Int floorPos = pos;
                 floorPos.z = floorz;
-                if (blocks[x, y] == 1)
+                if (blocks[x,y] == 127)
                 {
-                    map.SetTile(pos, biomeScripts[biomes[x,y]].biomeBlocks[0].tile);
+                    map.SetTile(pos, null);
                 }
                 else
                 {
-                    map.SetTile(pos, biomeScripts[biomes[x, y]].emptyBlocks[0].tile);
+                    map.SetTile(pos, manager.GetBlock(blocks[x, y]).tile);
                 }
                 floor.SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.tile);
             }
         }
+    }
+    byte GetType(byte tile)
+    {
+        if (tile == 127)
+            return 0;
+        if (manager.GetBlock(tile).blockType == Blocks.Type.Wall)
+            return 1;
+        else
+            return 0;
     }
     public byte GetBlock(int x, int y)
     {
@@ -324,5 +378,9 @@ public class Chunk
     public Vector2Int bottomLeft()
     {
         return new Vector2Int(chunkPos.x * width, chunkPos.y * height);
+    }
+    public void UpdateByte(int x, int y, byte block)
+    {
+        blocks[x, y] = block;
     }
 }

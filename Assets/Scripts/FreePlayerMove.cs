@@ -8,7 +8,6 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Rigidbody2D))]
 public class FreePlayerMove : MonoBehaviour
 {
-    CreateWorld createWorld;
     Rigidbody2D player;
     PlayerControls controls;
     GameManager manager;
@@ -40,7 +39,6 @@ public class FreePlayerMove : MonoBehaviour
         canvas = manager.invObject;
         ropesystem = grid.GetComponent<RopeSystem>();
         blockplacing = grid.GetComponent<DestroyandPlace>();
-        createWorld = grid.GetComponent<CreateWorld>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
         controls.Movement.Horizontal.Enable();
@@ -133,10 +131,6 @@ public class FreePlayerMove : MonoBehaviour
     {
         pos = map.WorldToCell(transform.position);
         manager.pos = pos;
-        /*if (pos != prevpos)
-        {
-            createWorld.Spawn(pos);
-        }*/
         Vector3Int lookDir= Vector3Int.zero;
         if (rotDir != Vector2.zero)
             lookDir = new Vector3Int((int)rotDir.x, (int)rotDir.y, 0);

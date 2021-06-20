@@ -49,7 +49,7 @@ MonoBehaviour:
   - {fileID: 2773417132913332512, guid: 473d40bb3dc60b34799c443d18d20126, type: 3}
   chance: 0.2
   emptyBlocks:
-  - {fileID: 7708136233793523187, guid: 355f274df7f11dc438729f6e5999f20d, type: 3}
+  - {fileID: 6070446513901827791, guid: 82842d439548ee24fa9bc1d9ff847179, type: 3}
   baseFloor: {fileID: 7305457819448165391, guid: 12921bcf12c74a44db4e0b5a92a08e29, type: 3}
   scale: 1.1
   weight: 0.68

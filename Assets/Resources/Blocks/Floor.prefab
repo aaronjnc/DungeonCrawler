@@ -45,12 +45,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tile: {fileID: 11400000, guid: 90f324eb42d6a1a489135d0a360a2be1, type: 2}
   spawnable: 1
-  chance: 1
+  weight: 1
+  scale: 1.5
   solid: 0
   onlyone: 0
   breakable: 0
   biome: 0
   custom: 0
   prefab: 0
+  index: 0
   blockName: 
   blockType: 5

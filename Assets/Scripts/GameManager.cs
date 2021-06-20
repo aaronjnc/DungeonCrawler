@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Modes:")]
     public bool testingmode = true;
-    [Tooltip("Pregenerated mapsize (size x size)")]public int testingsize = 20;
+    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize = 20;
     public bool spawnEnemies;
 
     [Header("Abilities:")]
@@ -19,12 +19,11 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public bool placing = false;
     [HideInInspector]
-    public string tileName;
+    public byte currentTileID;
     [Header("Maps:")]
-    [Tooltip("Map containing background floor design")]public Tilemap floor;
-    [Tooltip("Map containg majority of tiles")]public Tilemap map;
-    [HideInInspector]
-    public List<Blocks> blocks = new List<Blocks>();
+    [Tooltip("Map containing background floor design")] public Tilemap floor;
+    [Tooltip("Map containg majority of tiles")] public Tilemap map;
+    //public List<Blocks> blocks = new List<Blocks>();
     [HideInInspector]
     public Vector3Int pos = Vector3Int.zero;
     [Header("Script Refs:")]
@@ -48,6 +47,8 @@ public class GameManager : MonoBehaviour
     public GameObject Astar;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
+    Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
+    Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
     public int gold = 0;
     // Start is called before the first frame update
     void Awake()
@@ -58,9 +59,8 @@ public class GameManager : MonoBehaviour
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
-            blocks.Add(block.GetComponent<Blocks>());
-            blocks[blocks.Count - 1].SetSolid();
-            blockNames.Add(block.name);
+            Blocks blockComp = block.GetComponent<Blocks>();
+            blocks.Add(blockComp.index, blockComp);
         }
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
@@ -80,21 +80,19 @@ public class GameManager : MonoBehaviour
         {
             spriteNames.Add(post.name);
         }
-        GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
+        //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
-    public Tile GetTile(string tileName)
+    public Tile GetTile(Vector2Int tilePos)
     {
-        if (blockNames.Contains(tileName))
-            return blocks[blockNames.IndexOf(tileName)].tile;
-        return null;
+        return blocks[GetByte(pos)].tile;
+    }
+    public Tile GetTile(byte tileID)
+    {
+        return blocks[tileID].tile;
     }
     public bool Solid(Vector3Int pos)
     {
-        pos.z = mapz;
-        string tileName = map.GetTile(pos).name;
-        if (blockNames.Contains(tileName))
-            return blocks[blockNames.IndexOf(tileName)].solid;
-        return false;
+        return blocks[GetByte(pos)].solid;
     }
     public Sprite GetSprite(string spriteName)
     {
@@ -110,7 +108,7 @@ public class GameManager : MonoBehaviour
     }
     public Tile GetSprite(Vector2 dir, string spriteName, int mod, Vector3Int spot, string tileName)
     {
-        Tile tile = GetTile(tileName);
+        /*Tile tile = GetTile(tileName);
         string postName = "";
         if (tile.name == "Post")
         {
@@ -145,7 +143,8 @@ public class GameManager : MonoBehaviour
             position += "Left";
         }
         postTile.sprite = Resources.Load<Sprite>(position);
-        return postTile;
+        return postTile;*/
+        return null;
     }
     public void ResetPrev()
     {
@@ -157,10 +156,6 @@ public class GameManager : MonoBehaviour
     {
         ropeplacing = false;
         ropesystem.enabled = false;
-    }
-    public void SetSolid(bool solid)
-    {
-        blocks[blockNames.IndexOf("Remove")].solid = solid;
     }
     public Sprite InventorySprite(string name)
     {
@@ -201,12 +196,20 @@ public class GameManager : MonoBehaviour
     }
     public bool breakable(Vector3Int pos)
     {
-        pos.z = mapz;
-        string tileName = map.GetTile(pos).name;
-        if (blockNames.Contains(tileName))
-        {
-            return blocks[blockNames.IndexOf(tileName)].breakable;
-        }
-        return false;
+        return blocks[GetByte(pos)].breakable;
+    }
+    public Blocks GetBlock(byte ID)
+    {
+        if (ContainsByte(ID))
+            return blocks[ID];
+        return null;
+    }
+    public byte GetByte(Vector3Int tilePos)
+    {
+        return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y));
+    }
+    public bool ContainsByte(byte ID)
+    {
+        return blocks.ContainsKey(ID);
     }
 }
