@@ -180,4 +180,23 @@ public class ChunkGen : MonoBehaviour
             localTilePos.y = tilePos.y % chunkHeight;
         return localTilePos;
     }
+    public byte GetBlock(Vector2Int tilePos)
+    {
+        Vector2Int chunkPos = GetChunkPos(tilePos);
+        if (ChunkGenerated(chunkPos))
+        {
+            Vector2Int chunkTilePos = GetChunkTilePos(tilePos);
+            return GetChunk(chunkPos).GetBlock(chunkTilePos.x, chunkTilePos.y);
+        }
+        return 0;
+    }
+    public void UpdateByte(Vector2Int tilePos, byte tile)
+    {
+        Vector2Int chunkPos = GetChunkPos(tilePos);
+        if (ChunkGenerated(chunkPos))
+        {
+            Vector2Int chunkTilePos = GetChunkTilePos(tilePos);
+            GetChunk(chunkPos).UpdateByte(chunkTilePos.x, chunkTilePos.y, tile);
+        }
+    }
 }

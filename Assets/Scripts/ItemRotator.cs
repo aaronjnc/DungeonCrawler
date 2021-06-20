@@ -154,7 +154,7 @@ public class ItemRotator : MonoBehaviour
                 case 1:
                     manager.blockplacing = true;
                     manager.placing = true;
-                    manager.tileName = chosenItem.itemSprite.name;
+                    manager.currentTileID = chosenItem.itemID;
                     break;
                 case 2:
                     manager.blockplacing = true;

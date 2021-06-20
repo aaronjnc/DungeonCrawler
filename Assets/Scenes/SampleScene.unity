@@ -476,6 +476,7 @@ MonoBehaviour:
   empty: 1
   level: 0
   cost: 0
+  itemID: 0
 --- !u!1 &146639809
 GameObject:
   m_ObjectHideFlags: 0
@@ -636,7 +637,6 @@ GameObject:
   m_Component:
   - component: {fileID: 173665710}
   - component: {fileID: 173665709}
-  - component: {fileID: 173665708}
   - component: {fileID: 173665712}
   - component: {fileID: 173665713}
   - component: {fileID: 173665714}
@@ -648,22 +648,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &173665708
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 173665707}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f64bc31330cedca44ba40c875406666f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  chunksize: 16
-  scale: 20
-  marketpos: []
-  troll: {fileID: 3481517882367892545, guid: 244ea214cea46ab4e880ea1840b25039, type: 3}
 --- !u!156049354 &173665709
 Grid:
   m_ObjectHideFlags: 0
@@ -699,7 +683,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 173665707}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5fc1eb6e366168a4a99aa9b1a94f4ca8, type: 3}
   m_Name: 
@@ -723,6 +707,7 @@ MonoBehaviour:
   - 
   - 
   - 
+  postID: 0
 --- !u!114 &173665713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -904,14 +889,13 @@ MonoBehaviour:
   revisiting: 1
   testingmode: 0
   testingsize: 30
-  spawnEnemies: 1
+  spawnEnemies: 0
   ropeplacing: 0
   blockplacing: 0
   placing: 0
-  tileName: 
+  currentTileID: 0
   floor: {fileID: 1048830378}
   map: {fileID: 1712392433}
-  blocks: []
   pos: {x: 0, y: 0, z: 0}
   destroyandPlace: {fileID: 173665713}
   ropesystem: {fileID: 173665712}
@@ -1518,6 +1502,7 @@ MonoBehaviour:
   empty: 1
   level: 0
   cost: 0
+  itemID: 0
 --- !u!1 &376525494
 GameObject:
   m_ObjectHideFlags: 0
@@ -2714,7 +2699,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4946243522126971644, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 4946243522126971644, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_LocalRotation.x
@@ -4684,6 +4669,7 @@ MonoBehaviour:
   empty: 1
   level: 0
   cost: 0
+  itemID: 0
 --- !u!1 &1048830375
 GameObject:
   m_ObjectHideFlags: 0
@@ -8023,6 +8009,7 @@ MonoBehaviour:
   empty: 1
   level: 0
   cost: 0
+  itemID: 0
 --- !u!1 &1527475297
 GameObject:
   m_ObjectHideFlags: 0
@@ -10187,6 +10174,7 @@ MonoBehaviour:
   empty: 1
   level: 0
   cost: 0
+  itemID: 0
 --- !u!1 &1909453490
 GameObject:
   m_ObjectHideFlags: 0

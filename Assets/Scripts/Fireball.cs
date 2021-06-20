@@ -55,7 +55,7 @@ public class Fireball : MonoBehaviour
                     continue;
                 if (manager.breakable(newPos))
                 {
-                    map.SetTile(newPos, manager.GetTile("Empty"));
+                    map.SetTile(newPos, null);
                     map.RefreshTile(newPos);
                 }
             }

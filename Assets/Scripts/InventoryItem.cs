@@ -15,6 +15,7 @@ public class InventoryItem : MonoBehaviour
     public bool empty = true;
     public int level;
     public int cost;
+    public byte itemID;
     public enum Type
     {
         Pickaxe,

@@ -7,13 +7,15 @@ public class Blocks : MonoBehaviour
 {
     public Tile tile;
     public bool spawnable;
-    public float chance;
+    public float weight;
+    public float scale;
     public bool solid;
     public bool onlyone;
     public bool breakable;
     public int biome;
     public bool custom;
     public bool prefab;
+    public byte index;
     [HideInInspector] public string blockName;
     public enum Type
     {

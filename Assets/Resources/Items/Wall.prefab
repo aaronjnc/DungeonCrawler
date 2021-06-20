@@ -52,3 +52,6 @@ MonoBehaviour:
   fighting: 0
   invType: 1
   empty: 0
+  level: 0
+  cost: 0
+  itemID: 1

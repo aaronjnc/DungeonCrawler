@@ -16,6 +16,7 @@ public class ItemReference
     public int level;
     public int cost;
     public string itemName;
+    public byte itemID;
     public enum Type
     {
         Pickaxe,
@@ -37,6 +38,7 @@ public class ItemReference
         empty = newScript.empty;
         level = newScript.level;
         cost = newScript.cost;
+        itemID = newScript.itemID;
     }
     public void SetValues(InventoryItem newScript)
     {
@@ -50,5 +52,6 @@ public class ItemReference
         invType = newScript.invType;
         level = newScript.level;
         cost = newScript.cost;
+        itemID = newScript.itemID;
     }
 }

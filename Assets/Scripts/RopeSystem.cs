@@ -24,6 +24,7 @@ public class RopeSystem : MonoBehaviour
     Vector3Int pos = Vector3Int.zero;
     int mapz;
     FreePlayerMove player;
+    public byte postID;
     // Start is called before the first frame update
     void Start()
     {
@@ -76,7 +77,7 @@ public class RopeSystem : MonoBehaviour
     {
         if (pos.x == startpos.x ^ pos.y == startpos.y)
         {
-            Tile ropeTile = manager.GetTile("Rope");
+            Tile ropeTile = manager.GetTile(postID);
             Vector3Int mapSpot = new Vector3Int(pos.x, pos.y, mapz);
             Sprite ropeSprite = null;
             int val = 0;
@@ -118,7 +119,7 @@ public class RopeSystem : MonoBehaviour
                     {
                         lineTiles.RemoveAt(lineTiles.Count - 1);
                         spriteTiles[lineTiles.Count - 1] = "";
-                        map.SetTile(ropes[distance - 1], manager.GetTile("Empty"));
+                        map.SetTile(ropes[distance - 1], null);
                         map.RefreshTile(ropes[distance - 1]);
                         ropes[distance - 1] = new Vector3Int(0, 0, 1);
                     }
@@ -142,19 +143,19 @@ public class RopeSystem : MonoBehaviour
     }
     void ClearRopes()
     {
-        for (int i = 0; i < ropes.Length; i++)
+        /*for (int i = 0; i < ropes.Length; i++)
         {
             if (ropes[i].z == 1)
                 continue;
             Tile newTile = manager.GetTile(lineTiles[i + 1]);
-            if (newTile.name != "Empty")
+            if (newTile != null)
                 newTile.sprite = manager.GetSprite(spriteTiles[i + 1]);
             map.SetTile(ropes[i], newTile);
             map.RefreshTile(ropes[i]);
             ropes[i] = new Vector3Int(0, 0, 1);
             lineTiles.RemoveAt(i + 1);
             spriteTiles[i + 1] = "";
-        }
+        }*/
     }
     void Finish()
     {
@@ -163,7 +164,7 @@ public class RopeSystem : MonoBehaviour
         {
             if (i-1 < lineTiles.Count && i-1 >= 0)
             {
-                Tile post = manager.GetTile("Post");
+                Tile post = manager.GetTile(postID);
                 /*if (lineTiles[i-1] == "Rope" || lineTiles[i-1] == "RopeUp")
                 {
                     post.sprite = Resources.Load<Sprite>("Images/Posts/UpRightDownLeft");
