@@ -13,6 +13,8 @@ public class EnemyInfo : MonoBehaviour
     public float firelength;
     float firetime = 0f;
     public float firechance;
+    public float weight;
+    public float scale;
     public enum EnemyType
     {
         Troll,

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
 public class ChunkGen : MonoBehaviour
 {
     public static ChunkGen currentWorld;
@@ -34,6 +33,7 @@ public class ChunkGen : MonoBehaviour
     public int randomBiomePercent;
     public int smooths;
     public int biomesmooths;
+    public float enemyChance;
     void Awake()
     {
         currentWorld = this;

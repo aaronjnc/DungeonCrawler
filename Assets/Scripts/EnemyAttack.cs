@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Pathfinding;
 
 public class EnemyAttack : MonoBehaviour
 {
@@ -12,7 +11,6 @@ public class EnemyAttack : MonoBehaviour
     public LayerMask tile;
     Vector3 lastLocation;
     public bool spotted;
-    IAstarAI ai;
     PlayerFight fightScript;
     public float attackSpeed;
     float attackCount = 0f;
@@ -21,7 +19,6 @@ public class EnemyAttack : MonoBehaviour
     void Start()
     {
         fightScript = GameObject.Find("Player").GetComponent<PlayerFight>();
-        ai = GetComponent<IAstarAI>();
     }
     private void FixedUpdate()
     {
@@ -34,11 +31,11 @@ public class EnemyAttack : MonoBehaviour
         }
         if (spotted)
         {
-            if (ai.remainingDistance <= reach && attackCharged)
+            /*if (ai.remainingDistance <= reach && attackCharged)
             {
                 fightScript.TakeDamage(damage);
                 attackCharged = false;
-            }
+            }*/
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -83,7 +80,7 @@ public class EnemyAttack : MonoBehaviour
     }
     void SetLocation()
     {
-        ai.destination = lastLocation;
-        ai.SearchPath();
+        //ai.destination = lastLocation;
+        //ai.SearchPath();
     }
 }

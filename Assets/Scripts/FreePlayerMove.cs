@@ -151,4 +151,20 @@ public class FreePlayerMove : MonoBehaviour
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        EnemyMovement enemy;
+        if (collision.gameObject.TryGetComponent<EnemyMovement>(out enemy))
+        {
+            enemy.activated = true;
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        EnemyMovement enemy;
+        if (collision.gameObject.TryGetComponent<EnemyMovement>(out enemy))
+        {
+            enemy.activated = false;
+        }
+    }
 }

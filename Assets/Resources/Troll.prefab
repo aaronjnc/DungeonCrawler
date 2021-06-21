@@ -432,6 +432,8 @@ MonoBehaviour:
   firedamage: 2
   firelength: 4
   firechance: 0.1
+  weight: 1
+  scale: 1.1
 --- !u!114 &8431762998876700618
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -454,7 +456,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   spotted: 0
-  fightScript: {fileID: 7711946254513186298, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
   attackSpeed: 3
 --- !u!58 &-658363201265995387
 CircleCollider2D:
