@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.AI;
 public class ChunkGen : MonoBehaviour
 {
     public static ChunkGen currentWorld;
@@ -34,6 +35,7 @@ public class ChunkGen : MonoBehaviour
     public int smooths;
     public int biomesmooths;
     public float enemyChance;
+    public NavMeshSurface2d surface;
     void Awake()
     {
         currentWorld = this;
@@ -125,6 +127,7 @@ public class ChunkGen : MonoBehaviour
         {
             GetChunk(chunkPos).GenerateChunk();
         }
+        surface.BuildNavMesh();
     }
     public bool ChunkCreated(Vector2Int chunkRelPos)
     {

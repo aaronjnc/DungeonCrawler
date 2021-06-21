@@ -54,8 +54,6 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        if (!spawnEnemies)
-            Astar.SetActive(false);
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
