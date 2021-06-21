@@ -49,7 +49,7 @@ public class ChunkGen : MonoBehaviour
         {
             for (int y = -1; y <=1;y++)
             {
-                PresetTile(new Vector2Int(x, y), 0);
+                PresetTile(new Vector2Int(x, y), 127);
             }
         }
         for (int x = -1; x <= 0; x++)
