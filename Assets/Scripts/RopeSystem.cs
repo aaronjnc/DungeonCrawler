@@ -31,18 +31,20 @@ public class RopeSystem : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player").GetComponent<FreePlayerMove>();
         ResetRopes();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        map = manager.map;
         controls = new PlayerControls();
         controls.Interact.Press.performed += Place;
         controls.Interact.Press.Enable();
         controls.Interact.Cancel.performed += Cancel;
         controls.Interact.Cancel.Enable();
         mapz = manager.mapz;
+        map = ChunkGen.currentWorld.currentmap;
     }
     void Place(CallbackContext ctx)
     {
         startpos = player.pos;
         startpos.z = manager.mapz;
+        if (ChunkGen.currentWorld.currentmap != map)
+            map = ChunkGen.currentWorld.currentmap;
         if (placing)
         {
             placing = false;

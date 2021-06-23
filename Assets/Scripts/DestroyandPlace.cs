@@ -21,17 +21,19 @@ public class DestroyandPlace : MonoBehaviour
     void Awake()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        map = manager.map;
         controls = new PlayerControls();
         mapz = manager.mapz;
         mapPos.z = mapz;
         controls.Interact.Press.performed += ReplaceTile;
         controls.Interact.Enable();
+        map = ChunkGen.currentWorld.currentmap;
     }
     public void Positioning(Vector3Int newPos)
     {
         mapPos = newPos;
         mapPos.z = mapz;
+        if (ChunkGen.currentWorld.currentmap != map)
+            map = ChunkGen.currentWorld.currentmap;
         if (prevmapPos != Vector3Int.zero)
         {
             ResetPrev();

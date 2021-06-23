@@ -6,8 +6,11 @@ using UnityEngine.Tilemaps;
 public class Chunk
 {
     GameManager manager { get { return ChunkGen.currentWorld.manager; } }
-    Tilemap map { get { return ChunkGen.currentWorld.map; } }
-    Tilemap floor { get { return ChunkGen.currentWorld.floor; } }
+    public Tilemap map;
+    public Tilemap floor;
+    GameObject floormap { get { return ChunkGen.currentWorld.floormap; } }
+    GameObject tilemap { get { return ChunkGen.currentWorld.map; } }
+    Transform grid { get { return ChunkGen.currentWorld.grid; } }
     Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
     int mapz { get { return ChunkGen.currentWorld.mapz; } }
     int floorz { get { return ChunkGen.currentWorld.floorz; } }
@@ -358,11 +361,12 @@ public class Chunk
     }
     void DrawMap()
     {
+        GenerateMaps();
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
             {
-                Vector3Int pos = new Vector3Int(x + (chunkPos.x * width), y + (chunkPos.y * height), mapz);
+                Vector3Int pos = new Vector3Int(x, y, mapz);
                 Vector3Int floorPos = pos;
                 floorPos.z = floorz;
                 if (blocks[x,y] == 127)
@@ -376,6 +380,15 @@ public class Chunk
                 floor.SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.tile);
             }
         }
+    }
+    void GenerateMaps()
+    {
+        GameObject newMap = GameObject.Instantiate(tilemap, grid);
+        newMap.transform.position = new Vector3(chunkPos.x * width, chunkPos.y * height,mapz);
+        GameObject newFloor = GameObject.Instantiate(floormap, grid);
+        newFloor.transform.position = new Vector3(chunkPos.x * width, chunkPos.y * height, floorz);
+        map = newMap.GetComponent<Tilemap>();
+        floor = newFloor.GetComponent<Tilemap>();
     }
     byte GetType(byte tile)
     {
@@ -405,5 +418,15 @@ public class Chunk
     public void UpdateByte(int x, int y, byte block)
     {
         blocks[x, y] = block;
+    }
+    public void UnloadChunk()
+    {
+        map.GetComponent<TilemapRenderer>().enabled = false;
+        floor.GetComponent<TilemapRenderer>().enabled = false;
+    }
+    public void LoadChunk()
+    {
+        map.GetComponent<TilemapRenderer>().enabled = true;
+        floor.GetComponent<TilemapRenderer>().enabled = true;
     }
 }
