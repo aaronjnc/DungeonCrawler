@@ -43,7 +43,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8580b2055bb7d9840933b35178fa25cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tile: {fileID: 11400000, guid: 9fae24e24cb9f044b9d9b2f73c6ce8dd, type: 2}
+  tile: {fileID: 11400000, guid: dc4f7b7a8aa0d1848b502f9e515b4e14, type: 2}
   spawnable: 1
   weight: 1
   scale: 1.5

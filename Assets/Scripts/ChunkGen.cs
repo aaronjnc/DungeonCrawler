@@ -128,6 +128,7 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).GenerateChunk();
         }
         surface.BuildNavMesh();
+        Debug.Log(surface.collectObjects.ToString());
     }
     public bool ChunkCreated(Vector2Int chunkRelPos)
     {
