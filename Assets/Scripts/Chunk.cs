@@ -16,6 +16,7 @@ public class Chunk
     int randomFillPercent { get { return ChunkGen.currentWorld.randomFillPercent; } }
     int smooths { get { return ChunkGen.currentWorld.smooths; } }
     int biomesmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
+    float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
     byte[,] blocks;
     byte[,] biomes;
     int seed;
@@ -315,19 +316,41 @@ public class Chunk
                     }
                     else
                     {
-                        float maxWeightEmpty = 0f;
-                        byte maxEmptyIndex = 0;
-                        List<Blocks> emptyBlocks = biomeScripts[biomes[x, y]].emptyBlocks;
-                        for (int i = 0; i < emptyBlocks.Count; i++)
+                        if (Random.Range(0,100) < enemyChance && manager.spawnEnemies)
                         {
-                            float weight = emptyBlocks[i].weight * Noise.Get2DPerlin(new Vector2Int(x, y), biomeseed, emptyBlocks[i].scale);
-                            if (weight > maxWeightEmpty)
+                            float maxWeightEnemy = 0f;
+                            byte maxEnemyIndex = 0;
+                            List<GameObject> enemies = biomeScripts[biomes[x, y]].enemies;
+                            for (int i = 0; i < enemies.Count;i++)
                             {
-                                maxWeightEmpty = weight;
-                                maxEmptyIndex = (byte)i;
+                                EnemyInfo enemy = enemies[i].GetComponent<EnemyInfo>();
+                                float weight = enemy.weight * Noise.Get2DPerlin(new Vector2Int(x, y), biomeseed, enemy.scale);
+                                if (weight > maxWeightEnemy)
+                                {
+                                    maxWeightEnemy = weight;
+                                    maxEnemyIndex = (byte)i;
+                                }
                             }
+                            blocks[x, y] = 127;
+                            GameObject enemyObj = GameObject.Instantiate(enemies[maxEnemyIndex]) as GameObject;
+                            enemyObj.transform.position = new Vector3(x + width * chunkPos.x, y + height * chunkPos.y, -5);
                         }
-                        blocks[x, y] = emptyBlocks[maxEmptyIndex].index;
+                        else
+                        {
+                            float maxWeightEmpty = 0f;
+                            byte maxEmptyIndex = 0;
+                            List<Blocks> emptyBlocks = biomeScripts[biomes[x, y]].emptyBlocks;
+                            for (int i = 0; i < emptyBlocks.Count; i++)
+                            {
+                                float weight = emptyBlocks[i].weight * Noise.Get2DPerlin(new Vector2Int(x, y), biomeseed, emptyBlocks[i].scale);
+                                if (weight > maxWeightEmpty)
+                                {
+                                    maxWeightEmpty = weight;
+                                    maxEmptyIndex = (byte)i;
+                                }
+                            }
+                            blocks[x, y] = emptyBlocks[maxEmptyIndex].index;
+                        }
                     }
                 }
             }

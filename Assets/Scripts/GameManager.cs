@@ -33,8 +33,8 @@ public class GameManager : MonoBehaviour
     Sprite[] sprites;
     Sprite[] posts;
     List<string> spriteNames = new List<string>();
-    [HideInInspector] public int mapz = -1;
-    [HideInInspector] public int floorz = 0;
+    [HideInInspector] public int mapz = 0;
+    [HideInInspector] public int floorz = 1;
     [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
     [HideInInspector] public Inventory inv;
     [HideInInspector] public bool fighting = false;
@@ -44,7 +44,6 @@ public class GameManager : MonoBehaviour
     public GameObject character;
     public static GameManager Instance;
     public GameObject invObject;
-    public GameObject Astar;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
@@ -54,8 +53,6 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         Instance = this;
-        if (!spawnEnemies)
-            Astar.SetActive(false);
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {

@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-
+using UnityEngine.AI;
 public class ChunkGen : MonoBehaviour
 {
     public static ChunkGen currentWorld;
     public GameManager manager;
-    [HideInInspector]
     public Tilemap map;
     [HideInInspector]
     public Tilemap floor;
@@ -34,10 +33,11 @@ public class ChunkGen : MonoBehaviour
     public int randomBiomePercent;
     public int smooths;
     public int biomesmooths;
+    public float enemyChance;
+    public NavMeshSurface2d surface;
     void Awake()
     {
         currentWorld = this;
-        map = manager.map;
         floor = manager.floor;
         mapz = manager.mapz;
         floorz = manager.floorz;
@@ -125,6 +125,7 @@ public class ChunkGen : MonoBehaviour
         {
             GetChunk(chunkPos).GenerateChunk();
         }
+        surface.BuildNavMesh();
     }
     public bool ChunkCreated(Vector2Int chunkRelPos)
     {

@@ -84,8 +84,6 @@ public class DestroyandPlace : MonoBehaviour
                     map.SetTile(mapPos, null);
                     map.RefreshTile(mapPos);
                     ChunkGen.currentWorld.UpdateByte(new Vector2Int(mapPos.x, mapPos.y), 0);
-                    if (manager.spawnEnemies)
-                        AstarPath.active.Scan(AstarPath.active.graphs[0]);
                 }
             }
             else if (manager.placing && map.GetTile<Tile>(mapPos).color.a != 255)
@@ -97,8 +95,6 @@ public class DestroyandPlace : MonoBehaviour
                 if (manager.Solid(mapPos))
                     map.GetTile<Tile>(mapPos).colliderType = Tile.ColliderType.Grid;
                 map.RefreshTile(mapPos);
-                if (manager.spawnEnemies)
-                    AstarPath.active.Scan(AstarPath.active.graphs[0]);
             }
             prevmapPos = Vector3Int.zero;
             prevtileName = "";
