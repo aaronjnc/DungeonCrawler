@@ -7,7 +7,6 @@ public class ChunkGen : MonoBehaviour
 {
     public static ChunkGen currentWorld;
     public GameManager manager;
-    [HideInInspector]
     public Tilemap map;
     [HideInInspector]
     public Tilemap floor;
@@ -39,7 +38,6 @@ public class ChunkGen : MonoBehaviour
     void Awake()
     {
         currentWorld = this;
-        map = manager.map;
         floor = manager.floor;
         mapz = manager.mapz;
         floorz = manager.floorz;
@@ -128,7 +126,6 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).GenerateChunk();
         }
         surface.BuildNavMesh();
-        Debug.Log(surface.collectObjects.ToString());
     }
     public bool ChunkCreated(Vector2Int chunkRelPos)
     {
