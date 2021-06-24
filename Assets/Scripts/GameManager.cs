@@ -20,9 +20,6 @@ public class GameManager : MonoBehaviour
     public bool placing = false;
     [HideInInspector]
     public byte currentTileID;
-    [Header("Maps:")]
-    [Tooltip("Map containing background floor design")] public Tilemap floor;
-    [Tooltip("Map containg majority of tiles")] public Tilemap map;
     //public List<Blocks> blocks = new List<Blocks>();
     [HideInInspector]
     public Vector3Int pos = Vector3Int.zero;

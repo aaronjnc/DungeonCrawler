@@ -7,16 +7,16 @@ public class ChunkGen : MonoBehaviour
 {
     public static ChunkGen currentWorld;
     public GameManager manager;
-    public Tilemap map;
-    [HideInInspector]
-    public Tilemap floor;
+    public GameObject map;
+    public Transform grid;
+    public GameObject floormap;
     [HideInInspector]
     public int mapz;
     [HideInInspector]
     public int floorz;
     Vector3Int pos = Vector3Int.zero;
     Vector3Int previousPos = Vector3Int.zero;
-    Vector2Int currentChunk = Vector2Int.zero;
+    public Vector2Int currentChunk = Vector2Int.zero;
     int currentHash;
     Hashtable chunks = new Hashtable();
     public Biomes[] biomes;
@@ -35,10 +35,11 @@ public class ChunkGen : MonoBehaviour
     public int biomesmooths;
     public float enemyChance;
     public NavMeshSurface2d surface;
+    [HideInInspector]
+    public Tilemap currentmap;
     void Awake()
     {
         currentWorld = this;
-        floor = manager.floor;
         mapz = manager.mapz;
         floorz = manager.floorz;
         if (randomSeed)
@@ -60,6 +61,9 @@ public class ChunkGen : MonoBehaviour
                 GenerateNewChunk(chunkPos);
             }
         }
+        currentChunk = new Vector2Int(0, 0);
+        currentHash = currentChunk.ToString().GetHashCode();
+        currentmap = GetMap(currentChunk);
     }
     void FixedUpdate()
     {
@@ -68,10 +72,16 @@ public class ChunkGen : MonoBehaviour
             pos = manager.pos;
             if (pos != previousPos)
             {
-                currentChunk = GetChunkPos(new Vector2Int(pos.x,pos.y));
-                currentHash = currentChunk.ToString().GetHashCode();
+                if (OutsideChunk(pos))
+                {
+                    currentChunk = GetChunkPos(new Vector2Int(pos.x, pos.y));
+                    currentHash = currentChunk.ToString().GetHashCode();
+                    currentmap = ((Chunk)chunks[currentHash]).map;
+                }
                 if (!WithinBounds())
+                {
                     GenerateNewChunks();
+                }
                 previousPos = pos;
             }
         }
@@ -80,7 +90,6 @@ public class ChunkGen : MonoBehaviour
     {
         Vector2Int topRight = ((Chunk)chunks[currentHash]).topRight();
         Vector2Int bottomLeft = ((Chunk)chunks[currentHash]).bottomLeft();
-        Vector2Int relGen = new Vector2Int(0, 0);
         if (pos.x + 10 > topRight.x || pos.x - 10 < bottomLeft.x || pos.y + 10 > topRight.y || pos.y - 10 < bottomLeft.y)
             return false;
         return true;
@@ -199,5 +208,26 @@ public class ChunkGen : MonoBehaviour
             Vector2Int chunkTilePos = GetChunkTilePos(tilePos);
             GetChunk(chunkPos).UpdateByte(chunkTilePos.x, chunkTilePos.y, tile);
         }
+    }
+    public bool OutsideChunk(Vector3 playerPos)
+    {
+        return (playerPos.x < currentChunk.x * chunkWidth || playerPos.x > currentChunk.x * chunkWidth + chunkWidth || playerPos.y < currentChunk.y * chunkHeight || playerPos.y > currentChunk.y * chunkHeight + chunkHeight);
+    }
+    public Tilemap GetMap(Vector2Int tilePos)
+    {
+        Debug.Log(GetChunk(tilePos).map.transform.position);
+        return GetChunk(tilePos).map;
+    }
+    public Tilemap GetMap(Vector3 playerPos)
+    {
+        return GetChunk(GetChunkPos(new Vector2Int((int)playerPos.x,(int)playerPos.y))).map;
+    }
+    public void UnloadChunk(Vector3 chunkPos)
+    {
+        GetChunk(new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight)).UnloadChunk();
+    }
+    public void LoadChunk(Vector3 chunkPos)
+    {
+        GetChunk(new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight)).LoadChunk();
     }
 }

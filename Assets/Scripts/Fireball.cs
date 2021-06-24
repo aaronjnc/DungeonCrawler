@@ -17,7 +17,6 @@ public class Fireball : MonoBehaviour
     void Start()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        map = manager.map;
         mapz = manager.mapz;
         dir = transform.up;
     }
@@ -28,8 +27,8 @@ public class Fireball : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1,enemies);
-        foreach(Collider2D collider in colliders)
+        Collider2D[] colliders = Physics2D.OverlapCircleAll(transform.position, 1, enemies);
+        foreach (Collider2D collider in colliders)
         {
             float mod = 1;
             if (collider.Equals(collision))
@@ -39,10 +38,13 @@ public class Fireball : MonoBehaviour
             EnemyInfo info;
             if (collider.gameObject.TryGetComponent<EnemyInfo>(out info))
             {
-                info.ReduceHealth(baseDamage*mod);
+                info.ReduceHealth(baseDamage * mod);
                 info.FireDamage();
             }
         }
+        if (collision.gameObject.TryGetComponent<Tilemap>(out map)) { }
+        else
+            map = ChunkGen.currentWorld.currentmap;
         Vector3Int tilePos = map.WorldToCell(transform.position);
         for (int x = tilePos.x-1; x<=tilePos.x+1;x++)
         {

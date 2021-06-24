@@ -34,7 +34,6 @@ public class FreePlayerMove : MonoBehaviour
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
-        map = GameObject.Find("Tilemap").GetComponent<Tilemap>();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         canvas = manager.invObject;
         ropesystem = grid.GetComponent<RopeSystem>();
@@ -129,6 +128,8 @@ public class FreePlayerMove : MonoBehaviour
     }
     void Actions()
     {
+        if (ChunkGen.currentWorld.currentmap != map)
+            map = ChunkGen.currentWorld.currentmap;
         pos = map.WorldToCell(transform.position);
         manager.pos = pos;
         Vector3Int lookDir= Vector3Int.zero;
@@ -151,20 +152,5 @@ public class FreePlayerMove : MonoBehaviour
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        EnemyMovement enemy;
-        if (collision.gameObject.TryGetComponent<EnemyMovement>(out enemy))
-        {
-            enemy.activated = true;
-        }
-    }
-    private void OnTriggerExit2D(Collider2D collision)
-    {
-        EnemyMovement enemy;
-        if (collision.gameObject.TryGetComponent<EnemyMovement>(out enemy))
-        {
-            enemy.activated = false;
-        }
-    }
+
 }
