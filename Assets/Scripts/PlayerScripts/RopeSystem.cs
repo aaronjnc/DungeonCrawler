@@ -37,14 +37,11 @@ public class RopeSystem : MonoBehaviour
         controls.Interact.Cancel.performed += Cancel;
         controls.Interact.Cancel.Enable();
         mapz = manager.mapz;
-        map = ChunkGen.currentWorld.currentmap;
     }
     void Place(CallbackContext ctx)
     {
         startpos = player.pos;
         startpos.z = manager.mapz;
-        if (ChunkGen.currentWorld.currentmap != map)
-            map = ChunkGen.currentWorld.currentmap;
         if (placing)
         {
             placing = false;

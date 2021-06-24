@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
     Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
+    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public int gold = 0;
     // Start is called before the first frame update
     void Awake()
@@ -76,17 +77,9 @@ public class GameManager : MonoBehaviour
         }
         //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
-    public Tile GetTile(Vector2Int tilePos)
-    {
-        return blocks[GetByte(pos)].tile;
-    }
     public Tile GetTile(byte tileID)
     {
         return blocks[tileID].tile;
-    }
-    public bool Solid(Vector3Int pos)
-    {
-        return blocks[GetByte(pos)].solid;
     }
     public Sprite GetSprite(string spriteName)
     {
@@ -169,6 +162,10 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+    public InventoryItem GetItem(byte ID)
+    {
+        return itemScripts[ID];
+    }
     public List<InventoryItem> GetLevel(int level)
     {
         List<InventoryItem> levelItems = new List<InventoryItem>();
@@ -188,9 +185,9 @@ public class GameManager : MonoBehaviour
         }
         return 0;
     }
-    public bool breakable(Vector3Int pos)
+    public bool breakable(Vector3Int pos, Vector2Int currentChunk)
     {
-        return blocks[GetByte(pos)].breakable;
+        return blocks[GetByte(pos, currentChunk)].breakable;
     }
     public Blocks GetBlock(byte ID)
     {
@@ -198,9 +195,9 @@ public class GameManager : MonoBehaviour
             return blocks[ID];
         return null;
     }
-    public byte GetByte(Vector3Int tilePos)
+    public byte GetByte(Vector3Int tilePos, Vector2Int currentChunk)
     {
-        return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y));
+        return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), currentChunk);
     }
     public bool ContainsByte(byte ID)
     {

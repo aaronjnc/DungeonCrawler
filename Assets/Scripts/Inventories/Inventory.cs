@@ -72,10 +72,10 @@ public class Inventory : MonoBehaviour
         AddItem(item);
         gameObject.SetActive(false);
     }
-    public void AddItem(string itemName)
+    public void AddItem(byte ID)
     {
         ItemReference item = new ItemReference();
-        item.SetValues(manager.GetItem(itemName));
+        item.SetValues(manager.GetItem(ID));
         AddItem(item);
     }
     public void AddItem(ItemReference itemRef)
