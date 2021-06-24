@@ -18,7 +18,6 @@ public class FreePlayerMove : MonoBehaviour
     RopeSystem ropesystem;
     DestroyandPlace blockplacing;
     public Vector3Int pos = Vector3Int.zero;
-    Tilemap map;
     Vector3Int prevpos = Vector3Int.zero;
     GameObject canvas;
     Vector2 rotDir = Vector2.zero;
@@ -28,6 +27,10 @@ public class FreePlayerMove : MonoBehaviour
     public GameObject playerMarket;
     public GameObject menu;
     public GameObject magicTree;
+    Vector3Int lookPos = Vector3Int.zero;
+    Vector3Int prevlookPos = Vector3Int.zero;
+    Vector2Int currentChunk = Vector2Int.zero;
+    Vector3Int prevPos = Vector3Int.zero;
     // Start is called before the first frame update
     void Start()
     {
@@ -53,6 +56,8 @@ public class FreePlayerMove : MonoBehaviour
         controls.Interact.Menu.Enable();
         controls.Fight.MagicMenu.performed += SpellMenu;
         controls.Fight.MagicMenu.Enable();
+        pos.z = manager.mapz;
+        prevpos.z = manager.mapz;
     }
     void SpellMenu(CallbackContext ctx)
     {
@@ -128,26 +133,34 @@ public class FreePlayerMove : MonoBehaviour
     }
     void Actions()
     {
-        if (ChunkGen.currentWorld.currentmap != map)
-            map = ChunkGen.currentWorld.currentmap;
-        pos = map.WorldToCell(transform.position);
+        Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
+        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        pos.x = newPos.x;
+        pos.y = newPos.y;
         manager.pos = pos;
+        manager.currentChunk = currentChunk;
         Vector3Int lookDir= Vector3Int.zero;
         if (rotDir != Vector2.zero)
             lookDir = new Vector3Int((int)rotDir.x, (int)rotDir.y, 0);
         else
             lookDir = new Vector3Int((int)previousDir.x, (int)previousDir.y, 0);
-        if (manager.blockplacing)
+        lookPos = pos + lookDir;
+        if (lookPos != prevlookPos)
         {
-            blockplacing.enabled = true;
-            blockplacing.Positioning(pos + lookDir);
-        }
-        else if (manager.ropeplacing)
-        {
-            if (!ropesystem.enabled)
-                ropesystem.enabled = true;
-            if (pos != prevpos)
-                ropesystem.Roping(pos);
+            if (manager.blockplacing)
+            {
+                blockplacing.enabled = true;
+                blockplacing.Positioning(lookPos,currentChunk);
+            }
+            else if (manager.ropeplacing)
+            {
+                if (!ropesystem.enabled)
+                    ropesystem.enabled = true;
+                if (pos != prevpos)
+                    ropesystem.Roping(pos);
+            }
+            prevlookPos = lookPos;
         }
         if (rotDir != Vector2.zero)
             previousDir = rotDir;

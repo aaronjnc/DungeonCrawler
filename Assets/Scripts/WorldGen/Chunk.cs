@@ -418,6 +418,15 @@ public class Chunk
     public void UpdateByte(int x, int y, byte block)
     {
         blocks[x, y] = block;
+        if (block == 127)
+            map.SetTile(new Vector3Int(x, y, mapz), null);
+        else
+        {
+            map.SetTile(new Vector3Int(x, y, mapz), manager.GetBlock(block).tile);
+            if (manager.GetBlock(block).solid)
+                UpdateCollider(x, y, Tile.ColliderType.Grid);
+        }
+        map.RefreshTile(new Vector3Int(x, y, mapz));
     }
     public void UnloadChunk()
     {
@@ -428,5 +437,18 @@ public class Chunk
     {
         map.GetComponent<TilemapRenderer>().enabled = true;
         floor.GetComponent<TilemapRenderer>().enabled = true;
+    }
+    public void UpdateColor(int x, int y, Color newColor)
+    {
+        map.GetTile<Tile>(new Vector3Int(x, y, mapz)).color = newColor;
+        map.RefreshTile(new Vector3Int(x, y, mapz));
+    }
+    public Tile GetTile(Vector3Int tilePos)
+    {
+        return map.GetTile<Tile>(tilePos);
+    }
+    public void UpdateCollider(int x, int y, Tile.ColliderType tileCollider)
+    {
+        map.GetTile<Tile>(new Vector3Int(x, y, mapz)).colliderType = tileCollider;
     }
 }
