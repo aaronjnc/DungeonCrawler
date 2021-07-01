@@ -904,6 +904,7 @@ MonoBehaviour:
   character: {fileID: 668468344}
   invObject: {fileID: 1762183656}
   markets: []
+  currentChunk: {x: 0, y: 0}
   gold: 0
 --- !u!4 &197893051
 Transform:
