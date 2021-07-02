@@ -51,7 +51,7 @@ MonoBehaviour:
   onlyone: 0
   breakable: 0
   biome: 0
-  custom: 0
+  custom: 1
   prefab: 0
   index: 7
   blockName: 

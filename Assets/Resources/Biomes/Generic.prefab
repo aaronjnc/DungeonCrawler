@@ -56,3 +56,5 @@ MonoBehaviour:
   baseFloor: {fileID: 3480578936055392808, guid: 65fbded487dbffd4d9700e699af5d718, type: 3}
   scale: 2
   weight: 1
+  specialBlocks:
+  - {fileID: 8475051305218921890, guid: 1908096c23f35e640a9c9363e5332eb2, type: 3}
