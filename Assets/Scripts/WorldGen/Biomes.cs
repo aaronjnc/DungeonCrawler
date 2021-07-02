@@ -13,4 +13,5 @@ public class Biomes : MonoBehaviour
     public Blocks baseFloor;
     public float scale;
     public float weight;
+    public List<Blocks> specialBlocks = new List<Blocks>();
 }

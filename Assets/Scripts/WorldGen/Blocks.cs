@@ -16,6 +16,7 @@ public class Blocks : MonoBehaviour
     public bool custom;
     public bool prefab;
     public byte index;
+    public int maxperchunk;
     [HideInInspector] public string blockName;
     public enum Type
     {

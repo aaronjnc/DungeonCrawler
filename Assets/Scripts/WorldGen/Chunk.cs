@@ -24,6 +24,7 @@ public class Chunk
     byte[,] biomes;
     int seed;
     int biomeseed;
+    int specialTileCount;
     System.Random random;
     public bool generated = false;
     public Vector2Int chunkPos;
@@ -37,6 +38,10 @@ public class Chunk
         blocks = new byte[width, height];
         biomes = new byte[width, height];
     }
+    int SpecialTileCount()
+    {
+        return Random.Range(0, 2);
+    }
     public void AddPreset(Vector2Int pos, byte tile)
     {
         blocks[pos.x, pos.y] = tile;
@@ -44,6 +49,7 @@ public class Chunk
     }
     public void GenerateChunk()
     {
+        specialTileCount = SpecialTileCount();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -54,6 +60,8 @@ public class Chunk
             SmoothBiomes();
         }
         DetermineBlock();
+        if (specialTileCount != 0)
+            GenerateSpecial();
         DrawMap();
         generated = true;
     }
@@ -450,5 +458,35 @@ public class Chunk
     public void UpdateCollider(int x, int y, Tile.ColliderType tileCollider)
     {
         map.GetTile<Tile>(new Vector3Int(x, y, mapz)).colliderType = tileCollider;
+    }
+    void GenerateSpecial()
+    {
+        Debug.Log(specialTileCount);
+        int generatedSpecial = 0;
+        int count = 0;
+        while (generatedSpecial < specialTileCount || count < 10)
+        {
+            int x = Random.Range(0, width - 1);
+            int y = Random.Range(0, height - 1);
+            if (blocks[x,y] == 127)
+            {
+                generatedSpecial++;
+                int maxIndex = 0;
+                float maxIndexWeight = 0;
+                for (int i = 0; i < biomeScripts[biomes[x, y]].specialBlocks.Count; i++)
+                {
+                    float weight = Noise.Get2DPerlin(new Vector2Int(x, y), seed, biomeScripts[biomes[x, y]].specialBlocks[i].weight);
+                    if (weight > maxIndexWeight)
+                    {
+                        maxIndex = (byte)i;
+                        maxIndexWeight = weight;
+                    }
+                }
+                blocks[x, y] = biomeScripts[biomes[x, y]].specialBlocks[maxIndex].index;
+                if (generatedSpecial == specialTileCount)
+                    break;
+            }
+            count++;
+        }
     }
 }
