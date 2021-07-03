@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2527990607171997409}
   - component: {fileID: 2527990607171997414}
+  - component: {fileID: 4806325385433669802}
   m_Layer: 0
   m_Name: Wall
   m_TagString: Untagged
@@ -54,5 +55,30 @@ MonoBehaviour:
   custom: 0
   prefab: 0
   index: 1
+  maxperchunk: 0
   blockName: 
   blockType: 0
+--- !u!114 &4806325385433669802
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2527990607171997415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1dc8431747f27a94eac035b671196ff4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSprite: {fileID: 21300000, guid: fb1e5121e8a6d124fa6a9b3c80369a04, type: 3}
+  stackSize: 50
+  baseDurability: 0
+  durability: 0
+  currentStack: 1
+  damage: 0
+  fighting: 0
+  invType: 1
+  empty: 0
+  level: 0
+  cost: 0
+  itemID: 1

@@ -446,9 +446,10 @@ public class Chunk
         map.GetComponent<TilemapRenderer>().enabled = true;
         floor.GetComponent<TilemapRenderer>().enabled = true;
     }
-    public void UpdateColor(int x, int y, Color newColor)
+    public void UpdateColor(int x, int y, Tile newTile)
     {
-        map.GetTile<Tile>(new Vector3Int(x, y, mapz)).color = newColor;
+        newTile.sprite = map.GetTile<Tile>(new Vector3Int(x, y, mapz)).sprite;
+        map.SetTile(new Vector3Int(x, y, mapz),newTile);
         map.RefreshTile(new Vector3Int(x, y, mapz));
     }
     public Tile GetTile(Vector3Int tilePos)
