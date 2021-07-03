@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.InputSystem.InputAction;
 
 public class MarketPlace : MonoBehaviour
 {
+    PlayerControls controls;
     [HideInInspector] public ItemReference[,,,] marketItems = new ItemReference[5, 3, 3, 5];
     [HideInInspector] public Image[,] itemImages = new Image[3, 5];
     public float xstart;
@@ -25,10 +27,15 @@ public class MarketPlace : MonoBehaviour
     public Vendor vendor;
     public GameObject transferButton;
     GameManager manager;
+    bool open = true;
     // Start is called before the first frame update
     void Start()
     {
+        controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        //controls.Interact.Enter.performed += ctx => open = true;
+        controls.Interact.Enter.performed += Close;
+        controls.Interact.Enter.Enable();
         currentItem = new ItemReference();
         baseImage = GetComponent<Image>().sprite;
         for (int tab = 0; tab < 5; tab++)
@@ -58,6 +65,15 @@ public class MarketPlace : MonoBehaviour
             }
         }
         gameObject.SetActive(false);
+    }
+    void Close(CallbackContext ctx)
+    {
+        if (open)
+        {
+            manager.ResumeGame();
+            gameObject.SetActive(false);
+            open = false;
+        }
     }
     public void ChangeItems()
     {

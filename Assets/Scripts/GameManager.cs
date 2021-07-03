@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public int gold = 0;
+    [HideInInspector] public bool paused = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -211,5 +212,15 @@ public class GameManager : MonoBehaviour
     public bool ContainsByte(byte ID)
     {
         return blocks.ContainsKey(ID);
+    }
+    public void PauseGame()
+    {
+        paused = true;
+        Time.timeScale = 0;
+    }
+    public void ResumeGame()
+    {
+        paused = false;
+        Time.timeScale = 1;
     }
 }
