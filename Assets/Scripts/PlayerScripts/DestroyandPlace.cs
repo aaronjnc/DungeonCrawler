@@ -98,6 +98,8 @@ public class DestroyandPlace : MonoBehaviour
     }
     void ReplaceTile(CallbackContext ctx)
     {
+        if (manager.paused)
+            return;
         if (manager.blockplacing && !manager.inv.gameObject.activeInHierarchy)
         {
             if (!manager.placing)

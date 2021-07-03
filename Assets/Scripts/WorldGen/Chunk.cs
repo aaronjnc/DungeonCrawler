@@ -29,6 +29,7 @@ public class Chunk
     public bool generated = false;
     public Vector2Int chunkPos;
     List<Vector2Int> presetTiles = new List<Vector2Int>();
+    Dictionary<Vector2Int, InteractableTile> specialTiles = new Dictionary<Vector2Int, InteractableTile>();
     public Chunk(Vector2Int pos)
     {
         chunkPos = pos;
@@ -462,7 +463,6 @@ public class Chunk
     }
     void GenerateSpecial()
     {
-        Debug.Log(specialTileCount);
         int generatedSpecial = 0;
         int count = 0;
         while (generatedSpecial < specialTileCount || count < 10)
@@ -484,10 +484,21 @@ public class Chunk
                     }
                 }
                 blocks[x, y] = biomeScripts[biomes[x, y]].specialBlocks[maxIndex].index;
+                if (manager.GetBlock(blocks[x,y]).interactable)
+                {
+                    InteractableTile newInteract = new InteractableTile();
+                    newInteract.SetUp(blocks[x, y]);
+                    specialTiles.Add(new Vector2Int(x, y), newInteract);
+                }
                 if (generatedSpecial == specialTileCount)
                     break;
             }
             count++;
         }
+    }
+    public void Interact(Vector2Int interactPos)
+    {
+        if (specialTiles.ContainsKey(interactPos))
+            specialTiles[interactPos].Interact();
     }
 }

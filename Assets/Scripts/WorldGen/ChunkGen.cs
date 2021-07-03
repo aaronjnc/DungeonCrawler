@@ -241,4 +241,9 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).UpdateCollider(tilePos.x, tilePos.y,tileCollider);
         }
     }
+    public void Interact(Vector3Int tilePos,Vector2Int chunkPos)
+    {
+        if (ChunkGenerated(chunkPos))
+            GetChunk(chunkPos).Interact(new Vector2Int(tilePos.x, tilePos.y));
+    }
 }
