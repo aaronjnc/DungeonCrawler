@@ -53,3 +53,5 @@ MonoBehaviour:
   invType: 0
   empty: 0
   level: 0
+  cost: 0
+  itemID: 16

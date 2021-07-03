@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: MossyWall
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: 21300000, guid: 14de4ad4d74bd104083c29431fa7331b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 255}
   m_Transform:
     e00: 1
     e01: 0
@@ -33,4 +33,4 @@ MonoBehaviour:
     e33: 1
   m_InstancedGameObject: {fileID: 0}
   m_Flags: 1
-  m_ColliderType: 1
+  m_ColliderType: 2

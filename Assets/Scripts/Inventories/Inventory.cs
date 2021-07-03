@@ -111,7 +111,7 @@ public class Inventory : MonoBehaviour
             for (int col = 0; col < 7; col++)
             {
                 item = invItems[invNum, row, col];
-                if (!item.empty && item.currentStack != item.stackSize)
+                if (itemRef.itemID == item.itemID && !item.empty && item.currentStack != item.stackSize)
                 {
                     spot = new Vector2Int(row, col);
                     found = true;
