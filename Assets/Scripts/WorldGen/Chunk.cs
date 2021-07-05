@@ -381,14 +381,15 @@ public class Chunk
                 Vector3Int pos = new Vector3Int(x, y, mapz);
                 Vector3Int floorPos = pos;
                 floorPos.z = floorz;
-                if (blocks[x,y] == 127)
+                /*if (blocks[x,y] == 127)
                 {
                     map.SetTile(pos, null);
                 }
                 else
                 {
                     map.SetTile(pos, manager.GetBlock(blocks[x, y]).tile);
-                }
+                }*/
+                UpdateByte(x, y, blocks[x, y]);
                 floor.SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.tile);
             }
         }

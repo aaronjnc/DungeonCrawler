@@ -25,11 +25,4 @@ public class Blocks : MonoBehaviour
         Empty,
     }
     public Type blockType;
-    public void SetSolid()
-    {
-        if (solid)
-            tile.colliderType = Tile.ColliderType.Grid;
-        else
-            tile.colliderType = Tile.ColliderType.None;
-    }
 }
