@@ -68,12 +68,9 @@ public class MarketPlace : MonoBehaviour
     }
     void Close(CallbackContext ctx)
     {
-        if (open)
-        {
-            manager.ResumeGame();
-            gameObject.SetActive(false);
-            open = false;
-        }
+        manager.ResumeGame();
+        open = false;
+        gameObject.SetActive(false);
     }
     public void ChangeItems()
     {

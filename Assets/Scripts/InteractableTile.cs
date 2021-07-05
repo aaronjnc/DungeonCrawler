@@ -14,7 +14,6 @@ public class InteractableTile
     List<GameObject> enableObjects = new List<GameObject>();
     public void SetUp(byte ID)
     {
-        Debug.Log(ID);
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         switch(ID)
         {

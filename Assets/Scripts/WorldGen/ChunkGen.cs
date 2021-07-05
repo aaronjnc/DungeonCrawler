@@ -52,6 +52,7 @@ public class ChunkGen : MonoBehaviour
                 PresetTile(new Vector2Int(x, y), 127);
             }
         }
+        PresetTile(new Vector2Int(1, 1), 7);
         for (int x = -1; x <= 0; x++)
         {
             for (int y = -1; y <= 0; y++)

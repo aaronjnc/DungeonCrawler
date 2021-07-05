@@ -74,7 +74,10 @@ public class Chunk
             for (int y = 0; y < height; y++)
             {
                 if (presetTiles.Contains(new Vector2Int(x, y)))
+                {
+                    AddInteractable(x, y);
                     continue;
+                }
                 if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                 {
                     SmoothChunk(x, y);
@@ -469,6 +472,8 @@ public class Chunk
         {
             int x = Random.Range(0, width - 1);
             int y = Random.Range(0, height - 1);
+            if (presetTiles.Contains(new Vector2Int(x, y)))
+                continue;
             if (blocks[x,y] == 127)
             {
                 generatedSpecial++;
@@ -484,16 +489,22 @@ public class Chunk
                     }
                 }
                 blocks[x, y] = biomeScripts[biomes[x, y]].specialBlocks[maxIndex].index;
-                if (manager.GetBlock(blocks[x,y]).interactable)
-                {
-                    InteractableTile newInteract = new InteractableTile();
-                    newInteract.SetUp(blocks[x, y]);
-                    specialTiles.Add(new Vector2Int(x, y), newInteract);
-                }
+                AddInteractable(x, y);
                 if (generatedSpecial == specialTileCount)
                     break;
             }
             count++;
+        }
+    }
+    public void AddInteractable(int x, int y)
+    {
+        if (blocks[x, y] == 127)
+            return;
+        if (manager.GetBlock(blocks[x, y]).interactable)
+        {
+            InteractableTile newInteract = new InteractableTile();
+            newInteract.SetUp(blocks[x, y]);
+            specialTiles.Add(new Vector2Int(x, y), newInteract);
         }
     }
     public void Interact(Vector2Int interactPos)
