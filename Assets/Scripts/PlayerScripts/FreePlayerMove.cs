@@ -21,10 +21,6 @@ public class FreePlayerMove : MonoBehaviour
     Vector3Int prevpos = Vector3Int.zero;
     GameObject canvas;
     Vector2 rotDir = Vector2.zero;
-    [HideInInspector]
-    public bool inventoryOpen = false;
-    public GameObject marketPlace;
-    public GameObject playerMarket;
     public GameObject menu;
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
@@ -62,60 +58,57 @@ public class FreePlayerMove : MonoBehaviour
     void SpellMenu(CallbackContext ctx)
     {
         if (magicTree.activeInHierarchy)
+        {
             magicTree.SetActive(false);
-        else
+            manager.ResumeGame();
+        }
+        else if (!manager.paused)
+        {
             magicTree.SetActive(true);
+            manager.PauseGame();
+        }
     }
     void ActivateMenu(CallbackContext ctx)
     {
         if (menu.activeInHierarchy)
+        {
             menu.SetActive(false);
-        else
+            manager.ResumeGame();
+        }
+        else if (!manager.paused)
+        {
             menu.SetActive(true);
+            manager.PauseGame();
+        }
     }
     void Enter(CallbackContext ctx)
     { 
-        if (!marketPlace.activeInHierarchy)
+        if (!manager.paused)
         {
-            Vector3Int lookDir = new Vector3Int((int)rotDir.x, (int)rotDir.y, -1);
-            if (manager.markets.Contains(pos+lookDir))
+            if (manager.GetByte(lookPos,currentChunk) != 127)
             {
-                int loc = manager.markets.IndexOf(pos + lookDir);
-                marketPlace.GetComponent<MarketPlace>().SetVendor(manager.vendors[loc]);
-                marketPlace.SetActive(true);
-                playerMarket.SetActive(true);
-                inventoryOpen = true;
-                manager.invOpen = true;
+                ChunkGen.currentWorld.Interact(lookPos, currentChunk);
             }
-        }
-        else
-        {
-            marketPlace.SetActive(false);
-            playerMarket.SetActive(false);
-            inventoryOpen = false;
-            manager.invOpen = false;
         }
     }
         
     void Inventory(CallbackContext ctx)
     {
-        if (!canvas.activeInHierarchy)
-        {
-            canvas.SetActive(true);
-            inventoryOpen = true;
-            manager.invOpen = true;
-        }
-        else
+        if (canvas.activeInHierarchy)
         {
             canvas.SetActive(false);
-            inventoryOpen = false;
-            manager.invOpen = false;
+            manager.ResumeGame();
+        }
+        else if (!manager.paused)
+        {
+            canvas.SetActive(true);
+            manager.PauseGame();
         }
     }
 
     void FixedUpdate()
     {
-        if (!inventoryOpen)
+        if (!manager.paused)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(controls.Movement.MousePosition.ReadValue<Vector2>());
             float angleRad = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x);

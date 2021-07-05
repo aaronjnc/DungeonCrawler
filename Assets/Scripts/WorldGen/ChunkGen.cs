@@ -219,11 +219,11 @@ public class ChunkGen : MonoBehaviour
     {
         GetChunk(new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight)).LoadChunk();
     }
-    public void UpdateColor(Vector2Int tilePos, Color newColor, Vector2Int chunkPos)
+    public void UpdateColor(Vector2Int tilePos, Tile newTile, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
         {
-            GetChunk(chunkPos).UpdateColor(tilePos.x, tilePos.y, newColor);
+            GetChunk(chunkPos).UpdateColor(tilePos.x, tilePos.y, newTile);
         }
     }
     public Tile GetTile(Vector3Int tilePos, Vector2Int chunkPos)
@@ -240,5 +240,10 @@ public class ChunkGen : MonoBehaviour
         {
             GetChunk(chunkPos).UpdateCollider(tilePos.x, tilePos.y,tileCollider);
         }
+    }
+    public void Interact(Vector3Int tilePos,Vector2Int chunkPos)
+    {
+        if (ChunkGenerated(chunkPos))
+            GetChunk(chunkPos).Interact(new Vector2Int(tilePos.x, tilePos.y));
     }
 }

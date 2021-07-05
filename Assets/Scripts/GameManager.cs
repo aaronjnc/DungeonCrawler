@@ -47,6 +47,7 @@ public class GameManager : MonoBehaviour
     Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public int gold = 0;
+    [HideInInspector] public bool paused = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -54,6 +55,14 @@ public class GameManager : MonoBehaviour
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
+            InventoryItem item;
+            if (block.TryGetComponent<InventoryItem>(out item))
+            {
+                item.durability = item.baseDurability;
+                item.currentStack = 1;
+                item.damage = 0;
+                itemScripts.Add(item.itemID, item);
+            }
             Blocks blockComp = block.GetComponent<Blocks>();
             blocks.Add(blockComp.index, blockComp);
         }
@@ -64,6 +73,7 @@ public class GameManager : MonoBehaviour
             invItem.currentStack = 1;
             invItem.damage = 0;
             items.Add(invItem);
+            itemScripts.Add(invItem.itemID, invItem);
         }
         sprites = Resources.LoadAll<Sprite>("Images");
         posts = Resources.LoadAll<Sprite>("Images/Posts");
@@ -202,5 +212,15 @@ public class GameManager : MonoBehaviour
     public bool ContainsByte(byte ID)
     {
         return blocks.ContainsKey(ID);
+    }
+    public void PauseGame()
+    {
+        paused = true;
+        Time.timeScale = 0;
+    }
+    public void ResumeGame()
+    {
+        paused = false;
+        Time.timeScale = 1;
     }
 }

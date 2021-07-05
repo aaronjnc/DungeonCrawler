@@ -18,6 +18,9 @@ public class DestroyandPlace : MonoBehaviour
     public Inventory inventory;
     Vector2Int currentChunk = Vector2Int.zero;
     Vector2Int prevChunk = Vector2Int.zero;
+    Tile destroy;
+    Tile place;
+    Tile refillTile;
     void Awake()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -26,6 +29,12 @@ public class DestroyandPlace : MonoBehaviour
         mapPos.z = mapz;
         controls.Interact.Press.performed += ReplaceTile;
         controls.Interact.Enable();
+        destroy = new Tile();
+        destroy.color = new Color(255, 0, 0);
+        place = new Tile();
+        place.color = new Color(255, 255, 255, 100);
+        refillTile = new Tile();
+        refillTile.color = new Color(255, 255, 255, 255);
     }
     public void Positioning(Vector3Int newPos, Vector2Int chunkPos)
     {
@@ -61,13 +70,13 @@ public class DestroyandPlace : MonoBehaviour
         if (manager.placing && GetTile(mapPos, currentChunk) == null)
         {
             UpdateTile(mapPos, manager.currentTileID, currentChunk);
-            UpdateColor(mapPos, new Color(255, 255, 255, 100), currentChunk);
+            UpdateColor(mapPos, place, currentChunk);
             UpdateCollider(mapPos, Tile.ColliderType.None, currentChunk);
             prevmapPos = mapPos;
         }
         else if (!manager.placing && GetTile(mapPos, currentChunk) != null && manager.breakable(mapPos, currentChunk))
         {
-            UpdateColor(mapPos, new Color(255, 0, 0), currentChunk);
+            UpdateColor(mapPos, destroy, currentChunk);
             prevmapPos = mapPos;
         }
         else
@@ -83,12 +92,14 @@ public class DestroyandPlace : MonoBehaviour
         }
         else
         {
-            UpdateColor(prevmapPos, new Color(255, 255, 255, 255), prevChunk);
+            UpdateColor(prevmapPos, refillTile, prevChunk);
         }
         prevmapPos = Vector3Int.zero;
     }
     void ReplaceTile(CallbackContext ctx)
     {
+        if (manager.paused)
+            return;
         if (manager.blockplacing && !manager.inv.gameObject.activeInHierarchy)
         {
             if (!manager.placing)
@@ -104,7 +115,7 @@ public class DestroyandPlace : MonoBehaviour
             {
                 manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
                 UpdateTile(mapPos, manager.currentTileID, currentChunk);
-                UpdateColor(mapPos, new Color(255, 255, 255, 255), currentChunk);
+                UpdateColor(mapPos, refillTile, currentChunk);
             }
             prevmapPos = Vector3Int.zero;
         }
@@ -123,9 +134,9 @@ public class DestroyandPlace : MonoBehaviour
     {
         ChunkGen.currentWorld.UpdateByte(new Vector2Int(tilePos.x, tilePos.y),tile, chunkPos);
     }
-    void UpdateColor(Vector3Int tilePos, Color newColor, Vector2Int chunkPos)
+    void UpdateColor(Vector3Int tilePos, Tile updateTile, Vector2Int chunkPos)
     {
-        ChunkGen.currentWorld.UpdateColor(new Vector2Int(tilePos.x, tilePos.y), newColor, chunkPos);
+        ChunkGen.currentWorld.UpdateColor(new Vector2Int(tilePos.x, tilePos.y), updateTile, chunkPos);
     }
     void UpdateCollider(Vector3Int tilePos, Tile.ColliderType tileCollider, Vector2Int chunkPos)
     {

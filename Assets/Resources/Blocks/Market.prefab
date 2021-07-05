@@ -54,5 +54,7 @@ MonoBehaviour:
   custom: 1
   prefab: 0
   index: 7
+  maxperchunk: 0
+  interactable: 1
   blockName: 
   blockType: 1

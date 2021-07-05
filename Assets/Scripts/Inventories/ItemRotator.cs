@@ -49,7 +49,6 @@ public class ItemRotator : MonoBehaviour
     }
     void Expanded(CallbackContext ctx)
     {
-        playerMovement.inventoryOpen = true;
         rotatorImage.sprite = fullRotator;
         foreach(Image img in images)
         {
@@ -59,7 +58,6 @@ public class ItemRotator : MonoBehaviour
     }
     void Canceled(CallbackContext ctx)
     {
-        playerMovement.inventoryOpen = false;
         foreach (Image img in images)
         {
             img.gameObject.SetActive(false);
