@@ -16,11 +16,13 @@ public class EnemyAttack : MonoBehaviour
     float attackCount = 0f;
     bool attackCharged = true;
     NavMeshAgent agent;
+    EnemyMovement movement;
     // Start is called before the first frame update
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         fightScript = GameObject.Find("Player").GetComponent<PlayerFight>();
+        movement = GetComponent<EnemyMovement>();
     }
     private void FixedUpdate()
     {
@@ -55,7 +57,7 @@ public class EnemyAttack : MonoBehaviour
                 {
                     lastLocation = pos;
                     spotted = true;
-                    SetLocation();
+                    SetLocation(angle);
                 }
             }
         }
@@ -75,7 +77,7 @@ public class EnemyAttack : MonoBehaviour
                 {
                     lastLocation = pos;
                     spotted = true;
-                    SetLocation();
+                    SetLocation(angle);
                 }
             }
         }
@@ -84,8 +86,11 @@ public class EnemyAttack : MonoBehaviour
     {
         spotted = false;
     }
-    void SetLocation()
+    void SetLocation(float angle)
     {
         agent.SetDestination(lastLocation);
+        if (agent.remainingDistance < 1f)
+            agent.isStopped = true;
+        movement.Rotate();
     }
 }
