@@ -215,7 +215,6 @@ GameObject:
   - component: {fileID: 4063174041652437069}
   - component: {fileID: 8431762998876700618}
   - component: {fileID: -658363201265995387}
-  - component: {fileID: 7139629232144545137}
   m_Layer: 10
   m_Name: Troll
   m_TagString: Untagged
@@ -231,7 +230,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3481517882367892545}
   m_LocalRotation: {x: 0, y: 0, z: -0.7071068, w: 0.7071068}
-  m_LocalPosition: {x: -0.948, y: 0.029, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children:
   - {fileID: 5822394867212600694}
@@ -409,28 +408,6 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 1
---- !u!195 &7139629232144545137
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3481517882367892545}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.22000006
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 0.4800001
-  m_BaseOffset: 0
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
 --- !u!1 &4845891840385269652
 GameObject:
   m_ObjectHideFlags: 0

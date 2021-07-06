@@ -9,7 +9,6 @@ public class ChunkGen : MonoBehaviour
     public GameManager manager;
     public GameObject map;
     public Transform grid;
-    public GameObject floormap;
     [HideInInspector]
     public int mapz;
     [HideInInspector]
@@ -35,6 +34,8 @@ public class ChunkGen : MonoBehaviour
     public int biomesmooths;
     public float enemyChance;
     public NavMeshSurface2d surface;
+    public int maxenemies;
+    public Transform enemyParent;
     [HideInInspector]
     void Awake()
     {
@@ -128,7 +129,6 @@ public class ChunkGen : MonoBehaviour
         {
             GetChunk(chunkPos).GenerateChunk();
         }
-        surface.BuildNavMesh();
     }
     public bool ChunkCreated(Vector2Int chunkRelPos)
     {
