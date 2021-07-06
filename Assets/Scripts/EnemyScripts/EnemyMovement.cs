@@ -9,6 +9,7 @@ public class EnemyMovement : MonoBehaviour
     EnemyAttack attack;
     public bool activated = false;
     NavMeshAgent agent;
+    public float rotateSpeed;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,6 +29,10 @@ public class EnemyMovement : MonoBehaviour
     }
     float waittime = 10f;
     float timewaited = 0f;
+    float lookTime = 5f;
+    float lookwait = 0f;
+    float lookAngle;
+    Vector2 nextPoint;
     // Update is called once per frame
     void FixedUpdate()
     {
@@ -52,9 +57,56 @@ public class EnemyMovement : MonoBehaviour
                 }
             }
         }
+        if (agent.hasPath && !attack.spotted)
+        {
+            Rotate();
+        }
+        else if (!attack.spotted)
+        {
+            lookwait += Time.deltaTime;
+            if (lookwait > lookTime)
+            {
+                lookAngle = Random.Range(0, 360);
+                lookwait = 0f;
+            }
+            StartCoroutine("StandRotate");
+        }
+    }
+    public void Rotate()
+    {
+        if (nextPoint != (Vector2)agent.path.corners[1])
+        {
+            StartCoroutine("Rotator");
+            nextPoint = agent.path.corners[1];
+        }
+    }
+    IEnumerator Rotator()
+    {
+        Vector2 target = agent.path.corners[1] - transform.position;
+        float angle = Vector2.SignedAngle(transform.up, target);
+        float targetAngle = transform.localEulerAngles.z + angle;
+        if (targetAngle >= 360)
+            targetAngle -= 360;
+        else if (targetAngle < 0)
+            targetAngle += 360;
+        transform.up = Vector3.Lerp(transform.up, target, rotateSpeed);
+        yield return null;
+        /*while (transform.localEulerAngles.z < targetAngle - .1f || transform.localEulerAngles.z > targetAngle + .1f)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotateSpeed * Time.deltaTime);
+            yield return null;
+        }*/
+    }
+    IEnumerator StandRotate()
+    {
+        while (transform.localEulerAngles.z < lookAngle - .1f || transform.localEulerAngles.z > lookAngle + .1f)
+        {
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, lookAngle), rotateSpeed * Time.deltaTime);
+            yield return null;
+        }
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawSphere(centerpos, radius);
+        Gizmos.DrawWireSphere(centerpos, radius);
     }
 }
