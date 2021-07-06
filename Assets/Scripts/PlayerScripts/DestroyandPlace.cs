@@ -100,6 +100,8 @@ public class DestroyandPlace : MonoBehaviour
     {
         if (manager.paused)
             return;
+        if (manager.GetByte(mapPos, currentChunk) == 127)
+            return;
         if (manager.blockplacing && !manager.inv.gameObject.activeInHierarchy)
         {
             if (!manager.placing)

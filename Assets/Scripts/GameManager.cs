@@ -30,8 +30,8 @@ public class GameManager : MonoBehaviour
     Sprite[] sprites;
     Sprite[] posts;
     List<string> spriteNames = new List<string>();
-    [HideInInspector] public int mapz = 0;
-    [HideInInspector] public int floorz = 1;
+    [HideInInspector] public int mapz;
+    [HideInInspector] public int floorz;
     [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
     [HideInInspector] public Inventory inv;
     [HideInInspector] public bool fighting = false;
@@ -51,6 +51,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        mapz = 0;
+        floorz = 1;
         Instance = this;
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))

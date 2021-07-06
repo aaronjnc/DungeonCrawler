@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.AI;
 
 public class Chunk
 {
@@ -12,14 +13,15 @@ public class Chunk
     GameObject tilemap { get { return ChunkGen.currentWorld.map; } }
     Transform grid { get { return ChunkGen.currentWorld.grid; } }
     Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
-    int mapz { get { return ChunkGen.currentWorld.mapz; } }
-    int floorz { get { return ChunkGen.currentWorld.floorz; } }
+    int mapz = 0;
+    int floorz = 1;
     int width { get { return ChunkGen.currentWorld.chunkWidth; } }
     int height { get { return ChunkGen.currentWorld.chunkHeight; } }
     int randomFillPercent { get { return ChunkGen.currentWorld.randomFillPercent; } }
     int smooths { get { return ChunkGen.currentWorld.smooths; } }
     int biomesmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
     float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
+    NavMeshSurface2d surface { get { return ChunkGen.currentWorld.surface; } }
     byte[,] blocks;
     byte[,] biomes;
     int seed;
@@ -389,10 +391,31 @@ public class Chunk
                 {
                     map.SetTile(pos, manager.GetBlock(blocks[x, y]).tile);
                 }*/
-                UpdateByte(x, y, blocks[x, y]);
-                floor.SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.tile);
+                SetTile(pos, blocks[x, y]);
+                if (blocks[x,y] == 127)
+                    SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.index);
+                //floor.SetTile(floorPos, biomeScripts[biomes[x, y]].baseFloor.tile);
             }
         }
+    }
+    void SetTile(Vector3Int tilePos, byte index)
+    {
+        if (index == 127)
+        {
+            map.SetTile(tilePos, null);
+        }
+        else
+        {
+            Blocks block = manager.GetBlock(index);
+            map.SetTile(tilePos, block.tile);
+            if (block.solid)
+            {
+                map.GetTile<Tile>(tilePos).colliderType = Tile.ColliderType.Grid;
+            }
+            else
+                map.GetTile<Tile>(tilePos).colliderType = Tile.ColliderType.None;
+        }
+        map.RefreshTile(tilePos);
     }
     void GenerateMaps()
     {
@@ -432,14 +455,19 @@ public class Chunk
     {
         blocks[x, y] = block;
         if (block == 127)
+        {
             map.SetTile(new Vector3Int(x, y, mapz), null);
+            map.SetTile(new Vector3Int(x, y, floorz), biomeScripts[biomes[x, y]].baseFloor.tile);
+        }
         else
         {
             map.SetTile(new Vector3Int(x, y, mapz), manager.GetBlock(block).tile);
             if (manager.GetBlock(block).solid)
-                UpdateCollider(x, y, Tile.ColliderType.Grid);
+                UpdateCollider(x, y,Tile.ColliderType.Grid);
+            map.SetTile(new Vector3Int(x, y, floorz), null);
         }
         map.RefreshTile(new Vector3Int(x, y, mapz));
+        surface.BuildNavMesh();
     }
     public void UnloadChunk()
     {
@@ -459,6 +487,7 @@ public class Chunk
     }
     public Tile GetTile(Vector3Int tilePos)
     {
+        tilePos.z = mapz;
         return map.GetTile<Tile>(tilePos);
     }
     public void UpdateCollider(int x, int y, Tile.ColliderType tileCollider)
