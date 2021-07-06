@@ -38,9 +38,9 @@ public class ChunkGen : MonoBehaviour
     [HideInInspector]
     void Awake()
     {
+        mapz = 0;
+        floorz = 1;
         currentWorld = this;
-        mapz = manager.mapz;
-        floorz = manager.floorz;
         if (randomSeed)
             seed = Random.Range(0, int.MaxValue);
         if (randomBiomeSeed)
@@ -197,7 +197,7 @@ public class ChunkGen : MonoBehaviour
     {
         if (ChunkGenerated(chunkPos))
         {
-            GetChunk(chunkPos).UpdateByte(tilePos.x, tilePos.y, tile);
+            GetChunk(chunkPos).UpdateByte(tilePos.x, tilePos.y,tile);
         }
     }
     public bool OutsideChunk(Vector3 playerPos)
