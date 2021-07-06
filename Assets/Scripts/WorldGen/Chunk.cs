@@ -539,13 +539,37 @@ public class Chunk
     {
         int enemyCount = 0;
         int count = 0;
+        int minx = 0;
+        int maxx = 64;
+        int miny = 0;
+        int maxy = 64;
+        if (chunkPos == new Vector2Int(0, 0))
+        {
+            minx = 5;
+            miny = 5;
+        }
+        else if (chunkPos == new Vector2Int(-1, -1))
+        {
+            maxx = 60;
+            maxy = 60;
+        }
+        else if (chunkPos == new Vector2Int(-1,0))
+        {
+            maxx = 60;
+            miny = 5;
+        }
+        else if (chunkPos == new Vector2Int(0,-1))
+        {
+            minx = 5;
+            maxy = 60;
+        }
         while (enemyCount < numEnemies && count < numEnemies*3)
         {
-            int x = Random.Range(0, 64);
-            int y = Random.Range(0, 64);
+            int x = Random.Range(minx, maxx);
+            int y = Random.Range(miny, maxy);
             if (presetTiles.Contains(new Vector2Int(x, y)))
                 continue;
-            if (blocks[x,y] == 127 && GetSurroundingWalls(x,y,2) == 0)
+            if (blocks[x,y] == 127 && GetSurroundingWalls(x,y,2) ==0)
             {
                 enemyCount++;
                 int maxIndex = 0;
