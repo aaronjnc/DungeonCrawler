@@ -23,6 +23,7 @@ public class Blocks : MonoBehaviour
     {
         Wall,
         Empty,
+        Floor,
     }
     public Type blockType;
 }

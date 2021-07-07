@@ -10,7 +10,7 @@ public class Biomes : MonoBehaviour
     public float chance;
     public List<Blocks> emptyBlocks = new List<Blocks>();
     public List<GameObject> enemies = new List<GameObject>();
-    public Blocks baseFloor;
+    public List<Blocks> floorBlocks = new List<Blocks>();
     public float scale;
     public float weight;
     public List<Blocks> specialBlocks = new List<Blocks>();

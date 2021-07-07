@@ -45,7 +45,6 @@ public class EnemyMovement : MonoBehaviour
                 timewaited += Time.deltaTime;
                 if (timewaited > waittime)
                 {
-                    Debug.Log(transform.position);
                     Vector2 newPosition = centerpos + Random.insideUnitCircle * radius;
                     Vector2 dir = (centerpos - newPosition).normalized;
                     float magnitude = (centerpos - newPosition).magnitude;
@@ -98,11 +97,6 @@ public class EnemyMovement : MonoBehaviour
             targetAngle += 360;
         transform.up = Vector3.Lerp(transform.up, target, rotateSpeed);
         yield return null;
-        /*while (transform.localEulerAngles.z < targetAngle - .1f || transform.localEulerAngles.z > targetAngle + .1f)
-        {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotateSpeed * Time.deltaTime);
-            yield return null;
-        }*/
     }
     /// <summary>
     /// Rotate while waiting
@@ -115,9 +109,5 @@ public class EnemyMovement : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, lookAngle), rotateSpeed * Time.deltaTime);
             yield return null;
         }
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(centerpos, radius);
     }
 }
