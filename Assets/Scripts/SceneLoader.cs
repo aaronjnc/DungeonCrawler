@@ -5,10 +5,17 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoader : MonoBehaviour
 {
+    /// <summary>
+    /// Load new scene
+    /// </summary>
+    /// <param name="level">Scene name</param>
     public void LoadScene(int level)
     {
         SceneManager.LoadScene(level);
     }
+    /// <summary>
+    /// Exit game
+    /// </summary>
     public void Exit()
     {
         Application.Quit();
