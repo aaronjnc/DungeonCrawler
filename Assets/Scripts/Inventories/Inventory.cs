@@ -72,12 +72,20 @@ public class Inventory : MonoBehaviour
         AddItem(item);
         gameObject.SetActive(false);
     }
+    /// <summary>
+    /// Adds item of ID to inventory
+    /// </summary>
+    /// <param name="ID">Item ID to add to inventory</param>
     public void AddItem(byte ID)
     {
         ItemReference item = new ItemReference();
         item.SetValues(manager.GetItem(ID));
         AddItem(item);
     }
+    /// <summary>
+    /// Adds item based on item script
+    /// </summary>
+    /// <param name="itemRef">Script of item to add to inventory</param>
     public void AddItem(ItemReference itemRef)
     {
         InventoryType type = itemRef.invType;
@@ -134,18 +142,16 @@ public class Inventory : MonoBehaviour
             invItems[invNum, (int)empty.x, (int)empty.y].empty = false;
             if (invType == type)
             {
-                UpdateItem(new Vector2Int((int)empty.x, (int)empty.y), itemRef.itemSprite);
+                UpdateImage(new Vector2Int((int)empty.x, (int)empty.y), itemRef.itemSprite);
             }
         }
     }
-    public void MoveItem(Vector2Int newPos, Vector2Int oldPos)
-    {
-        ItemReference item = invItems[currentInv,oldPos.x, oldPos.y];
-        item.empty = true;
-        invItems[currentInv, newPos.x, newPos.y].ChangeValues(item);
-        UpdateItem(newPos, item.itemSprite);
-    }
-    void UpdateItem(Vector2Int newPos, Sprite itemSprite)
+    /// <summary>
+    /// Updates image at given position
+    /// </summary>
+    /// <param name="newPos">Image position</param>
+    /// <param name="itemSprite">New sprite</param>
+    void UpdateImage(Vector2Int newPos, Sprite itemSprite)
     {
         images[newPos.x, newPos.y].GetComponent<Image>().sprite = itemSprite;
         if (itemSprite != null)
@@ -153,6 +159,11 @@ public class Inventory : MonoBehaviour
         else
             images[newPos.x, newPos.y].GetComponent<Image>().color = new Color(255, 255, 255, 0);
     }
+    /// <summary>
+    /// Update chosen item image
+    /// </summary>
+    /// <param name="pos">Chosen item position</param>
+    /// <param name="itemSprite">New item sprite</param>
     void UpdateChosen(int pos, Sprite itemSprite)
     {
         chosenImages[pos].GetComponent<Image>().sprite = itemSprite;
@@ -161,6 +172,10 @@ public class Inventory : MonoBehaviour
         else
             chosenImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
     }
+    /// <summary>
+    /// Switch between inventory types
+    /// </summary>
+    /// <param name="type">New inventory page type</param>
     public void ChangeInventory(InventoryType type)
     {
         switch (type)
@@ -188,48 +203,75 @@ public class Inventory : MonoBehaviour
             UpdateChosen(row, chosenItems[currentInv, row].itemSprite);
             for (int col = 0; col < 7; col++)
             {
-                UpdateItem(new Vector2Int(row, col), invItems[currentInv, row, col].itemSprite);
+                UpdateImage(new Vector2Int(row, col), invItems[currentInv, row, col].itemSprite);
             }
         }
     }
+    /// <summary>
+    /// Determines number of items in current stack
+    /// </summary>
+    /// <param name="pos">Chosen item position</param>
+    /// <returns></returns>
     public int currentStack(Vector2Int pos)
     {
         return chosenItems[pos.x, pos.y].currentStack;
     }
+    /// <summary>
+    /// Determines durability of current item
+    /// </summary>
+    /// <param name="pos">Chosen item position</param>
+    /// <returns></returns>
     public int currentDurability(Vector2Int pos)
     {
         return chosenItems[pos.x, pos.y].durability;
     }
-    public void removeItem(Vector2Int pos)
+    /// <summary>
+    /// Removes item at position
+    /// </summary>
+    /// <param name="pos">Item position</param>
+    public void RemoveItem(Vector2Int pos)
     {
         invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y] = new ItemReference();
         chosenItems[pos.x, pos.y] = new ItemReference();
         if (pos.x == currentInv)
         {
-            UpdateItem(chosenPos[pos.x, pos.y], null);
+            UpdateImage(chosenPos[pos.x, pos.y], null);
             UpdateChosen(pos.y, null);
         }
         swapRotators.UpdateRotator(pos.x);
     }
+    /// <summary>
+    /// Reduce durability of item
+    /// </summary>
+    /// <param name="pos">Chosen item position</param>
     public void reduceDurability(Vector2Int pos)
     {
         invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].durability--;
         if (invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].durability == 0)
-            removeItem(pos);
+            RemoveItem(pos);
     }
+    /// <summary>
+    /// Reduce stack count
+    /// </summary>
+    /// <param name="pos">Chosen item position</param>
     public void reduceStack(Vector2Int pos)
     {
         invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].currentStack--;
         if (invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].currentStack == 0)
-            removeItem(pos);
+            RemoveItem(pos);
     }
-    public void RemoveItem(int tab, int i)
+    /// <summary>
+    /// Removes chosen item
+    /// </summary>
+    /// <param name="tab">Current inventory page</param>
+    /// <param name="i">Chosen position</param>
+    public void RemoveChosenItem(int tab, int i)
     {
         int invrow = (i / 7);
         int invcol = (i % 7);
         invItems[tab, invrow, invcol].ChangeValues(new ItemReference());
         if (tab == currentInv)
-            UpdateItem(new Vector2Int(invrow, invcol), invItems[tab, invrow, invcol].itemSprite);
+            UpdateImage(new Vector2Int(invrow, invcol), invItems[tab, invrow, invcol].itemSprite);
         for (int spot = 0; spot < 5; spot++)
         {
             if (chosenPos[tab,i].Equals(new Vector2Int(invrow,invcol)))
@@ -242,6 +284,11 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Moves item to new location in inventory
+    /// </summary>
+    /// <param name="arrayPos">Original position of item</param>
+    /// <param name="dropPos">New position of item</param>
     public void DropItem(Vector2Int arrayPos, Vector3 dropPos)
     {
         int row = Mathf.RoundToInt((invy -dropPos.y)/ydistance);
@@ -261,9 +308,9 @@ public class Inventory : MonoBehaviour
                 invItems[currentInv, row, col].empty = false;
                 invItems[currentInv, arrayPos.x, arrayPos.y] = new ItemReference();
                 images[arrayPos.x, arrayPos.y].GetComponent<Image>().sprite = null;
-                UpdateItem(arrayPos, null);
+                UpdateImage(arrayPos, null);
                 invItems[currentInv, row, col].ChangeValues(invItems[currentInv, arrayPos.x, arrayPos.y]);
-                UpdateItem(new Vector2Int(row, col), invItems[currentInv, row, col].itemSprite);
+                UpdateImage(new Vector2Int(row, col), invItems[currentInv, row, col].itemSprite);
             }
         }
         else if (row >= 5)
@@ -304,6 +351,11 @@ public class Inventory : MonoBehaviour
             }
         }       
     }
+    /// <summary>
+    /// Determines if inventory slot is empty
+    /// </summary>
+    /// <param name="arrayPos">Inventory position</param>
+    /// <returns></returns>
     public bool isEmpty(Vector2Int arrayPos)
     {
         if (images[arrayPos.x, arrayPos.y].GetComponent<Image>().sprite == null)

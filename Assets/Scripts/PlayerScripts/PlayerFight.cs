@@ -29,6 +29,10 @@ public class PlayerFight : MonoBehaviour
         controls.Fight.Magic.performed += CastSpell;
         controls.Fight.Magic.Enable();
     }
+    /// <summary>
+    /// Cast spell when number is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void CastSpell(CallbackContext ctx)
     {
         int num;
@@ -36,9 +40,13 @@ public class PlayerFight : MonoBehaviour
         num--;
         GetComponent<Magic>().PerformSpell(num);
     }
+    /// <summary>
+    /// Player attack when 'Left Mouse Button' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void MouseClick(CallbackContext ctx)
     {
-        if (manager.fighting && !manager.invOpen)
+        if (manager.fighting && !manager.paused)
         {
             invItem.ChangeValues(manager.currentItem);
             if (invItem.fighting)

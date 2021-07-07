@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.AI;
 public class EnemyAttack : MonoBehaviour
 {
     public float reach;
@@ -15,10 +15,14 @@ public class EnemyAttack : MonoBehaviour
     public float attackSpeed;
     float attackCount = 0f;
     bool attackCharged = true;
+    NavMeshAgent agent;
+    EnemyMovement movement;
     // Start is called before the first frame update
     void Start()
     {
+        agent = GetComponent<NavMeshAgent>();
         fightScript = GameObject.Find("Player").GetComponent<PlayerFight>();
+        movement = GetComponent<EnemyMovement>();
     }
     private void FixedUpdate()
     {
@@ -31,23 +35,25 @@ public class EnemyAttack : MonoBehaviour
         }
         if (spotted)
         {
-            /*if (ai.remainingDistance <= reach && attackCharged)
+            if (agent.remainingDistance <= reach && attackCharged)
             {
                 fightScript.TakeDamage(damage);
                 attackCharged = false;
-            }*/
+            }
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (player == (player | (1 << collision.gameObject.layer)))
         {
-            Vector3 pos = collision.gameObject.transform.position;
-            Vector3 dirtoTarget = (pos - transform.position).normalized;
-            if (Vector3.Angle(transform.up,dirtoTarget)<viewangle/2)
+            Vector2 pos = collision.gameObject.transform.position;
+            Vector2 currentpos = transform.position;
+            Vector2 dirToTarget = (pos - currentpos).normalized;
+            float angle = Vector2.SignedAngle(transform.up, dirToTarget);
+            if (angle < viewangle / 2 && angle > -viewangle / 2)
             {
                 float distancetoTarget = Vector3.Distance(transform.position, pos);
-                if (!Physics.Raycast(transform.position,dirtoTarget,distancetoTarget,tile))
+                if (!Physics2D.Raycast(transform.position, dirToTarget, distancetoTarget, tile))
                 {
                     lastLocation = pos;
                     spotted = true;
@@ -60,12 +66,14 @@ public class EnemyAttack : MonoBehaviour
     {
         if (player == (player | (1 << collision.gameObject.layer)))
         {
-            Vector3 pos = collision.gameObject.transform.position;
-            Vector3 dirtoTarget = (pos - transform.position).normalized;
-            if (Vector3.Angle(transform.up, dirtoTarget) < viewangle / 2)
+            Vector2 pos = collision.gameObject.transform.position;
+            Vector2 currentpos = transform.position;
+            Vector2 dirToTarget = (pos - currentpos).normalized;
+            float angle = Vector2.SignedAngle(transform.up, dirToTarget);
+            if (angle < viewangle / 2 && angle > -viewangle / 2)
             {
                 float distancetoTarget = Vector3.Distance(transform.position, pos);
-                if (!Physics.Raycast(transform.position, dirtoTarget, distancetoTarget, tile))
+                if (!Physics2D.Raycast(transform.position, dirToTarget, distancetoTarget, tile))
                 {
                     lastLocation = pos;
                     spotted = true;
@@ -78,9 +86,14 @@ public class EnemyAttack : MonoBehaviour
     {
         spotted = false;
     }
+    /// <summary>
+    /// Sets agent destination to last seen player location
+    /// </summary>
     void SetLocation()
     {
-        //ai.destination = lastLocation;
-        //ai.SearchPath();
+        agent.SetDestination(lastLocation);
+        if (agent.remainingDistance < 1f)
+            agent.isStopped = true;
+        movement.Rotate();
     }
 }

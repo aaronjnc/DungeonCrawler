@@ -53,7 +53,7 @@ public class Fireball : MonoBehaviour
                 Vector3Int newPos = new Vector3Int(x, y, mapz);
                 if (map.GetTile<Tile>(newPos).sprite == null)
                     continue;
-                if (manager.breakable(newPos, new Vector2Int(0,0)))
+                if (manager.IsBreakable(newPos, new Vector2Int(0,0)))
                 {
                     map.SetTile(newPos, null);
                     map.RefreshTile(newPos);

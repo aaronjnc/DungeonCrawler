@@ -948,7 +948,6 @@ MonoBehaviour:
   manager: {fileID: 197893050}
   map: {fileID: 4165390775133197889, guid: 1400dd10ed3196e4080b41959b0ad85a, type: 3}
   grid: {fileID: 173665710}
-  floormap: {fileID: 3616126506455009893, guid: 86c0d1fed54626642b2858a377676d36, type: 3}
   mapz: 0
   floorz: 0
   currentChunk: {x: 0, y: 0}
@@ -968,6 +967,8 @@ MonoBehaviour:
   biomesmooths: 1
   enemyChance: 5
   surface: {fileID: 1177679496}
+  maxenemies: 3
+  enemyParent: {fileID: 1073499107}
 --- !u!1 &271272727
 GameObject:
   m_ObjectHideFlags: 0
@@ -4778,6 +4779,36 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1071884523}
   m_CullTransparentMesh: 0
+--- !u!1 &1073499106
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1073499107}
+  m_Layer: 0
+  m_Name: Enemies
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1073499107
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1073499106}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1091965692
 GameObject:
   m_ObjectHideFlags: 0
@@ -5632,7 +5663,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d94351c84d6c03e499a212a9a07a8d8c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AgentTypeID: 0
+  m_AgentTypeID: -1372625422
   m_CollectObjects: 0
   m_Size: {x: 10, y: 10, z: 10}
   m_Center: {x: 0, y: 2, z: 0}

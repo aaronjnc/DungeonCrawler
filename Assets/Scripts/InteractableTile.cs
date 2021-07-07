@@ -12,6 +12,10 @@ public class InteractableTile
     public TileType type;
     Vendor vendor;
     List<GameObject> enableObjects = new List<GameObject>();
+    /// <summary>
+    /// Sets up script given tile ID
+    /// </summary>
+    /// <param name="ID">ID for interactable tile</param>
     public void SetUp(byte ID)
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -25,6 +29,9 @@ public class InteractableTile
                 break;
         }
     }
+    /// <summary>
+    /// Interacts with tile given type of interactable tile
+    /// </summary>
     public void Interact()
     {
         switch(type)

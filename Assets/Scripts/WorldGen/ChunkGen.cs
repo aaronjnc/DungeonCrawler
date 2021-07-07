@@ -9,7 +9,6 @@ public class ChunkGen : MonoBehaviour
     public GameManager manager;
     public GameObject map;
     public Transform grid;
-    public GameObject floormap;
     [HideInInspector]
     public int mapz;
     [HideInInspector]
@@ -35,6 +34,8 @@ public class ChunkGen : MonoBehaviour
     public int biomesmooths;
     public float enemyChance;
     public NavMeshSurface2d surface;
+    public int maxenemies;
+    public Transform enemyParent;
     [HideInInspector]
     void Awake()
     {
@@ -84,12 +85,19 @@ public class ChunkGen : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Determines if the view bounds at the current position extend beyond the current chunk
+    /// </summary>
+    /// <returns></returns>
     bool WithinBounds()
     {
         if (pos.x >= chunkWidth-12|| pos.x <= 12 || pos.y >= chunkHeight-10 || pos.y <= 10)
             return false;
         return true;
     }
+    /// <summary>
+    /// Generates new chunks in different directions
+    /// </summary>
     void GenerateNewChunks()
     {
         Vector2Int relGen;
@@ -110,12 +118,20 @@ public class ChunkGen : MonoBehaviour
         relGen = new Vector2Int(relx, rely);
         GenDirections(relGen);
     }
+    /// <summary>
+    /// Determines if adjacent chunk is already generated
+    /// </summary>
+    /// <param name="relGen">The relative direction of new chunk given current</param>
     public void GenDirections(Vector2Int relGen)
     {
         Vector2Int chunkPos = relGen + currentChunk;
         if (!ChunkGenerated(chunkPos))
             GenerateNewChunk(chunkPos);
     }
+    /// <summary>
+    /// Generates map of chunk at given chunk pos
+    /// </summary>
+    /// <param name="chunkPos">Chunk position</param>
     public void GenerateNewChunk(Vector2Int chunkPos)
     {
         if (!ChunkCreated(chunkPos))
@@ -128,13 +144,22 @@ public class ChunkGen : MonoBehaviour
         {
             GetChunk(chunkPos).GenerateChunk();
         }
-        surface.BuildNavMesh();
     }
+    /// <summary>
+    /// Returns true if Chunk script has already been created
+    /// </summary>
+    /// <param name="chunkRelPos">Chunk position</param>
+    /// <returns></returns>
     public bool ChunkCreated(Vector2Int chunkRelPos)
     {
         int hash = chunkRelPos.ToString().GetHashCode();
         return chunks.Contains(hash);
     }
+    /// <summary>
+    /// Returns true if Chunk has already been generated
+    /// </summary>
+    /// <param name="chunkRelPos"></param>
+    /// <returns></returns>
     public bool ChunkGenerated(Vector2Int chunkRelPos)
     {
         int hash = chunkRelPos.ToString().GetHashCode();
@@ -144,11 +169,21 @@ public class ChunkGen : MonoBehaviour
         }
         return false;
     }
+    /// <summary>
+    /// Returns chunk script for chunk at given position
+    /// </summary>
+    /// <param name="chunkRelPos">Chunk position</param>
+    /// <returns></returns>
     public Chunk GetChunk(Vector2Int chunkRelPos)
     {
         int hash = chunkRelPos.ToString().GetHashCode();
         return (Chunk)chunks[hash];
     }
+    /// <summary>
+    /// Presets tile at given world position using tile ID
+    /// </summary>
+    /// <param name="tilePos">World position</param>
+    /// <param name="tile">Tile ID</param>
     public void PresetTile(Vector2Int tilePos, byte tile)
     {
         Vector2Int chunkPos = GetChunkPos(tilePos);
@@ -164,6 +199,11 @@ public class ChunkGen : MonoBehaviour
             ((Chunk)chunks[hash]).AddPreset(chunkTilePos, tile);
         }
     }
+    /// <summary>
+    /// Determines the Vector2 Chunk for the given position
+    /// </summary>
+    /// <param name="tilePos">World position</param>
+    /// <returns></returns>
     public Vector2Int GetChunkPos(Vector2Int tilePos)
     {
         Vector2Int chunkPos = Vector2Int.zero;
@@ -171,6 +211,11 @@ public class ChunkGen : MonoBehaviour
         chunkPos.y = (tilePos.y < 0) ? (tilePos.y - chunkHeight) / chunkHeight : tilePos.y / chunkHeight;
         return chunkPos;
     }
+    /// <summary>
+    /// Determines the position relative to its chunk
+    /// </summary>
+    /// <param name="tilePos">World position</param>
+    /// <returns></returns>
     public Vector2Int GetChunkTilePos(Vector2Int tilePos)
     {
         Vector2Int localTilePos = new Vector2Int(0, 0);
@@ -184,6 +229,12 @@ public class ChunkGen : MonoBehaviour
             localTilePos.y = tilePos.y % chunkHeight;
         return localTilePos;
     }
+    /// <summary>
+    /// Gets block ID at given position
+    /// </summary>
+    /// <param name="tilePos">World position</param>
+    /// <param name="chunkPos">Chunk position</param>
+    /// <returns></returns>
     public byte GetBlock(Vector2Int tilePos, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
@@ -193,6 +244,12 @@ public class ChunkGen : MonoBehaviour
         }
         return 0;
     }
+    /// <summary>
+    /// Changes byte given chunk tile position and chunk pos
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="tile">Tile ID</param>
+    /// <param name="chunkPos">Chunk position</param>
     public void UpdateByte(Vector2Int tilePos, byte tile, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
@@ -200,26 +257,37 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).UpdateByte(tilePos.x, tilePos.y,tile);
         }
     }
+    /// <summary>
+    /// Returns true if player has gone outside of current chunk
+    /// </summary>
+    /// <param name="playerPos">World position</param>
+    /// <returns></returns>
     public bool OutsideChunk(Vector3 playerPos)
     {
         return (playerPos.x < currentChunk.x * chunkWidth || playerPos.x > currentChunk.x * chunkWidth + chunkWidth || playerPos.y < currentChunk.y * chunkHeight || playerPos.y > currentChunk.y * chunkHeight + chunkHeight);
     }
-    public Tilemap GetMap(Vector2Int tilePos)
-    {
-        return GetChunk(tilePos).map;
-    }
-    public Tilemap GetMap(Vector3 playerPos)
-    {
-        return GetChunk(GetChunkPos(new Vector2Int((int)playerPos.x,(int)playerPos.y))).map;
-    }
+    /// <summary>
+    /// Unloads chunk at given position
+    /// </summary>
+    /// <param name="chunkPos">Chunk position</param>
     public void UnloadChunk(Vector3 chunkPos)
     {
         GetChunk(new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight)).UnloadChunk();
     }
+    /// <summary>
+    /// Loads chunk at given position
+    /// </summary>
+    /// <param name="chunkPos">Chunk position</param>
     public void LoadChunk(Vector3 chunkPos)
     {
         GetChunk(new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight)).LoadChunk();
     }
+    /// <summary>
+    /// Updates the color of the tile at given chunk tile position and chunk position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="newTile">Tile with updated colors</param>
+    /// <param name="chunkPos">Chunk position</param>
     public void UpdateColor(Vector2Int tilePos, Tile newTile, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
@@ -227,6 +295,12 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).UpdateColor(tilePos.x, tilePos.y, newTile);
         }
     }
+    /// <summary>
+    /// Returns the tile at the given chunk tile position and chunk position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="chunkPos">Chunk position</param>
+    /// <returns></returns>
     public Tile GetTile(Vector3Int tilePos, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
@@ -235,6 +309,12 @@ public class ChunkGen : MonoBehaviour
         }
         return null;
     }
+    /// <summary>
+    /// Updates the collider for the given chunk tile position in the given chunk
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="tileCollider">New tile collider</param>
+    /// <param name="chunkPos">Chunk position</param>
     public void UpdateCollider(Vector3Int tilePos, Tile.ColliderType tileCollider, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
@@ -242,6 +322,11 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).UpdateCollider(tilePos.x, tilePos.y,tileCollider);
         }
     }
+    /// <summary>
+    /// Interacts with tile at given location in given chunk
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="chunkPos">Chunk position</param>
     public void Interact(Vector3Int tilePos,Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))

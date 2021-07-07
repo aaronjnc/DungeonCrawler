@@ -27,6 +27,10 @@ public class EnemyInfo : MonoBehaviour
         slider.minValue = 0;
         slider.value = health;
     }
+    /// <summary>
+    /// Reduce health of enemy by given amount
+    /// </summary>
+    /// <param name="amount">Amount to reduce health by</param>
     public void ReduceHealth(float amount)
     {
         health = Mathf.Clamp(health-amount,0,maxHealth);
@@ -34,6 +38,9 @@ public class EnemyInfo : MonoBehaviour
         if (health <= 0)
             Destroy(gameObject);
     }
+    /// <summary>
+    /// Determines if enemy is on fire
+    /// </summary>
     public void FireDamage()
     {
         if (Random.value < firechance)

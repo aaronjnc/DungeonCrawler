@@ -37,8 +37,8 @@ public class ItemRotator : MonoBehaviour
         {
             items[i] = new ItemReference();
         }
-        controls.Inventory.ItemRotator.performed += Expanded;
-        controls.Inventory.ItemRotator.canceled += Canceled;
+        controls.Inventory.ItemRotator.performed += ExpandRotator;
+        controls.Inventory.ItemRotator.canceled += MinimizeRotator;
         controls.Inventory.ItemRotator.Enable();
         controls.Movement.MousePosition.Enable();
         fullRotator = swapRotators.fullRotators[current];
@@ -47,7 +47,11 @@ public class ItemRotator : MonoBehaviour
         if (swapRotators.current != rotator)
             gameObject.SetActive(false);
     }
-    void Expanded(CallbackContext ctx)
+    /// <summary>
+    /// Expands item rotator when 'Tab' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
+    void ExpandRotator(CallbackContext ctx)
     {
         rotatorImage.sprite = fullRotator;
         foreach(Image img in images)
@@ -56,7 +60,11 @@ public class ItemRotator : MonoBehaviour
         }
         open = true;
     }
-    void Canceled(CallbackContext ctx)
+    /// <summary>
+    /// Minimizes item rotator when 'Tab' is released
+    /// </summary>
+    /// <param name="ctx"></param>
+    void MinimizeRotator(CallbackContext ctx)
     {
         foreach (Image img in images)
         {
@@ -65,7 +73,6 @@ public class ItemRotator : MonoBehaviour
         rotatorImage.sprite = swapRotators.smallRotator;
         open = false;
     }
-    // Update is called once per frame
     float timechange = 0f;
     void FixedUpdate()
     {
@@ -112,6 +119,9 @@ public class ItemRotator : MonoBehaviour
             previous = current;
         }
     }
+    /// <summary>
+    /// Updates items within item rotator given inventory
+    /// </summary>
     public void UpdateItems()
     {
         for (int i = 0; i < 5; i++)
@@ -136,12 +146,14 @@ public class ItemRotator : MonoBehaviour
         if (swapRotators.current == rotator)
             CurrentItem();
     }
+    /// <summary>
+    /// Sets certain values given currently selected item
+    /// </summary>
     void CurrentItem()
     {
         manager.currentItem.ChangeValues(chosenItem);
         if (!chosenItem.empty)
         {
-            DisableRopes();
             DisableBlockPlacing();
             manager.fighting = false;
             switch (rotator)
@@ -167,18 +179,15 @@ public class ItemRotator : MonoBehaviour
         }
         else
         {
-            DisableRopes();
             DisableBlockPlacing();
         }
     }
-    public void DisableRopes()
-    {
-        manager.ResetRopes();
-        manager.ropeplacing = false;
-    }
+    /// <summary>
+    /// Resets everything when block placing is disabled
+    /// </summary>
     public void DisableBlockPlacing()
     {
-        manager.ResetPrev();
+        manager.ResetPreviousTile();
         manager.blockplacing = false;
     }
 }
