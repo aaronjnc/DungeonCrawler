@@ -42,7 +42,7 @@ public class BuyandSell : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         {
             manager.gold += currentItem.cost;
             int pos = marketPlace.currentLoc.x * 15 + marketPlace.currentLoc.y * 5 + marketPlace.currentLoc.z;
-            inventory.RemoveItem(marketPlace.currentTab, pos);
+            inventory.RemoveChosenItem(marketPlace.currentTab, pos);
             marketPlace.UpdateImage(new ItemReference(), loc);
             marketPlace.currentItem.ChangeValues(new ItemReference());
             marketPlace.RefreshImage(marketPlace.chosenImage, null);

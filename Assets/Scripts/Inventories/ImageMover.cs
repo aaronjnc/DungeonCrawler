@@ -18,6 +18,10 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         inv = manager.inv;
         startpos = transform.position;
     }
+    /// <summary>
+    /// Array position of this image
+    /// </summary>
+    /// <param name="arrayPos">Array position</param>
     public void SetArrayPos(Vector2Int arrayPos)
     {
         itemPos = arrayPos;

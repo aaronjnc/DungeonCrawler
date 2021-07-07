@@ -12,6 +12,11 @@ public class SpellManager : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    /// <summary>
+    /// Places spell in chosen position
+    /// </summary>
+    /// <param name="image">Spell object</param>
+    /// <param name="spell">Spell number</param>
     public void PlaceSpell(GameObject image, int spell)
     {
         Vector3 pos = image.transform.position;

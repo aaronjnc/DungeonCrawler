@@ -72,6 +72,9 @@ public class EnemyMovement : MonoBehaviour
             StartCoroutine("StandRotate");
         }
     }
+    /// <summary>
+    /// Determine whether or not to rotate enemy
+    /// </summary>
     public void Rotate()
     {
         if (nextPoint != (Vector2)agent.path.corners[1])
@@ -80,6 +83,10 @@ public class EnemyMovement : MonoBehaviour
             nextPoint = agent.path.corners[1];
         }
     }
+    /// <summary>
+    /// Rotates enemy to look relative to direction
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Rotator()
     {
         Vector2 target = agent.path.corners[1] - transform.position;
@@ -97,6 +104,10 @@ public class EnemyMovement : MonoBehaviour
             yield return null;
         }*/
     }
+    /// <summary>
+    /// Rotate while waiting
+    /// </summary>
+    /// <returns></returns>
     IEnumerator StandRotate()
     {
         while (transform.localEulerAngles.z < lookAngle - .1f || transform.localEulerAngles.z > lookAngle + .1f)
