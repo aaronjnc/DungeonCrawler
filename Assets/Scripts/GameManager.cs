@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Modes:")]
     public bool testingmode = true;
-    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize = 20;
+    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize;
     public bool spawnEnemies;
 
     [Header("Abilities:")]
@@ -83,6 +83,11 @@ public class GameManager : MonoBehaviour
         foreach(Sprite post in posts)
         {
             spriteNames.Add(post.name);
+        }
+        if (testingmode)
+        {
+            GetComponent<WorldCreationTesting>().enabled = true;
+            GetComponent<WorldCreationTesting>().size = testingsize;
         }
         //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }

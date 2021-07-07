@@ -36,6 +36,7 @@ public class ChunkGen : MonoBehaviour
     public NavMeshSurface2d surface;
     public int maxenemies;
     public Transform enemyParent;
+    public int specialTileChance;
     [HideInInspector]
     void Awake()
     {
