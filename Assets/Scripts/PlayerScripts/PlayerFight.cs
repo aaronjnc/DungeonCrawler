@@ -24,8 +24,10 @@ public class PlayerFight : MonoBehaviour
         healthSlider.value = health;
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        controls.Interact.Press.performed += MouseClick;
+        controls.Interact.Press.canceled += BaseAttack;
         controls.Interact.Press.Enable();
+        controls.Fight.AdvanceAttack.canceled += AdvancedAttack;
+        controls.Fight.AdvanceAttack.Enable();
         controls.Fight.Magic.performed += CastSpell;
         controls.Fight.Magic.Enable();
     }
@@ -41,25 +43,35 @@ public class PlayerFight : MonoBehaviour
         GetComponent<Magic>().PerformSpell(num);
     }
     /// <summary>
-    /// Player attack when 'Left Mouse Button' is pressed
+    /// Player base attack when 'Left Mouse Button' is pressed
     /// </summary>
     /// <param name="ctx"></param>
-    void MouseClick(CallbackContext ctx)
+    void BaseAttack(CallbackContext ctx)
     {
         if (manager.fighting && !manager.paused)
         {
             invItem.ChangeValues(manager.currentItem);
             if (invItem.fighting)
             {
-                Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, reach,enemy);
-                for(int i = 0; i < enemies.Length;i++)
-                {
-                    Vector2Int chunk = enemies[i].GetComponent<EnemyInfo>().chunk;
-                    ChunkGen.currentWorld.GetChunk(chunk).KillEnemy(enemies[i].gameObject);
-                }
+                invItem.weaponScript.BaseAttack(gameObject.transform);
             }
         }
     }
+    /// <summary>
+    /// Player advanced attackw when 'Right Mouse Button' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
+    void AdvancedAttack(CallbackContext ctx)
+    {
+        if (manager.fighting && !manager.paused)
+        {
+            invItem.ChangeValues(manager.currentItem);
+            if (invItem.fighting)
+            {
+                invItem.weaponScript.AdvancedAttack(gameObject.transform);
+            }
+        }
+    }        
     public void TakeDamage(float amount)
     {
         health = Mathf.Clamp(health - amount, 0, maxHealth);
@@ -68,9 +80,5 @@ public class PlayerFight : MonoBehaviour
         {
             Destroy(gameObject);
         }
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(transform.position, reach);
     }
 }
