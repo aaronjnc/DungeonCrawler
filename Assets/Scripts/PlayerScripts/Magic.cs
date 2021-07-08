@@ -46,7 +46,6 @@ public class Magic : MonoBehaviour
                 currentCharge[disabledSpells[i]] += Time.deltaTime;
                 if (currentCharge[disabledSpells[i]] >= chargeTime[disabledSpells[i]])
                 {
-                    Debug.Log("reached");
                     currentCharge[disabledSpells[i]] = 0;
                     charged[disabledSpells[i]] = true;
                     Animator animator = cooldownTimers[disabledSpells[i]].GetComponent<Animator>();

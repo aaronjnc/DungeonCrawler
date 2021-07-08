@@ -415,6 +415,8 @@ public class Chunk
                         {
                             GenerateSpecial(x, y);
                         }
+                        if (blocks[x, y] == 0)
+                            Debug.Log(x + " " + y);
                     }
                 }
             }
