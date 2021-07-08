@@ -45,7 +45,6 @@ public class EnemyMovement : MonoBehaviour
                 timewaited += Time.deltaTime;
                 if (timewaited > waittime)
                 {
-                    Debug.Log(transform.position);
                     Vector2 newPosition = centerpos + Random.insideUnitCircle * radius;
                     Vector2 dir = (centerpos - newPosition).normalized;
                     float magnitude = (centerpos - newPosition).magnitude;
@@ -72,6 +71,9 @@ public class EnemyMovement : MonoBehaviour
             StartCoroutine("StandRotate");
         }
     }
+    /// <summary>
+    /// Determine whether or not to rotate enemy
+    /// </summary>
     public void Rotate()
     {
         if (nextPoint != (Vector2)agent.path.corners[1])
@@ -80,6 +82,10 @@ public class EnemyMovement : MonoBehaviour
             nextPoint = agent.path.corners[1];
         }
     }
+    /// <summary>
+    /// Rotates enemy to look relative to direction
+    /// </summary>
+    /// <returns></returns>
     IEnumerator Rotator()
     {
         Vector2 target = agent.path.corners[1] - transform.position;
@@ -91,12 +97,11 @@ public class EnemyMovement : MonoBehaviour
             targetAngle += 360;
         transform.up = Vector3.Lerp(transform.up, target, rotateSpeed);
         yield return null;
-        /*while (transform.localEulerAngles.z < targetAngle - .1f || transform.localEulerAngles.z > targetAngle + .1f)
-        {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, targetAngle), rotateSpeed * Time.deltaTime);
-            yield return null;
-        }*/
     }
+    /// <summary>
+    /// Rotate while waiting
+    /// </summary>
+    /// <returns></returns>
     IEnumerator StandRotate()
     {
         while (transform.localEulerAngles.z < lookAngle - .1f || transform.localEulerAngles.z > lookAngle + .1f)
@@ -104,9 +109,5 @@ public class EnemyMovement : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, lookAngle), rotateSpeed * Time.deltaTime);
             yield return null;
         }
-    }
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireSphere(centerpos, radius);
     }
 }

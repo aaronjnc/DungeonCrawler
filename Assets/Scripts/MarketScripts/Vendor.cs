@@ -10,6 +10,9 @@ public class Vendor
     float[] chance = new float[] { .8f,.1f,.01f,.001f,.0001f};
     int[] itemCount = new int[] { 0, 0, 0, 0, 0 };
     bool[] full = new bool[] { false, false, false, false, false };
+    /// <summary>
+    /// Sets up vendor script and generates new items
+    /// </summary>
     public Vendor()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -19,6 +22,9 @@ public class Vendor
         }
         Restock();
     }
+    /// <summary>
+    /// Refreshes item list separated by level
+    /// </summary>
     void RefreshItemLevels()
     {
         List<InventoryItem> invItems = manager.items;
@@ -27,6 +33,9 @@ public class Vendor
             separatedItems[item.level].Add(item);
         }
     }
+    /// <summary>
+    /// Clears vendor items
+    /// </summary>
     void RefreshItems()
     {
         for (int tab = 0; tab < 5; tab++)
@@ -43,6 +52,11 @@ public class Vendor
             }
         }
     }
+    /// <summary>
+    /// Updates vendor item with new item script
+    /// </summary>
+    /// <param name="itemRef">New item script</param>
+    /// <param name="itemPos">Item position</param>
     public void UpdateItem(ItemReference itemRef, Vector4 itemPos)
     {
         vendorItems[(int)itemPos.x, (int)itemPos.y, (int)itemPos.z, (int)itemPos.w].ChangeValues(itemRef);
@@ -52,6 +66,9 @@ public class Vendor
             full[(int)itemPos.x] = false;
         }
     }
+    /// <summary>
+    /// Clear vendor inventory and generate all new items
+    /// </summary>
     public void Restock()
     {
         RefreshItemLevels();
@@ -78,6 +95,10 @@ public class Vendor
             AddItem(vendorItem);
         }
     }
+    /// <summary>
+    /// Adds items to inventory given item script
+    /// </summary>
+    /// <param name="itemRef">New item script</param>
     public void AddItem(ItemReference itemRef)
     {
         int tab = 0;
@@ -109,6 +130,10 @@ public class Vendor
         if (itemCount[tab] == 35)
             full[tab] = true;
     }
+    /// <summary>
+    /// Converts inventoryitem script to add
+    /// </summary>
+    /// <param name="newItem">New item script</param>
     public void AddItem(InventoryItem newItem)
     {
         ItemReference itemRef = new ItemReference();

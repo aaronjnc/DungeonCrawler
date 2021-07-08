@@ -57,7 +57,7 @@ public class EnemyAttack : MonoBehaviour
                 {
                     lastLocation = pos;
                     spotted = true;
-                    SetLocation(angle);
+                    SetLocation();
                 }
             }
         }
@@ -77,7 +77,7 @@ public class EnemyAttack : MonoBehaviour
                 {
                     lastLocation = pos;
                     spotted = true;
-                    SetLocation(angle);
+                    SetLocation();
                 }
             }
         }
@@ -86,7 +86,10 @@ public class EnemyAttack : MonoBehaviour
     {
         spotted = false;
     }
-    void SetLocation(float angle)
+    /// <summary>
+    /// Sets agent destination to last seen player location
+    /// </summary>
+    void SetLocation()
     {
         agent.SetDestination(lastLocation);
         if (agent.remainingDistance < 1f)

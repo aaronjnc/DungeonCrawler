@@ -637,9 +637,7 @@ GameObject:
   m_Component:
   - component: {fileID: 173665710}
   - component: {fileID: 173665709}
-  - component: {fileID: 173665712}
   - component: {fileID: 173665713}
-  - component: {fileID: 173665714}
   - component: {fileID: 173665716}
   m_Layer: 0
   m_Name: Grid
@@ -674,38 +672,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &173665712
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 173665707}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5fc1eb6e366168a4a99aa9b1a94f4ca8, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startpos: {x: 0, y: 0, z: 0}
-  placing: 0
-  length: 0
-  ropes:
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 0, z: 0}
-  dir: {x: 0, y: 0}
-  lineTiles: []
-  spriteTiles:
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  postID: 0
 --- !u!114 &173665713
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -722,18 +688,6 @@ MonoBehaviour:
   prevmapPos: {x: 0, y: 0, z: 0}
   swapRotators: {fileID: 689145501}
   inventory: {fileID: 1762183660}
---- !u!114 &173665714
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 173665707}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af4f152da9ca5b64bba132dde06e5e42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1839735485 &173665716
 Tilemap:
   m_ObjectHideFlags: 0
@@ -865,6 +819,7 @@ GameObject:
   - component: {fileID: 197893050}
   - component: {fileID: 197893052}
   - component: {fileID: 197893053}
+  - component: {fileID: 197893054}
   m_Layer: 0
   m_Name: GameController
   m_TagString: Untagged
@@ -886,15 +841,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   revisiting: 1
   testingmode: 0
-  testingsize: 30
-  spawnEnemies: 0
-  ropeplacing: 0
+  testingsize: 5
+  spawnEnemies: 1
   blockplacing: 0
   placing: 0
   currentTileID: 0
   pos: {x: 0, y: 0, z: 0}
   destroyandPlace: {fileID: 173665713}
-  ropesystem: {fileID: 173665712}
   mapz: -1
   floorz: 0
   items: []
@@ -965,10 +918,24 @@ MonoBehaviour:
   randomBiomePercent: 55
   smooths: 5
   biomesmooths: 1
-  enemyChance: 5
+  enemyChance: 75
   surface: {fileID: 1177679496}
   maxenemies: 3
   enemyParent: {fileID: 1073499107}
+  specialTileChance: 25
+--- !u!114 &197893054
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 197893049}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4f152da9ca5b64bba132dde06e5e42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: 0
 --- !u!1 &271272727
 GameObject:
   m_ObjectHideFlags: 0
