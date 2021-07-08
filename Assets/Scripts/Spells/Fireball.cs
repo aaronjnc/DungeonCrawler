@@ -10,7 +10,7 @@ public class Fireball : MonoBehaviour
     Vector3 dir;
     public LayerMask tiles;
     public LayerMask enemies;
-    Tilemap map;
+    public LayerMask ignoreLayers;
     int mapz;
     public float baseDamage;
     // Start is called before the first frame update
@@ -42,25 +42,24 @@ public class Fireball : MonoBehaviour
                 info.FireDamage();
             }
         }
-        if (collision.gameObject.TryGetComponent<Tilemap>(out map)) { }
-        Vector3Int tilePos = map.WorldToCell(transform.position);
-        for (int x = tilePos.x-1; x<=tilePos.x+1;x++)
+        Vector2Int hitLocation = new Vector2Int((int)transform.position.x,(int)transform.position.y);
+        for (int x = hitLocation.x-1; x<=hitLocation.x+1;x++)
         {
-            for (int y = tilePos.y-1;y<=tilePos.y+1;y++)
+            for (int y = hitLocation.y-1;y<=hitLocation.y+1;y++)
             {
                 if (x == 0 && y == 0)
                     continue;
-                Vector3Int newPos = new Vector3Int(x, y, mapz);
-                if (map.GetTile<Tile>(newPos).sprite == null)
+                Vector2Int tilePos = ChunkGen.currentWorld.GetChunkTilePos(new Vector2Int(x, y));
+                Vector2Int chunkPos = ChunkGen.currentWorld.GetChunkPos(new Vector2Int(x, y));
+                Vector3Int newLoc = new Vector3Int(x, y, mapz);
+                if (ChunkGen.currentWorld.GetBlock(new Vector2Int(newLoc.x,newLoc.y),chunkPos) == 127)
                     continue;
-                if (manager.IsBreakable(newPos, new Vector2Int(0,0)))
+                if (manager.IsBreakable(newLoc, chunkPos))
                 {
-                    map.SetTile(newPos, null);
-                    map.RefreshTile(newPos);
+                    ChunkGen.currentWorld.UpdateByte(tilePos, 127, chunkPos);
                 }
             }
         }
-        if (collision.gameObject.name != "Player")
-            Destroy(gameObject);
+        Destroy(gameObject);
     }
 }
