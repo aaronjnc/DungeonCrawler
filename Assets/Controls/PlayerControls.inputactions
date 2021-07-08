@@ -395,6 +395,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "AdvanceAttack",
+                    "type": "Button",
+                    "id": "b29dbf48-e4ba-4a4d-847c-63a5ec3b5aa6",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -461,6 +469,17 @@
                     "processors": "",
                     "groups": "",
                     "action": "MagicMenu",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "03097948-2c78-4277-97db-73e66ea713e9",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "AdvanceAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

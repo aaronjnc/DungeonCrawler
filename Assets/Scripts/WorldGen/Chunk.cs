@@ -729,6 +729,5 @@ public class Chunk
     {
         enemies.Remove(enemy.GetHashCode());
         GameObject.Destroy(enemy);
-        Debug.Log("Killed");
     }
 }

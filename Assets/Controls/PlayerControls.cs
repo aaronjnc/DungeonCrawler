@@ -408,6 +408,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""AdvanceAttack"",
+                    ""type"": ""Button"",
+                    ""id"": ""b29dbf48-e4ba-4a4d-847c-63a5ec3b5aa6"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -476,6 +484,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""MagicMenu"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""03097948-2c78-4277-97db-73e66ea713e9"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AdvanceAttack"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -507,6 +526,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Fight = asset.FindActionMap("Fight", throwIfNotFound: true);
         m_Fight_Magic = m_Fight.FindAction("Magic", throwIfNotFound: true);
         m_Fight_MagicMenu = m_Fight.FindAction("MagicMenu", throwIfNotFound: true);
+        m_Fight_AdvanceAttack = m_Fight.FindAction("AdvanceAttack", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -753,12 +773,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private IFightActions m_FightActionsCallbackInterface;
     private readonly InputAction m_Fight_Magic;
     private readonly InputAction m_Fight_MagicMenu;
+    private readonly InputAction m_Fight_AdvanceAttack;
     public struct FightActions
     {
         private @PlayerControls m_Wrapper;
         public FightActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Magic => m_Wrapper.m_Fight_Magic;
         public InputAction @MagicMenu => m_Wrapper.m_Fight_MagicMenu;
+        public InputAction @AdvanceAttack => m_Wrapper.m_Fight_AdvanceAttack;
         public InputActionMap Get() { return m_Wrapper.m_Fight; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -774,6 +796,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @MagicMenu.started -= m_Wrapper.m_FightActionsCallbackInterface.OnMagicMenu;
                 @MagicMenu.performed -= m_Wrapper.m_FightActionsCallbackInterface.OnMagicMenu;
                 @MagicMenu.canceled -= m_Wrapper.m_FightActionsCallbackInterface.OnMagicMenu;
+                @AdvanceAttack.started -= m_Wrapper.m_FightActionsCallbackInterface.OnAdvanceAttack;
+                @AdvanceAttack.performed -= m_Wrapper.m_FightActionsCallbackInterface.OnAdvanceAttack;
+                @AdvanceAttack.canceled -= m_Wrapper.m_FightActionsCallbackInterface.OnAdvanceAttack;
             }
             m_Wrapper.m_FightActionsCallbackInterface = instance;
             if (instance != null)
@@ -784,6 +809,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @MagicMenu.started += instance.OnMagicMenu;
                 @MagicMenu.performed += instance.OnMagicMenu;
                 @MagicMenu.canceled += instance.OnMagicMenu;
+                @AdvanceAttack.started += instance.OnAdvanceAttack;
+                @AdvanceAttack.performed += instance.OnAdvanceAttack;
+                @AdvanceAttack.canceled += instance.OnAdvanceAttack;
             }
         }
     }
@@ -816,5 +844,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         void OnMagic(InputAction.CallbackContext context);
         void OnMagicMenu(InputAction.CallbackContext context);
+        void OnAdvanceAttack(InputAction.CallbackContext context);
     }
 }
