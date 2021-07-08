@@ -51,11 +51,11 @@ public class PlayerFight : MonoBehaviour
             invItem.ChangeValues(manager.currentItem);
             if (invItem.fighting)
             {
-                Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, reach, enemy);
+                Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, reach,enemy);
                 for(int i = 0; i < enemies.Length;i++)
                 {
-                    Destroy(enemies[i].gameObject);
-                    Debug.Log("enemy killed");
+                    Vector2Int chunk = enemies[i].GetComponent<EnemyInfo>().chunk;
+                    ChunkGen.currentWorld.GetChunk(chunk).KillEnemy(enemies[i].gameObject);
                 }
             }
         }

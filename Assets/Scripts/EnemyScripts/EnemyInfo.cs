@@ -15,6 +15,7 @@ public class EnemyInfo : MonoBehaviour
     public float firechance;
     public float weight;
     public float scale;
+    public Vector2Int chunk;
     public enum EnemyType
     {
         Troll,

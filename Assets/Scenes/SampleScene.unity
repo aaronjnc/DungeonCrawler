@@ -919,7 +919,6 @@ MonoBehaviour:
   smooths: 5
   biomesmooths: 1
   enemyChance: 75
-  surface: {fileID: 1177679496}
   maxenemies: 3
   enemyParent: {fileID: 1073499107}
   specialTileChance: 25
@@ -2790,7 +2789,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7711946254513186298, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: enemy.m_Bits
-      value: 256
+      value: 1024
       objectReference: {fileID: 0}
     - target: {fileID: 7711946254513186298, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: reach
@@ -4755,7 +4754,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1073499107}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Enemies
   m_TagString: Untagged
   m_Icon: {fileID: 0}
