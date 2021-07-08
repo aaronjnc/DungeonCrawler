@@ -33,7 +33,6 @@ public class ChunkGen : MonoBehaviour
     public int smooths;
     public int biomesmooths;
     public float enemyChance;
-    public NavMeshSurface2d surface;
     public int maxenemies;
     public Transform enemyParent;
     public int specialTileChance;

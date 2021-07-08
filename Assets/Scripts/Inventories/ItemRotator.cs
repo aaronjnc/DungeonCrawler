@@ -21,7 +21,8 @@ public class ItemRotator : MonoBehaviour
     SwapRotators swapRotators;
     public Inventory inv;
     GameManager manager;
-    public int rotator;
+    [HideInInspector]
+    public int rotator = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -180,6 +181,7 @@ public class ItemRotator : MonoBehaviour
         else
         {
             DisableBlockPlacing();
+            manager.fighting = false;
         }
     }
     /// <summary>
