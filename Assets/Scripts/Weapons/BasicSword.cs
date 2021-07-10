@@ -20,7 +20,7 @@ public class BasicSword : MonoBehaviour, WeaponInterface<Transform, PlayerFight>
         for (int i = 0; i < enemies.Length; i++)
         {
             Vector3 dir = enemies[i].transform.position-playerTransform.position;
-            float dot = Vector3.Dot(dir, -transform.up);
+            float dot = Vector3.Dot(dir, transform.right);
             if (dot >= Mathf.Cos(swingAngle))
             {
                 enemies[i].GetComponent<EnemyInfo>().ReduceHealth(baseDamage);

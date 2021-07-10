@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
@@ -186,5 +187,12 @@ public class GameManager : MonoBehaviour
     {
         paused = false;
         Time.timeScale = 1;
+    }
+    public void BuildNavMesh()
+    {
+        foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
+        {
+            surface.BuildNavMesh();
+        }
     }
 }

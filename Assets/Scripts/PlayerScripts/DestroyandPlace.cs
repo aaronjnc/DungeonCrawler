@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UnityEngine.InputSystem.InputAction;
+using UnityEngine.AI;
 
 public class DestroyandPlace : MonoBehaviour
 {
@@ -123,6 +124,8 @@ public class DestroyandPlace : MonoBehaviour
                     manager.inv.reduceDurability(new Vector2Int(swapRotators.current,swapRotators.chosen));
                     manager.inv.AddItem(GetBlock(mapPos,currentChunk));
                     UpdateTile(mapPos, 127, currentChunk);
+                    if (manager.spawnEnemies)
+                        manager.BuildNavMesh();
                 }
             }
             else if (manager.placing && GetTile(mapPos, currentChunk).color.a != 255)
@@ -130,6 +133,8 @@ public class DestroyandPlace : MonoBehaviour
                 manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
                 UpdateTile(mapPos, manager.currentTileID, currentChunk);
                 UpdateColor(mapPos, refillTile, currentChunk);
+                if (manager.spawnEnemies)
+                    manager.BuildNavMesh();
             }
             prevmapPos = Vector3Int.zero;
         }
