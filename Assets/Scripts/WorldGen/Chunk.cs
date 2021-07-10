@@ -610,8 +610,6 @@ public class Chunk
             map.SetTile(new Vector3Int(x, y, floorz), null);
         }
         map.RefreshTile(new Vector3Int(x, y, mapz));
-        if (manager.spawnEnemies)
-            BuildNavMeshes();
     }
     /// <summary>
     /// Disables the renderer of the map and enemies

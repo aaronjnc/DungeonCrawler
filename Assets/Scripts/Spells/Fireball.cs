@@ -47,19 +47,11 @@ public class Fireball : MonoBehaviour
         {
             for (int y = hitLocation.y-1;y<=hitLocation.y+1;y++)
             {
-                if (x == 0 && y == 0)
-                    continue;
-                Vector2Int tilePos = ChunkGen.currentWorld.GetChunkTilePos(new Vector2Int(x, y));
-                Vector2Int chunkPos = ChunkGen.currentWorld.GetChunkPos(new Vector2Int(x, y));
-                Vector3Int newLoc = new Vector3Int(x, y, mapz);
-                if (ChunkGen.currentWorld.GetBlock(new Vector2Int(newLoc.x,newLoc.y),chunkPos) == 127)
-                    continue;
-                if (manager.IsBreakable(newLoc, chunkPos))
-                {
-                    ChunkGen.currentWorld.UpdateByte(tilePos, 127, chunkPos);
-                }
+                //Set tile on fire
             }
         }
         Destroy(gameObject);
+        if (manager.spawnEnemies)
+            manager.BuildNavMesh();
     }
 }
