@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.AI;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager currentManager;
     [Tooltip("Eliminate lone tiles")] public bool revisiting = false;
 
     [Header("Modes:")]
@@ -23,7 +25,6 @@ public class GameManager : MonoBehaviour
     public Vector3Int pos = Vector3Int.zero;
     [Header("Script Refs:")]
     public DestroyandPlace destroyandPlace;
-    List<string> blockNames = new List<string>();
     Sprite[] sprites;
     Sprite[] posts;
     List<string> spriteNames = new List<string>();
@@ -36,7 +37,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    public static GameManager Instance;
     public GameObject invObject;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
@@ -50,7 +50,7 @@ public class GameManager : MonoBehaviour
     {
         mapz = 0;
         floorz = 1;
-        Instance = this;
+        currentManager = this;
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
@@ -187,5 +187,12 @@ public class GameManager : MonoBehaviour
     {
         paused = false;
         Time.timeScale = 1;
+    }
+    public void BuildNavMesh()
+    {
+        foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
+        {
+            surface.BuildNavMesh();
+        }
     }
 }

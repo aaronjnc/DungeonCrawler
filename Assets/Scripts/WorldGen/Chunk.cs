@@ -415,6 +415,8 @@ public class Chunk
                         {
                             GenerateSpecial(x, y);
                         }
+                        if (blocks[x, y] == 0)
+                            Debug.Log(x + " " + y);
                     }
                 }
             }
@@ -442,6 +444,7 @@ public class Chunk
         }
         GameObject enemy = GameObject.Instantiate(biomeScripts[biomes[x, y]].enemies[maxIndex], enemyParent) as GameObject;
         enemy.transform.position = GetWorldPos(x, y, -1);
+        enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
         enemies.Add(enemy.GetHashCode(), enemy);
     }
     /// <summary>
@@ -607,8 +610,6 @@ public class Chunk
             map.SetTile(new Vector3Int(x, y, floorz), null);
         }
         map.RefreshTile(new Vector3Int(x, y, mapz));
-        if (manager.spawnEnemies)
-            BuildNavMeshes();
     }
     /// <summary>
     /// Disables the renderer of the map and enemies
@@ -719,5 +720,14 @@ public class Chunk
         {
             surface.BuildNavMesh();
         }
+    }
+    /// <summary>
+    /// Called to kill enemy and open up spawn spot
+    /// </summary>
+    /// <param name="enemy">Gameobject for enemy</param>
+    public void KillEnemy(GameObject enemy)
+    {
+        enemies.Remove(enemy.GetHashCode());
+        GameObject.Destroy(enemy);
     }
 }

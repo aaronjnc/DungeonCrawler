@@ -15,6 +15,7 @@ public class EnemyInfo : MonoBehaviour
     public float firechance;
     public float weight;
     public float scale;
+    public Vector2Int chunk;
     public enum EnemyType
     {
         Troll,
@@ -36,7 +37,9 @@ public class EnemyInfo : MonoBehaviour
         health = Mathf.Clamp(health-amount,0,maxHealth);
         slider.value = health;
         if (health <= 0)
-            Destroy(gameObject);
+        {
+            ChunkGen.currentWorld.GetChunk(chunk).KillEnemy(this.gameObject);
+        }
     }
     /// <summary>
     /// Determines if enemy is on fire
