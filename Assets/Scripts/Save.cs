@@ -4,10 +4,10 @@ using UnityEngine;
 [System.Serializable]
 public class Save 
 {
+    PlayerControls controls;
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
