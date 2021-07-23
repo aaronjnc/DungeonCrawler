@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8276145670282941052}
   - component: {fileID: 6809059416530318459}
+  - component: {fileID: 4368615406007474759}
   m_Layer: 0
   m_Name: ExtendoSword
   m_TagString: Untagged
@@ -55,3 +56,24 @@ MonoBehaviour:
   level: 3
   cost: 0
   itemID: 17
+--- !u!114 &4368615406007474759
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076400607671303244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 952eacf8ffafd094a98dc2e02d192d23, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reach: 1
+  extendedreach: 5
+  enemy:
+    serializedVersion: 2
+    m_Bits: 1024
+  hasHoldEffect: 0
+  swingAngle: 45
+  baseDamage: 15
+  advancedDamage: 15
