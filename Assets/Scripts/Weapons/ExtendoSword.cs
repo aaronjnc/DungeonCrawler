@@ -30,12 +30,11 @@ public class ExtendoSword : MonoBehaviour, WeaponInterface<Transform, PlayerFigh
     }
     public void AdvancedAttack(Transform playerTransform)
     {
-        RaycastHit2D enemies = Physics2D.Raycast(playerTransform.position-transform.up, -transform.up, extendedreach);
-        if (enemies.collider.gameObject.layer == enemy)
+        RaycastHit2D hit = Physics2D.Raycast(playerTransform.position + playerTransform.right, playerTransform.right, extendedreach, enemy);
+        if (hit.collider.gameObject.CompareTag("Enemy"))
         {
-            enemies.collider.gameObject.GetComponent<EnemyInfo>().ReduceHealth(advancedDamage);
+            hit.collider.gameObject.GetComponent<EnemyInfo>().ReduceHealth(advancedDamage);
         }
-        Debug.Log(enemies.collider.gameObject.name);
     }
     public void HoldEffect(PlayerFight playerFight)
     {

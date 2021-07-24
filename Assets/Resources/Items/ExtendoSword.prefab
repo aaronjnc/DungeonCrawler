@@ -72,7 +72,7 @@ MonoBehaviour:
   extendedreach: 5
   enemy:
     serializedVersion: 2
-    m_Bits: 1024
+    m_Bits: 1536
   hasHoldEffect: 0
   swingAngle: 45
   baseDamage: 15
