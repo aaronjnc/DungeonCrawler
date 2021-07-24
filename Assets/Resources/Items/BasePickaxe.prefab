@@ -48,7 +48,7 @@ MonoBehaviour:
   baseDurability: 50
   durability: 50
   currentStack: 1
-  damage: 0
+  damage: 15
   fighting: 0
   invType: 2
   empty: 1

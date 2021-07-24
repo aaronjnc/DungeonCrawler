@@ -22,6 +22,11 @@ public class DestroyandPlace : MonoBehaviour
     Tile destroy;
     Tile place;
     Tile refillTile;
+    bool breaking;
+    float blockHealth;
+    Vector3Int destroyPos;
+    Vector2Int destroyChunkPos;
+    int damage;
     void Awake()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -29,6 +34,7 @@ public class DestroyandPlace : MonoBehaviour
         mapz = manager.mapz;
         mapPos.z = mapz;
         controls.Interact.Press.performed += ReplaceTile;
+        controls.Interact.Press.canceled += StopBreaking;
         controls.Interact.Enable();
         destroy = new Tile();
         destroy.color = new Color(255, 0, 0);
@@ -69,6 +75,8 @@ public class DestroyandPlace : MonoBehaviour
         currentChunk = chunkPos + chunkMod;
         mapPos = newPos;
         mapPos.z = mapz;
+        if (breaking && mapPos != destroyPos)
+            ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
         if (prevmapPos != Vector3Int.zero)
         {
             ResetPrevious();
@@ -88,6 +96,16 @@ public class DestroyandPlace : MonoBehaviour
         else
         {
             prevmapPos = Vector3Int.zero;
+        }
+    }
+    private void FixedUpdate()
+    {
+        if (breaking)
+        {
+            blockHealth -= damage*Time.deltaTime;
+            Debug.Log(blockHealth);
+            if (blockHealth <= 0)
+                DestroyBlock(destroyPos, destroyChunkPos,GetBlock(destroyPos,destroyChunkPos));
         }
     }
     /// <summary>
@@ -121,11 +139,7 @@ public class DestroyandPlace : MonoBehaviour
             {
                 if (GetTile(mapPos,currentChunk).color.b != 255)
                 {
-                    manager.inv.reduceDurability(new Vector2Int(swapRotators.current,swapRotators.chosen));
-                    manager.inv.AddItem(GetBlock(mapPos,currentChunk));
-                    UpdateTile(mapPos, 127, currentChunk);
-                    if (manager.spawnEnemies)
-                        manager.BuildNavMesh();
+                    ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
                 }
             }
             else if (manager.placing && GetTile(mapPos, currentChunk).color.a != 255)
@@ -138,6 +152,27 @@ public class DestroyandPlace : MonoBehaviour
             }
             prevmapPos = Vector3Int.zero;
         }
+    }
+    void ChangeBreaking(Vector3Int newPos, Vector2Int newChunk, byte newID)
+    {
+        breaking = true;
+        blockHealth = manager.GetItem(newID).durability;
+        destroyPos = newPos;
+        destroyChunkPos = newChunk;
+        damage = swapRotators.rotators[swapRotators.current].GetComponent<ItemRotator>().chosenItem.damage;
+    }
+    void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
+    {
+        breaking = false;
+        manager.inv.reduceDurability(new Vector2Int(swapRotators.current, swapRotators.chosen));
+        manager.inv.AddItem(blockID);
+        UpdateTile(newPos, 127, newChunk);
+        if (manager.spawnEnemies)
+            manager.BuildNavMesh();
+    }
+    void StopBreaking(CallbackContext ctx)
+    {
+        breaking = false;
     }
     private void OnDisable()
     {
