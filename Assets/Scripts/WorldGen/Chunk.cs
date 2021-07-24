@@ -445,6 +445,7 @@ public class Chunk
         GameObject enemy = GameObject.Instantiate(biomeScripts[biomes[x, y]].enemies[maxIndex], enemyParent) as GameObject;
         enemy.transform.position = GetWorldPos(x, y, -1);
         enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
+        enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, enemyParent.position.z);
         enemies.Add(enemy.GetHashCode(), enemy);
     }
     /// <summary>
