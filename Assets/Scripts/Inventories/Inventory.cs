@@ -68,7 +68,7 @@ public class Inventory : MonoBehaviour
         ItemReference item = new ItemReference();
         item.SetValues(manager.GetItem("BasePickaxe"));
         AddItem(item);
-        item.SetValues(manager.GetItem("Sword"));
+        item.SetValues(manager.GetItem("ExtendoSword"));
         AddItem(item);
         gameObject.SetActive(false);
     }

@@ -218,7 +218,7 @@ GameObject:
   - component: {fileID: 8749311350456138140}
   m_Layer: 10
   m_Name: Troll
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -231,7 +231,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3481517882367892545}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children:
   - {fileID: 5822394867212600694}
@@ -371,6 +371,7 @@ MonoBehaviour:
   firechance: 0.1
   weight: 1
   scale: 1.1
+  chunk: {x: 0, y: 0}
 --- !u!114 &8431762998876700618
 MonoBehaviour:
   m_ObjectHideFlags: 0

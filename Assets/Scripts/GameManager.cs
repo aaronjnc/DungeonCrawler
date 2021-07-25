@@ -59,7 +59,6 @@ public class GameManager : MonoBehaviour
             {
                 item.durability = item.baseDurability;
                 item.currentStack = 1;
-                item.damage = 0;
                 itemScripts.Add(item.itemID, item);
             }
             Blocks blockComp = block.GetComponent<Blocks>();
@@ -70,7 +69,6 @@ public class GameManager : MonoBehaviour
             InventoryItem invItem = item.GetComponent<InventoryItem>();
             invItem.durability = invItem.baseDurability;
             invItem.currentStack = 1;
-            invItem.damage = 0;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
         }
