@@ -76,6 +76,7 @@ public class Chunk
             SmoothBiomes();
         }
         DetermineBlock();
+        SpecialBlockGeneration();
         DrawMap();
         generated = true;
     }
@@ -407,13 +408,9 @@ public class Chunk
                         {
                             SpawnEnemy(x,y);
                         }
-                        else if (rando > specialTileChance || specialTileCount==0)
-                        {
-                            DetermineEmptyType(x, y);
-                        }
                         else
                         {
-                            GenerateSpecial(x, y);
+                            DetermineEmptyType(x, y);
                         }
                         if (blocks[x, y] == 0)
                             Debug.Log(x + " " + y);
@@ -470,35 +467,42 @@ public class Chunk
         blocks[x, y] = emptyBlocks[maxEmptyIndex].index;
     }
     /// <summary>
-    /// Determine special tile type
+    /// Determines where special blocks generate in the chunk
     /// </summary>
-    /// <param name="x">Chunk tile position x</param>
-    /// <param name="y">Chunk tile position y</param>
-    void GenerateSpecial(int x, int y)
+    void SpecialBlockGeneration()
     {
-        specialTileCount--;
-        int maxIndex = 0;
-        float maxIndexWeight = 0;
-        for (int i = 0; i < biomeScripts[biomes[x, y]].specialBlocks.Count; i++)
+        float heighestWeight = 0;
+        int heighestX = 0;
+        int heighestY = 0;
+        for (int x = 0; x < width; x++)
         {
-            float weight = biomeScripts[biomes[x, y]].specialBlocks[i].weight *
-                Noise.Get2DPerlin(new Vector2Int(x, y), seed, biomeScripts[biomes[x, y]].specialBlocks[i].scale);
-            if (weight > maxIndexWeight)
+            for (int y = 0; y < height;y++)
             {
-                maxIndex = (byte)i;
-                maxIndexWeight = weight;
+                if (blocks[x, y] != 127)
+                    continue;
+                float weight = Random.Range(0, 100);
+                int walls = GetSurroundingWalls(x, y, 2);
+                if (walls > 3 && walls < 7)
+                    weight *= 2;
+                if (weight > heighestWeight)
+                {
+                    heighestX = x;
+                    heighestY = y;
+                    heighestWeight = weight;
+                }
             }
         }
-        Blocks specialBlock = biomeScripts[biomes[x, y]].specialBlocks[maxIndex];
+        int random = UnityEngine.Random.Range(0, biomeScripts[biomes[heighestX,heighestY]].specialBlocks.Count);
+        Blocks specialBlock = biomeScripts[biomes[heighestX, heighestY]].specialBlocks[random];
         if (specialBlock.blockType == Blocks.Type.Floor)
         {
-            floor[x, y] = specialBlock.index;
-            blocks[x, y] = 127;
+            floor[heighestX, heighestY] = specialBlock.index;
+            blocks[heighestX, heighestY] = 127;
         }
         else
         {
-            blocks[x, y] = specialBlock.index;
-            AddInteractable(x, y);
+            blocks[heighestX, heighestY] = specialBlock.index;
+            AddInteractable(heighestX, heighestY);
         }
     }
     /// <summary>
