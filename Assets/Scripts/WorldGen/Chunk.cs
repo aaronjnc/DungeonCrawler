@@ -21,18 +21,16 @@ public class Chunk
     float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
     int maxenemies { get { return ChunkGen.currentWorld.maxenemies; } }
     Transform enemyParent { get { return ChunkGen.currentWorld.enemyParent; } }
-    int specialTileChance { get { return ChunkGen.currentWorld.specialTileChance; } }
     byte[,] blocks;
     byte[,] biomes;
     byte[,] floor;
     int seed;
     int biomeseed;
-    int specialTileCount;
     int numEnemies;
     System.Random random;
     public bool generated = false;
     public Vector2Int chunkPos;
-    List<Vector2Int> presetTiles = new List<Vector2Int>();
+    List<Vector3Int> presetTiles = new List<Vector3Int>();
     Dictionary<Vector2Int, InteractableTile> specialTiles = new Dictionary<Vector2Int, InteractableTile>();
     Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     /// <summary>
@@ -55,9 +53,12 @@ public class Chunk
     /// </summary>
     /// <param name="pos">Chunk position of the tile</param>
     /// <param name="tile">ID of the tile</param>
-    public void AddPreset(Vector2Int pos, byte tile)
+    public void AddPreset(Vector3Int pos, byte tile)
     {
-        blocks[pos.x, pos.y] = tile;
+        if (pos.z == 0)
+            blocks[pos.x, pos.y] = tile;
+        else
+            floor[pos.x, pos.y] = tile;
         presetTiles.Add(pos);
     }
     /// <summary>
@@ -65,7 +66,6 @@ public class Chunk
     /// </summary>
     public void GenerateChunk()
     {
-        specialTileCount = Random.Range(0, 2);
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -90,7 +90,7 @@ public class Chunk
         {
             for (int y = 0; y < height; y++)
             {
-                if (presetTiles.Contains(new Vector2Int(x, y)))
+                if (presetTiles.Contains(new Vector3Int(x, y,mapz)))
                 {
                     AddInteractable(x, y);
                     continue;
@@ -166,7 +166,7 @@ public class Chunk
         {
             for (int y = 0; y < height; y++)
             {
-                if (presetTiles.Contains(new Vector2Int(x, y)))
+                if (presetTiles.Contains(new Vector3Int(x, y,mapz)))
                     continue;
                 byte walls = GetSurroundingWalls(x, y, i);
                 if (walls > 4)
@@ -380,7 +380,7 @@ public class Chunk
                     }
                 }
                 floor[x, y] = strongFloorIndex;
-                if (!presetTiles.Contains(new Vector2Int(x,y)))
+                if (!presetTiles.Contains(new Vector3Int(x,y,mapz)))
                 {
                     if (blocks[x, y] == 1)
                     {
@@ -478,7 +478,7 @@ public class Chunk
         {
             for (int y = 0; y < height;y++)
             {
-                if (blocks[x, y] != 127)
+                if (blocks[x, y] != 127 || presetTiles.Contains(new Vector3Int(x,y,mapz)))
                     continue;
                 float weight = Random.Range(0, 100);
                 int walls = GetSurroundingWalls(x, y, 2);

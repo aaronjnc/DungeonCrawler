@@ -45,6 +45,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public int gold = 0;
     [HideInInspector] public bool paused = false;
+    [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
     // Start is called before the first frame update
     void Awake()
     {
@@ -71,6 +72,10 @@ public class GameManager : MonoBehaviour
             invItem.currentStack = 1;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
+        }
+        foreach(GameObject item in Resources.LoadAll("PremadeSections"))
+        {
+            sections.Add(item.GetComponent<PremadeSection>());
         }
         sprites = Resources.LoadAll<Sprite>("Images");
         posts = Resources.LoadAll<Sprite>("Images/Posts");
