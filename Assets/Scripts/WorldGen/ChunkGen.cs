@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.AI;
+using System;
+
 public class ChunkGen : MonoBehaviour
 {
     public static ChunkGen currentWorld;
@@ -43,17 +45,19 @@ public class ChunkGen : MonoBehaviour
         floorz = 1;
         currentWorld = this;
         if (randomSeed)
-            seed = Random.Range(0, int.MaxValue);
+            seed = UnityEngine.Random.Range(0, int.MaxValue);
         if (randomBiomeSeed)
-            biomeseed = Random.Range(0, 1000000);
-        for (int x = -1; x <= 1; x++)
+            biomeseed = UnityEngine.Random.Range(0, 1000000);
+        PresetTiles(new Vector2Int(0, 0), manager.sections[0]);
+        foreach(PremadeSection sections in manager.sections)
         {
-            for (int y = -1; y <=1;y++)
+            if (sections.CreatAtStart)
             {
-                PresetTile(new Vector2Int(x, y), 127);
+                int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
+                int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
+                PresetTiles(new Vector2Int(startX, startY), sections);
             }
         }
-        PresetTile(new Vector2Int(1, 1), 7);
         for (int x = -1; x <= 0; x++)
         {
             for (int y = -1; y <= 0; y++)
@@ -156,6 +160,15 @@ public class ChunkGen : MonoBehaviour
         return chunks.Contains(hash);
     }
     /// <summary>
+    /// Creates chunk script at given position
+    /// </summary>
+    /// <param name="chunkPos">Chunk position</param>
+    public void CreateChunk(Vector2Int chunkPos)
+    {
+        int hash = chunkPos.ToString().GetHashCode();
+        chunks.Add(hash, new Chunk(chunkPos));
+    }
+    /// <summary>
     /// Returns true if Chunk has already been generated
     /// </summary>
     /// <param name="chunkRelPos"></param>
@@ -178,26 +191,6 @@ public class ChunkGen : MonoBehaviour
     {
         int hash = chunkRelPos.ToString().GetHashCode();
         return (Chunk)chunks[hash];
-    }
-    /// <summary>
-    /// Presets tile at given world position using tile ID
-    /// </summary>
-    /// <param name="tilePos">World position</param>
-    /// <param name="tile">Tile ID</param>
-    public void PresetTile(Vector2Int tilePos, byte tile)
-    {
-        Vector2Int chunkPos = GetChunkPos(tilePos);
-        Vector2Int chunkTilePos = GetChunkTilePos(tilePos);
-        if (ChunkCreated(chunkPos))
-        {
-            GetChunk(chunkPos).AddPreset(chunkTilePos, tile);
-        }
-        else
-        {
-            int hash = chunkPos.ToString().GetHashCode();
-            chunks.Add(hash, new Chunk(chunkPos));
-            ((Chunk)chunks[hash]).AddPreset(chunkTilePos, tile);
-        }
     }
     /// <summary>
     /// Determines the Vector2 Chunk for the given position
@@ -331,5 +324,33 @@ public class ChunkGen : MonoBehaviour
     {
         if (ChunkGenerated(chunkPos))
             GetChunk(chunkPos).Interact(new Vector2Int(tilePos.x, tilePos.y));
+    }
+    void PresetTiles(Vector2Int startPos, PremadeSection section)
+    {
+        if (section.textmap != null)
+            PresetMap(startPos, section.textmap, 0);
+        if (section.floormap != null)
+            PresetMap(startPos, section.floormap, 1);
+    }
+    void PresetMap(Vector2Int startPos, TextAsset textmap, int z)
+    {
+        string[] rows = textmap.text.Split('\n');
+        for (int r = 0; r < rows.Length; r++)
+        {
+            string[] columns = rows[r].Split('|');
+            for (int c = 0; c < columns.Length; c++)
+            {
+                if (Char.IsLetter(columns[c][0]))
+                    continue;
+                int relX = c - columns.Length / 2;
+                int relY = rows.Length / 2-r;
+                Vector2Int newPos = startPos + new Vector2Int(relX, relY);
+                Vector2Int chunkPos = GetChunkPos(newPos);
+                Vector2Int chunkTilePos = GetChunkTilePos(newPos);
+                if (!ChunkCreated(chunkPos))
+                    CreateChunk(chunkPos);
+                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), (byte)Convert.ToInt32(columns[c]));
+            }
+        }
     }
 }

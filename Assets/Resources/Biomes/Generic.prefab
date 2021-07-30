@@ -59,3 +59,4 @@ MonoBehaviour:
   weight: 1
   specialBlocks:
   - {fileID: 8475051305218921890, guid: 1908096c23f35e640a9c9363e5332eb2, type: 3}
+  - {fileID: 3165912897697432854, guid: 3550867d7ae45fe4e97832626d4279af, type: 3}
