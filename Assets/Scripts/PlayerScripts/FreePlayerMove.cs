@@ -25,8 +25,6 @@ public class FreePlayerMove : MonoBehaviour
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
     Vector2Int currentChunk = Vector2Int.zero;
-    Vector3Int prevPos = Vector3Int.zero;
-    // Start is called before the first frame update
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
@@ -167,5 +165,4 @@ public class FreePlayerMove : MonoBehaviour
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
-
 }
