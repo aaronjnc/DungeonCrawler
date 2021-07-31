@@ -265,7 +265,9 @@ public class ChunkGen : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     public void UnloadChunk(Vector3 chunkPos)
     {
-        GetChunk(new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight)).UnloadChunk();
+        Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
+        if (newChunkPos != currentChunk)
+            GetChunk(newChunkPos).UnloadChunk();
     }
     /// <summary>
     /// Loads chunk at given position
