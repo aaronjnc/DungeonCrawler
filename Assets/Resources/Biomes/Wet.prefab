@@ -58,5 +58,4 @@ MonoBehaviour:
   scale: 1.1
   weight: 0.68
   specialBlocks:
-  - {fileID: 8475051305218921890, guid: 1908096c23f35e640a9c9363e5332eb2, type: 3}
   - {fileID: 5242018764825017894, guid: 7db953448bdfe2743bc2da0a3389be51, type: 3}

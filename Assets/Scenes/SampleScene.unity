@@ -1010,6 +1010,7 @@ MonoBehaviour:
   currentChunk: {x: 0, y: 0}
   gold: 0
   paused: 0
+  sections: []
 --- !u!4 &197893051
 Transform:
   m_ObjectHideFlags: 0
