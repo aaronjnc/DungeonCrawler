@@ -1011,6 +1011,9 @@ MonoBehaviour:
   gold: 0
   paused: 0
   sections: []
+  fullText: 
+  textFiles:
+  - {fileID: 4900000, guid: 1d5559bc27c9ee948aa451f76de6f6ac, type: 3}
 --- !u!4 &197893051
 Transform:
   m_ObjectHideFlags: 0

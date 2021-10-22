@@ -165,4 +165,8 @@ public class FreePlayerMove : MonoBehaviour
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 }

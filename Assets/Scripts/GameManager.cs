@@ -46,9 +46,12 @@ public class GameManager : MonoBehaviour
     public int gold = 0;
     [HideInInspector] public bool paused = false;
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    [HideInInspector] public string fullText;
+    public TextAsset[] textFiles;
     // Start is called before the first frame update
     void Awake()
     {
+        DontDestroyOnLoad(gameObject);
         mapz = 0;
         floorz = 1;
         currentManager = this;
@@ -196,6 +199,16 @@ public class GameManager : MonoBehaviour
         foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
         {
             surface.BuildNavMesh();
+        }
+    }
+    public void assignTextFile(string textName)
+    {
+        foreach(TextAsset text in textFiles)
+        {
+            if (text.name.Equals(textName))
+            {
+                fullText = text.text;
+            }
         }
     }
 }

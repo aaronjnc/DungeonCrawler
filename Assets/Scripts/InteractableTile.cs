@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class InteractableTile
 {
@@ -37,13 +38,15 @@ public class InteractableTile
         switch(type)
         {
             case TileType.Market:
-                enableObjects[0].GetComponent<MarketPlace>().SetVendor(vendor);
-                manager.PauseGame();
+                //enableObjects[0].GetComponent<MarketPlace>().SetVendor(vendor);
+                //manager.PauseGame();
+                manager.assignTextFile("Market");
+                SceneManager.LoadScene(2);
                 break;
         }
         foreach(GameObject enableObject in enableObjects)
         {
-            enableObject.SetActive(true);
+            //enableObject.SetActive(true);
         }
     }
 }
