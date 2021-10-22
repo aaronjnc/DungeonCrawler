@@ -62,4 +62,11 @@ public class EnemyInfo : MonoBehaviour
             }    
         }
     }
+    public override string ToString()
+    {
+        string enemy = "*" + gameObject.name + "\n";
+        enemy += gameObject.transform.position + "\n";
+        enemy += gameObject.transform.rotation + "\n";
+        return enemy;
+    }
 }

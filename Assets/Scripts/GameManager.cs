@@ -48,6 +48,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
     [HideInInspector] public string fullText;
     public TextAsset[] textFiles;
+    [HideInInspector] public bool loadFromFile = false;
+    GameInformation gameInfo;
     // Start is called before the first frame update
     void Awake()
     {
@@ -210,5 +212,14 @@ public class GameManager : MonoBehaviour
                 fullText = text.text;
             }
         }
+    }
+    public void loadWorld(GameInformation info)
+    {
+        loadFromFile = true;
+        gameInfo = info;
+    }
+    public GameInformation GetGameInformation()
+    {
+        return gameInfo;
     }
 }

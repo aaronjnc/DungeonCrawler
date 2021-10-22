@@ -24,7 +24,7 @@ public class FreePlayerMove : MonoBehaviour
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
-    Vector2Int currentChunk = Vector2Int.zero;
+    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
