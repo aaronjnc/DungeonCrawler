@@ -21,7 +21,7 @@ public class Inventory : MonoBehaviour
     public MonoBehaviour[] chosenSpells = new MonoBehaviour[5];
     public Image[] chosenImages = new Image[5];
     public ItemReference emptyitem;
-    Vector2Int[,] chosenPos = new Vector2Int[5,5];
+    public Vector2Int[,] chosenPos = new Vector2Int[5,5];
     public SwapRotators swapRotators;
     public Magic magic;
     public GameObject invImage;
@@ -65,11 +65,17 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
-        ItemReference item = new ItemReference();
-        item.SetValues(manager.GetItem("BasePickaxe"));
-        AddItem(item);
-        item.SetValues(manager.GetItem("ExtendoSword"));
-        AddItem(item);
+        if (manager.loadFromFile)
+        {
+            loadFromFile(manager.GetGameInformation());
+        } else
+        {
+            ItemReference item = new ItemReference();
+            item.SetValues(manager.GetItem("BasePickaxe"));
+            AddItem(item);
+            item.SetValues(manager.GetItem("ExtendoSword"));
+            AddItem(item);
+        }
         gameObject.SetActive(false);
     }
     /// <summary>
@@ -362,5 +368,42 @@ public class Inventory : MonoBehaviour
             return true;
         else
             return false;
+    }
+
+    private void loadFromFile(GameInformation info)
+    {
+        ItemReference item = new ItemReference();
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                for (int k = 0; k < 7; k++)
+                {
+                    byte infoItem = info.inventory[i, j, k];
+                    if (infoItem != 127)
+                    {
+                        item.SetValues(manager.GetItem(infoItem));
+                        item.currentStack = info.stackSize[i, j, k];
+                        item.durability = info.durability[i, j, k];
+                        AddItem(item);
+                    }
+                }
+                chosenItems[i, j] = new ItemReference();
+                if (info.chosenPos[i, j, 0] != int.MaxValue)
+                {
+                    chosenPos[i, j] = new Vector2Int(info.chosenPos[i, j, 0], info.chosenPos[i, j, 1]);
+                    chosenItems[i, j].ChangeValues(invItems[i, chosenPos[i, j].x, chosenPos[i, j].y]);
+                    chosenItems[i, j].empty = false;
+                    swapRotators.UpdateRotator(i);
+                }
+            }
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            if (!chosenItems[0,i].empty)
+            {
+                UpdateChosen(i, chosenItems[0, i].itemSprite);
+            }
+        }
     }
 }

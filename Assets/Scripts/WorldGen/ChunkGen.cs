@@ -401,6 +401,7 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).loadFromFile(worldMap[i]);
         }
         currentChunk = new Vector2Int(gameInfo.currentChunk[0], gameInfo.currentChunk[1]);
+        manager.currentChunk = currentChunk;
         currentHash = currentChunk.ToString().GetHashCode();
     }
 }

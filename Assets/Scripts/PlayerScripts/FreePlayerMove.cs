@@ -49,6 +49,10 @@ public class FreePlayerMove : MonoBehaviour
         controls.Fight.MagicMenu.Enable();
         pos.z = manager.mapz;
         prevpos.z = manager.mapz;
+        if (manager.loadFromFile)
+        {
+            loadFromFile(manager.GetGameInformation());
+        }
     }
     /// <summary>
     /// Activates the spell menu when 'X' is pressed
@@ -167,5 +171,11 @@ public class FreePlayerMove : MonoBehaviour
     private void OnDestroy()
     {
         controls.Disable();
+    }
+
+    private void loadFromFile(GameInformation info)
+    {
+        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
+        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
     }
 }

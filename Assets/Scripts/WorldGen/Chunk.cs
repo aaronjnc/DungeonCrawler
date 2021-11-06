@@ -775,7 +775,6 @@ public class Chunk
     public void loadFromFile(string[] stringMap)
     {
         string[] blockMap = stringMap[0].Split('\n');
-        Debug.Log(stringMap[0]);
         string[] floorMap = stringMap[1].Split('\n');
         string[] biomeMap = stringMap[2].Split('\n');
         blocks = new byte[width, height];
@@ -797,5 +796,7 @@ public class Chunk
             }
         }
         DrawMap();
+        map.GetComponent<TilemapRenderer>().enabled = false;
+        generated = true;
     }
 }
