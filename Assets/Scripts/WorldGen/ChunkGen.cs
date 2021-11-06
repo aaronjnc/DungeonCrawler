@@ -38,18 +38,20 @@ public class ChunkGen : MonoBehaviour
     public int maxenemies;
     public Transform enemyParent;
     public int specialTileChance;
-    [HideInInspector]
-    void Awake()
+    private void OnEnable()
     {
+        currentWorld = this;
+        grid = GameObject.Find("Grid").transform;
+        playerMovement = GameObject.Find("Player").GetComponent<FreePlayerMove>();
+        enemyParent = GameObject.Find("Enemies").transform;
+        mapz = 0;
+        floorz = 1;
         if (manager.loadFromFile)
         {
             loadPreviousWorld();
         }
         else
         {
-            mapz = 0;
-            floorz = 1;
-            currentWorld = this;
             if (randomSeed)
                 seed = UnityEngine.Random.Range(0, int.MaxValue);
             if (randomBiomeSeed)
@@ -393,8 +395,8 @@ public class ChunkGen : MonoBehaviour
         for (int i = 0; i < worldMap.Length; i++)
         {
             string chunkPosString = worldMap[i][0].Split('\n')[0];
-            char[] chunkPosChar = chunkPosString.ToCharArray();
-            Vector2Int chunkPos = new Vector2Int((int)Char.GetNumericValue(chunkPosChar[0]), (int)Char.GetNumericValue(chunkPosChar[2]));
+            string[] chunkPosSep = chunkPosString.Split(',');
+            Vector2Int chunkPos = new Vector2Int(Int32.Parse(chunkPosSep[0]), Int32.Parse(chunkPosSep[1]));
             CreateChunk(chunkPos);
             GetChunk(chunkPos).loadFromFile(worldMap[i]);
         }

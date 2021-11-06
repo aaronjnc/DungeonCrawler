@@ -775,21 +775,25 @@ public class Chunk
     public void loadFromFile(string[] stringMap)
     {
         string[] blockMap = stringMap[0].Split('\n');
+        Debug.Log(stringMap[0]);
         string[] floorMap = stringMap[1].Split('\n');
         string[] biomeMap = stringMap[2].Split('\n');
-        for (int i = 0; i < blockMap.Length; i++)
+        blocks = new byte[width, height];
+        floor = new byte[width, height];
+        biomes = new byte[width, height];
+        for (int i = 0; i < height; i++)
         {
-            string[] blockIds = blockMap[i].Split(',');
-            string[] floorIds = floorMap[i].Split(',');
-            string[] biomeIds = biomeMap[i].Split(',');
-            for (int j = 0; j < blocks.Length; j++)
+            string[] blockIds = blockMap[i + 1].Split(',');
+            string[] floorIds = floorMap[i + 1].Split(',');
+            string[] biomeIds = biomeMap[i + 1].Split(',');
+            for (int j = 0; j < blockIds.Length; j++)
             {
-                int blockId = Int32.Parse(blockIds[i]);
-                int floorId = Int32.Parse(floorIds[i]);
-                int biomeId = Int32.Parse(biomeIds[i]);
+                int blockId = Int32.Parse(blockIds[j]);
+                int floorId = Int32.Parse(floorIds[j]);
+                int biomeId = Int32.Parse(biomeIds[j]);
                 blocks[i, j] = (byte)blockId;
                 floor[i, j] = (byte)floorId;
-                biomes[i, j] = (byte)biomeId;
+                biomes[i, j] = (byte)biomeId;              
             }
         }
         DrawMap();

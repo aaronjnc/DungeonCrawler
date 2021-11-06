@@ -18,7 +18,7 @@ public class FreePlayerMove : MonoBehaviour
     DestroyandPlace blockplacing;
     public Vector3Int pos = Vector3Int.zero;
     Vector3Int prevpos = Vector3Int.zero;
-    GameObject canvas;
+    public GameObject canvas;
     Vector2 rotDir = Vector2.zero;
     public GameObject menu;
     public GameObject magicTree;
@@ -31,7 +31,6 @@ public class FreePlayerMove : MonoBehaviour
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        canvas = manager.invObject;
         blockplacing = grid.GetComponent<DestroyandPlace>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
