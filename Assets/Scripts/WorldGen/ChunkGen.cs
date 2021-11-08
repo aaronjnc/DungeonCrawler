@@ -38,36 +38,45 @@ public class ChunkGen : MonoBehaviour
     public int maxenemies;
     public Transform enemyParent;
     public int specialTileChance;
-    [HideInInspector]
-    void Awake()
+    private void OnEnable()
     {
+        currentWorld = this;
+        grid = GameObject.Find("Grid").transform;
+        playerMovement = GameObject.Find("Player").GetComponent<FreePlayerMove>();
+        enemyParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
-        currentWorld = this;
-        if (randomSeed)
-            seed = UnityEngine.Random.Range(0, int.MaxValue);
-        if (randomBiomeSeed)
-            biomeseed = UnityEngine.Random.Range(0, 1000000);
-        PresetTiles(new Vector2Int(0, 0), manager.sections[0]);
-        foreach(PremadeSection sections in manager.sections)
+        if (manager.loadFromFile)
         {
-            if (sections.CreatAtStart)
-            {
-                int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
-                int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
-                PresetTiles(new Vector2Int(startX, startY), sections);
-            }
+            loadPreviousWorld();
         }
-        for (int x = -1; x <= 0; x++)
+        else
         {
-            for (int y = -1; y <= 0; y++)
+            if (randomSeed)
+                seed = UnityEngine.Random.Range(0, int.MaxValue);
+            if (randomBiomeSeed)
+                biomeseed = UnityEngine.Random.Range(0, 1000000);
+            PresetTiles(new Vector2Int(0, 0), manager.sections[0]);
+            foreach (PremadeSection sections in manager.sections)
             {
-                Vector2Int chunkPos = new Vector2Int(x, y);
-                GenerateNewChunk(chunkPos);
+                if (sections.CreatAtStart)
+                {
+                    int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
+                    int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
+                    PresetTiles(new Vector2Int(startX, startY), sections);
+                }
             }
+            for (int x = -1; x <= 0; x++)
+            {
+                for (int y = -1; y <= 0; y++)
+                {
+                    Vector2Int chunkPos = new Vector2Int(x, y);
+                    GenerateNewChunk(chunkPos);
+                }
+            }
+            currentChunk = new Vector2Int(0, 0);
+            currentHash = currentChunk.ToString().GetHashCode();
         }
-        currentChunk = new Vector2Int(0, 0);
-        currentHash = currentChunk.ToString().GetHashCode();
     }
     void FixedUpdate()
     {
@@ -354,5 +363,45 @@ public class ChunkGen : MonoBehaviour
                 GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), (byte)Convert.ToInt32(columns[c]));
             }
         }
+    }
+    public string[][] getWorldMap()
+    {
+        string[][] wallStrings = new string[chunks.Keys.Count][];
+        int i = 0;
+        foreach(object key in chunks.Keys)
+        {
+            wallStrings[i] = ((Chunk)chunks[key]).getChunkMap();
+            i++;
+        }
+        return wallStrings;
+    }
+    public string[][] getEnemies()
+    {
+        string[][] enemyStrings = new string[chunks.Keys.Count][];
+        int i = 0;
+        foreach(object key in chunks.Keys)
+        {
+            enemyStrings[i] = ((Chunk)chunks[key]).getEnemies();
+            i++;
+        }
+        return enemyStrings;
+    }
+    void loadPreviousWorld()
+    {
+        GameInformation gameInfo = manager.GetGameInformation();
+        string[][] worldMap = gameInfo.worldMap;
+        seed = gameInfo.seed;
+        biomeseed = gameInfo.biomeSeed;
+        for (int i = 0; i < worldMap.Length; i++)
+        {
+            string chunkPosString = worldMap[i][0].Split('\n')[0];
+            string[] chunkPosSep = chunkPosString.Split(',');
+            Vector2Int chunkPos = new Vector2Int(Int32.Parse(chunkPosSep[0]), Int32.Parse(chunkPosSep[1]));
+            CreateChunk(chunkPos);
+            GetChunk(chunkPos).loadFromFile(worldMap[i]);
+        }
+        currentChunk = new Vector2Int(gameInfo.currentChunk[0], gameInfo.currentChunk[1]);
+        manager.currentChunk = currentChunk;
+        currentHash = currentChunk.ToString().GetHashCode();
     }
 }

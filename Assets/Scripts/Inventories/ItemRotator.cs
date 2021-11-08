@@ -26,15 +26,20 @@ public class ItemRotator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StartMethod();
+    }
+
+    void StartMethod()
+    {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         rotatorImage = GetComponent<Image>();
         controls = new PlayerControls();
         swapRotators = GetComponentInParent<SwapRotators>();
-        foreach(Image img in images)
+        foreach (Image img in images)
         {
             img.gameObject.SetActive(false);
         }
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             items[i] = new ItemReference();
         }
@@ -125,6 +130,7 @@ public class ItemRotator : MonoBehaviour
     /// </summary>
     public void UpdateItems()
     {
+        StartMethod();
         for (int i = 0; i < 5; i++)
         {
             items[i].ChangeValues(inv.chosenItems[rotator,i]);
@@ -134,10 +140,10 @@ public class ItemRotator : MonoBehaviour
             else
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
-        if (items[0].empty)
+        if (!items[current].empty)
             chosenItem = new ItemReference();
         else
-            chosenItem.ChangeValues(items[0]);
+            chosenItem.ChangeValues(items[current]);
         centralImage.sprite = chosenItem.itemSprite;
         fullRotator = swapRotators.fullRotators[0];
         if (chosenItem.itemSprite != null)

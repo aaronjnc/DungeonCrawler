@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Magic : MonoBehaviour
 {
-    int[] enabledSpells = new int[5];
+    [HideInInspector] public int[] enabledSpells = new int[5];
     delegate void Actions();
     bool[] charged = new bool[5];
     public float[] chargeTime = new float[15];

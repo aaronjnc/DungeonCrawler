@@ -1,0 +1,15 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class SaveManager : MonoBehaviour
+{
+    public void SaveGame()
+    {
+        SaveSystem.Save();
+    }
+    public void LoadGame()
+    {
+        SaveSystem.Load();
+    }
+}

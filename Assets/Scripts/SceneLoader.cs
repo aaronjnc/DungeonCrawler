@@ -9,7 +9,7 @@ public class SceneLoader : MonoBehaviour
     /// Load new scene
     /// </summary>
     /// <param name="level">Scene name</param>
-    public void LoadScene(int level)
+    public static void LoadScene(int level)
     {
         SceneManager.LoadScene(level);
     }
