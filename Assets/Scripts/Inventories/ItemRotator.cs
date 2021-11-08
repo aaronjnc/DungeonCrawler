@@ -140,10 +140,10 @@ public class ItemRotator : MonoBehaviour
             else
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
-        if (items[0].empty)
+        if (!items[current].empty)
             chosenItem = new ItemReference();
         else
-            chosenItem.ChangeValues(items[0]);
+            chosenItem.ChangeValues(items[current]);
         centralImage.sprite = chosenItem.itemSprite;
         fullRotator = swapRotators.fullRotators[0];
         if (chosenItem.itemSprite != null)
