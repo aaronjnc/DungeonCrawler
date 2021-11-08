@@ -8,8 +8,4 @@ public class SaveManager : MonoBehaviour
     {
         SaveSystem.Save();
     }
-    public void LoadGame()
-    {
-        SaveSystem.Load();
-    }
 }

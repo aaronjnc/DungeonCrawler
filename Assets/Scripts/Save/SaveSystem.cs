@@ -11,15 +11,14 @@ public static class SaveSystem
         GameObject manager = GameObject.Find("GameController");
         GameInformation info = new GameInformation(manager);
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/player.txt";
+        string path = Application.persistentDataPath + "/saves/player.txt";
         FileStream stream = new FileStream(path, FileMode.Create);
         formatter.Serialize(stream, info);
         stream.Close();
         Debug.Log("Saved");
     }
-    public static void Load()
+    public static void Load(string path)
     {
-        string path = Application.persistentDataPath + "/player.txt";
         if (File.Exists(path))
         {
             BinaryFormatter formatter = new BinaryFormatter();
