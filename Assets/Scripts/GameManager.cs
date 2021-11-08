@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 using UnityEngine.AI;
+using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -37,7 +39,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    public GameObject invObject;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
@@ -46,9 +47,19 @@ public class GameManager : MonoBehaviour
     public int gold = 0;
     [HideInInspector] public bool paused = false;
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    [HideInInspector] public string fullText;
+    public TextAsset[] textFiles;
+    [HideInInspector] public bool loadFromFile = false;
+    GameInformation gameInfo;
     // Start is called before the first frame update
     void Awake()
     {
+        if (!Directory.Exists(Application.persistentDataPath + "/saves"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/saves");
+        }
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
         mapz = 0;
         floorz = 1;
         currentManager = this;
@@ -196,6 +207,41 @@ public class GameManager : MonoBehaviour
         foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
         {
             surface.BuildNavMesh();
+        }
+    }
+    public void assignTextFile(string textName)
+    {
+        foreach(TextAsset text in textFiles)
+        {
+            if (text.name.Equals(textName))
+            {
+                fullText = text.text;
+            }
+        }
+    }
+    public void loadWorld(GameInformation info)
+    {
+        loadFromFile = true;
+        gameInfo = info;
+        
+        SceneLoader.LoadScene(1);
+    }
+    public GameInformation GetGameInformation()
+    {
+        return gameInfo;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        ChunkGen gen = GetComponent<ChunkGen>();
+        if (scene.name.Equals("World"))
+        {
+            destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
+            character = GameObject.Find("Player");
+            gen.enabled = true;
+        } else
+        {
+            gen.enabled = false;
         }
     }
 }

@@ -103,7 +103,6 @@ public class DestroyandPlace : MonoBehaviour
         if (breaking)
         {
             blockHealth -= damage*Time.deltaTime;
-            Debug.Log(blockHealth);
             if (blockHealth <= 0)
                 DestroyBlock(destroyPos, destroyChunkPos,GetBlock(destroyPos,destroyChunkPos));
         }

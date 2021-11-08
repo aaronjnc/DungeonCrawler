@@ -497,6 +497,74 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Dialog"",
+            ""id"": ""1dab01ba-649d-4ef0-810a-744c9a86746c"",
+            ""actions"": [
+                {
+                    ""name"": ""Change Option"",
+                    ""type"": ""Value"",
+                    ""id"": ""eb45456e-557b-43f5-b0dc-82ae1936ab87"",
+                    ""expectedControlType"": ""Axis"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Choose Line"",
+                    ""type"": ""Button"",
+                    ""id"": ""67b93504-d20f-43f3-8c03-93f83f8170c9"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""67d1d2fa-ccef-43d4-a035-7a40ee35a745"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Change Option"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""2d387e99-069a-47df-ac71-63a7a6bb60a3"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Change Option"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""b58f9ee5-3e6b-4727-ab56-753f596c4f61"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Change Option"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""167c19b9-13fc-4358-b450-9b1ee535d17b"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Choose Line"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -527,6 +595,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Fight_Magic = m_Fight.FindAction("Magic", throwIfNotFound: true);
         m_Fight_MagicMenu = m_Fight.FindAction("MagicMenu", throwIfNotFound: true);
         m_Fight_AdvanceAttack = m_Fight.FindAction("AdvanceAttack", throwIfNotFound: true);
+        // Dialog
+        m_Dialog = asset.FindActionMap("Dialog", throwIfNotFound: true);
+        m_Dialog_ChangeOption = m_Dialog.FindAction("Change Option", throwIfNotFound: true);
+        m_Dialog_ChooseLine = m_Dialog.FindAction("Choose Line", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -816,6 +888,47 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     }
     public FightActions @Fight => new FightActions(this);
+
+    // Dialog
+    private readonly InputActionMap m_Dialog;
+    private IDialogActions m_DialogActionsCallbackInterface;
+    private readonly InputAction m_Dialog_ChangeOption;
+    private readonly InputAction m_Dialog_ChooseLine;
+    public struct DialogActions
+    {
+        private @PlayerControls m_Wrapper;
+        public DialogActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ChangeOption => m_Wrapper.m_Dialog_ChangeOption;
+        public InputAction @ChooseLine => m_Wrapper.m_Dialog_ChooseLine;
+        public InputActionMap Get() { return m_Wrapper.m_Dialog; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(DialogActions set) { return set.Get(); }
+        public void SetCallbacks(IDialogActions instance)
+        {
+            if (m_Wrapper.m_DialogActionsCallbackInterface != null)
+            {
+                @ChangeOption.started -= m_Wrapper.m_DialogActionsCallbackInterface.OnChangeOption;
+                @ChangeOption.performed -= m_Wrapper.m_DialogActionsCallbackInterface.OnChangeOption;
+                @ChangeOption.canceled -= m_Wrapper.m_DialogActionsCallbackInterface.OnChangeOption;
+                @ChooseLine.started -= m_Wrapper.m_DialogActionsCallbackInterface.OnChooseLine;
+                @ChooseLine.performed -= m_Wrapper.m_DialogActionsCallbackInterface.OnChooseLine;
+                @ChooseLine.canceled -= m_Wrapper.m_DialogActionsCallbackInterface.OnChooseLine;
+            }
+            m_Wrapper.m_DialogActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @ChangeOption.started += instance.OnChangeOption;
+                @ChangeOption.performed += instance.OnChangeOption;
+                @ChangeOption.canceled += instance.OnChangeOption;
+                @ChooseLine.started += instance.OnChooseLine;
+                @ChooseLine.performed += instance.OnChooseLine;
+                @ChooseLine.canceled += instance.OnChooseLine;
+            }
+        }
+    }
+    public DialogActions @Dialog => new DialogActions(this);
     public interface IMovementActions
     {
         void OnHorizontal(InputAction.CallbackContext context);
@@ -845,5 +958,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         void OnMagic(InputAction.CallbackContext context);
         void OnMagicMenu(InputAction.CallbackContext context);
         void OnAdvanceAttack(InputAction.CallbackContext context);
+    }
+    public interface IDialogActions
+    {
+        void OnChangeOption(InputAction.CallbackContext context);
+        void OnChooseLine(InputAction.CallbackContext context);
     }
 }

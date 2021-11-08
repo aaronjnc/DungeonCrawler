@@ -187,4 +187,9 @@ public class MarketPlace : MonoBehaviour
         if (marketItems[0, 0, 0, 0] != null)
             UpdateItems();
     }
+    private void OnDestroy()
+    {
+        if (controls != null)
+            controls.Disable();
+    }
 }

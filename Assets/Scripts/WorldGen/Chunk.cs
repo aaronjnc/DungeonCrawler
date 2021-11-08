@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.AI;
+using System;
 
 public class Chunk
 {
@@ -46,7 +47,7 @@ public class Chunk
         blocks = new byte[width, height];
         biomes = new byte[width, height];
         floor = new byte[width, height];
-        numEnemies = Random.Range(1, maxenemies+1);
+        numEnemies = UnityEngine.Random.Range(1, maxenemies+1);
     }
     /// <summary>
     /// Saves the position and type of tile that should be located at that position
@@ -400,7 +401,7 @@ public class Chunk
                     }
                     else
                     {
-                        int rando = Random.Range(0, 100);
+                        int rando = UnityEngine.Random.Range(0, 100);
                         Vector3 worldPos = GetWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
@@ -480,7 +481,7 @@ public class Chunk
             {
                 if (blocks[x, y] != 127 || presetTiles.Contains(new Vector3Int(x,y,mapz)))
                     continue;
-                float weight = Random.Range(0, 100);
+                float weight = UnityEngine.Random.Range(0, 100);
                 int walls = GetSurroundingWalls(x, y, 2);
                 if (walls > 3 && walls < 7)
                     weight *= 2;
@@ -734,5 +735,68 @@ public class Chunk
     {
         enemies.Remove(enemy.GetHashCode());
         GameObject.Destroy(enemy);
+    }
+
+    public string[] getChunkMap()
+    {
+        string[] chunkString = new string[3];
+        chunkString[0] = chunkPos.x + "," + chunkPos.y + "\n";
+        chunkString[1] = chunkPos.x + "," + chunkPos.y + "\n";
+        chunkString[2] = chunkPos.x + "," + chunkPos.y + "\n";
+        for (int i = 0; i < width; i++)
+        {
+            for (int j = 0; j < height; j++)
+            {
+                chunkString[0] += blocks[i, j];
+                chunkString[1] += floor[i, j];
+                chunkString[2] += biomes[i, j];
+                if (j != height-1)
+                {
+                    chunkString[0] += ",";
+                    chunkString[1] += ",";
+                    chunkString[2] += ",";
+                }    
+            }
+            chunkString[0] += "\n";
+            chunkString[1] += "\n";
+            chunkString[2] += "\n";
+        }
+        return chunkString;
+    }
+    public string[] getEnemies()
+    {
+        string[] enemyString = new string[enemies.Count];
+        for (int i = 0; i < enemyString.Length; i++)
+        {
+            enemyString[i] = enemies[i].GetComponent<EnemyInfo>().ToString();
+        }
+        return enemyString;
+    }
+    public void loadFromFile(string[] stringMap)
+    {
+        string[] blockMap = stringMap[0].Split('\n');
+        string[] floorMap = stringMap[1].Split('\n');
+        string[] biomeMap = stringMap[2].Split('\n');
+        blocks = new byte[width, height];
+        floor = new byte[width, height];
+        biomes = new byte[width, height];
+        for (int i = 0; i < height; i++)
+        {
+            string[] blockIds = blockMap[i + 1].Split(',');
+            string[] floorIds = floorMap[i + 1].Split(',');
+            string[] biomeIds = biomeMap[i + 1].Split(',');
+            for (int j = 0; j < blockIds.Length; j++)
+            {
+                int blockId = Int32.Parse(blockIds[j]);
+                int floorId = Int32.Parse(floorIds[j]);
+                int biomeId = Int32.Parse(biomeIds[j]);
+                blocks[i, j] = (byte)blockId;
+                floor[i, j] = (byte)floorId;
+                biomes[i, j] = (byte)biomeId;              
+            }
+        }
+        DrawMap();
+        map.GetComponent<TilemapRenderer>().enabled = false;
+        generated = true;
     }
 }
