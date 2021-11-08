@@ -198,6 +198,8 @@ public class ChunkGen : MonoBehaviour
     /// <returns></returns>
     public Chunk GetChunk(Vector2Int chunkRelPos)
     {
+        if (!ChunkCreated(chunkRelPos))
+            return null;
         int hash = chunkRelPos.ToString().GetHashCode();
         return (Chunk)chunks[hash];
     }
