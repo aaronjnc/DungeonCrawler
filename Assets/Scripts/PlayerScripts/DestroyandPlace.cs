@@ -232,4 +232,9 @@ public class DestroyandPlace : MonoBehaviour
     {
         return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), chunkPos);
     }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 }

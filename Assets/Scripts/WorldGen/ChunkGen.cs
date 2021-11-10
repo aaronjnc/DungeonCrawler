@@ -406,4 +406,9 @@ public class ChunkGen : MonoBehaviour
         manager.currentChunk = currentChunk;
         currentHash = currentChunk.ToString().GetHashCode();
     }
+
+    private void OnDisable()
+    {
+        chunks.Clear();
+    }
 }

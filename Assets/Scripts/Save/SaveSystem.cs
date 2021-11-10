@@ -11,7 +11,7 @@ public static class SaveSystem
         GameObject manager = GameObject.Find("GameController");
         GameInformation info = new GameInformation(manager);
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/saves/player.txt";
+        string path = Application.persistentDataPath + "/saves/" + manager.GetComponent<GameManager>().worldName + ".txt";
         FileStream stream = new FileStream(path, FileMode.Create);
         formatter.Serialize(stream, info);
         stream.Close();

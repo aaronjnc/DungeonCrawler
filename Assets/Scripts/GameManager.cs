@@ -5,6 +5,7 @@ using UnityEngine.AI;
 using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System.IO;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -51,6 +52,9 @@ public class GameManager : MonoBehaviour
     public TextAsset[] textFiles;
     [HideInInspector] public bool loadFromFile = false;
     GameInformation gameInfo;
+    [HideInInspector] public string worldName;
+    [HideInInspector] public DateTime startTime;
+    [HideInInspector] public double hours;
     // Start is called before the first frame update
     void Awake()
     {
@@ -239,9 +243,19 @@ public class GameManager : MonoBehaviour
             destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
             character = GameObject.Find("Player");
             gen.enabled = true;
+            startTime = DateTime.Now;
         } else
         {
             gen.enabled = false;
         }
+        if (scene.name.Equals("Menu"))
+        {
+            ResetValues();
+        }
+    }
+
+    private void ResetValues()
+    {
+
     }
 }
