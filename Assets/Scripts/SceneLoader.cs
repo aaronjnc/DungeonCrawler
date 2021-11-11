@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEditor;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -11,6 +12,7 @@ public class SceneLoader : MonoBehaviour
     /// <param name="level">Scene name</param>
     public static void LoadScene(int level)
     {
+        AssetDatabase.Refresh();
         SceneManager.LoadScene(level);
     }
     /// <summary>

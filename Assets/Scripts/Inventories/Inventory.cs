@@ -40,6 +40,7 @@ public class Inventory : MonoBehaviour
     void Awake()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        manager.LoadWorld();
         manager.inv = this;
         for(int row = 0; row < 5; row++)
         {

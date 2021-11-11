@@ -198,6 +198,8 @@ public class ChunkGen : MonoBehaviour
     /// <returns></returns>
     public Chunk GetChunk(Vector2Int chunkRelPos)
     {
+        if (!ChunkCreated(chunkRelPos))
+            return null;
         int hash = chunkRelPos.ToString().GetHashCode();
         return (Chunk)chunks[hash];
     }
@@ -403,5 +405,10 @@ public class ChunkGen : MonoBehaviour
         currentChunk = new Vector2Int(gameInfo.currentChunk[0], gameInfo.currentChunk[1]);
         manager.currentChunk = currentChunk;
         currentHash = currentChunk.ToString().GetHashCode();
+    }
+
+    private void OnDisable()
+    {
+        chunks.Clear();
     }
 }

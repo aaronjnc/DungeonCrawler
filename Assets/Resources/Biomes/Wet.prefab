@@ -48,7 +48,7 @@ MonoBehaviour:
   biomeBlocks:
   - {fileID: 2773417132913332512, guid: 473d40bb3dc60b34799c443d18d20126, type: 3}
   - {fileID: 3075861648672101678, guid: 3c2998edced09c642a1ac4a662ea99e8, type: 3}
-  chance: 0.2
+  chance: 0.45
   emptyBlocks:
   - {fileID: 6070446513901827791, guid: 82842d439548ee24fa9bc1d9ff847179, type: 3}
   enemies:

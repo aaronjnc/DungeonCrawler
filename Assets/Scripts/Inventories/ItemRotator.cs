@@ -198,4 +198,9 @@ public class ItemRotator : MonoBehaviour
         manager.ResetPreviousTile();
         manager.blockplacing = false;
     }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 }

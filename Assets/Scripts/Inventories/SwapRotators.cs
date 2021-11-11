@@ -43,4 +43,9 @@ public class SwapRotators : MonoBehaviour
     {
         rotators[i].GetComponent<ItemRotator>().UpdateItems();
     }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 }
