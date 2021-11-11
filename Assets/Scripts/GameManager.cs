@@ -55,6 +55,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string worldName;
     [HideInInspector] public DateTime startTime;
     [HideInInspector] public double hours;
+    private string previousWorld = "";
+    public ChunkGen gen;
     // Start is called before the first frame update
     void Awake()
     {
@@ -227,7 +229,6 @@ public class GameManager : MonoBehaviour
     {
         loadFromFile = true;
         gameInfo = info;
-        
         SceneLoader.LoadScene(1);
     }
     public GameInformation GetGameInformation()
@@ -237,25 +238,18 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
-        ChunkGen gen = GetComponent<ChunkGen>();
-        if (scene.name.Equals("World"))
-        {
-            destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
-            character = GameObject.Find("Player");
-            gen.enabled = true;
-            startTime = DateTime.Now;
-        } else
+        ResumeGame();
+        if (!scene.name.Equals("World"))
         {
             gen.enabled = false;
         }
-        if (scene.name.Equals("Menu"))
-        {
-            ResetValues();
-        }
     }
 
-    private void ResetValues()
+    public void LoadWorld()
     {
-
+        destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
+        character = GameObject.Find("Player");
+        gen.enabled = true;
+        startTime = DateTime.Now;
     }
 }

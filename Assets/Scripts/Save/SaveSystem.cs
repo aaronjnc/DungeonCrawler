@@ -15,7 +15,6 @@ public static class SaveSystem
         FileStream stream = new FileStream(path, FileMode.Create);
         formatter.Serialize(stream, info);
         stream.Close();
-        Debug.Log("Saved");
     }
     public static void Load(string path)
     {
@@ -25,6 +24,7 @@ public static class SaveSystem
             FileStream stream = new FileStream(path, FileMode.Open);
             GameInformation info = formatter.Deserialize(stream) as GameInformation;
             GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+            manager.loadFromFile = true;
             manager.loadWorld(info);
             stream.Close();
         }

@@ -27,7 +27,6 @@ public class FreePlayerMove : MonoBehaviour
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     void Start()
     {
-        Debug.Log("Start");
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
