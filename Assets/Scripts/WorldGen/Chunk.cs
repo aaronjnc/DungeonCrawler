@@ -863,7 +863,14 @@ public class Chunk
                 int biomeId = Int32.Parse(biomeIds[j]);
                 blocks[i, j] = (byte)blockId;
                 floor[i, j] = (byte)floorId;
-                biomes[i, j] = (byte)biomeId;              
+                biomes[i, j] = (byte)biomeId;
+                foreach(Blocks specialBlock in biomeScripts[biomeId].specialBlocks)
+                {
+                    if (specialBlock.index == blocks[i,j])
+                    {
+                        AddInteractable(i, j);
+                    }
+                }
             }
         }
         DrawMap();
