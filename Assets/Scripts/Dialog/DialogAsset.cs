@@ -85,7 +85,8 @@ public class DialogAsset : MonoBehaviour
                             removeSections.Add(currentLine.ToString() + command);
                             break;
                         case "Leave":
-                            SceneManager.LoadScene(1);
+                            string path = Application.persistentDataPath + "/saves/" + manager.worldName + ".txt";
+                            SaveSystem.Load(path);
                             break;
                         default:
                             break;
