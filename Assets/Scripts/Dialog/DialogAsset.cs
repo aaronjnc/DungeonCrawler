@@ -67,7 +67,6 @@ public class DialogAsset : MonoBehaviour
     }
     void performCommand(string chosenLine)
     {
-        Debug.Log("performed");
         if (commandStrings.Count == 0)
             return;
         foreach (string command in commandStrings)
