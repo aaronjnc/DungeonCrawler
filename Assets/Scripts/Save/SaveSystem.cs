@@ -11,11 +11,10 @@ public static class SaveSystem
         GameObject manager = GameObject.Find("GameController");
         GameInformation info = new GameInformation(manager);
         BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/saves/player.txt";
+        string path = Application.persistentDataPath + "/saves/" + manager.GetComponent<GameManager>().worldName + ".txt";
         FileStream stream = new FileStream(path, FileMode.Create);
         formatter.Serialize(stream, info);
         stream.Close();
-        Debug.Log("Saved");
     }
     public static void Load(string path)
     {
@@ -25,6 +24,7 @@ public static class SaveSystem
             FileStream stream = new FileStream(path, FileMode.Open);
             GameInformation info = formatter.Deserialize(stream) as GameInformation;
             GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+            manager.loadFromFile = true;
             manager.loadWorld(info);
             stream.Close();
         }

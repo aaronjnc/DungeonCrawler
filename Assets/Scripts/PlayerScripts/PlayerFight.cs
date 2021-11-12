@@ -81,4 +81,9 @@ public class PlayerFight : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 }

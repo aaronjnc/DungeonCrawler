@@ -41,6 +41,7 @@ public class InteractableTile
                 //enableObjects[0].GetComponent<MarketPlace>().SetVendor(vendor);
                 //manager.PauseGame();
                 manager.assignTextFile("Market");
+                SaveSystem.Save();
                 SceneManager.LoadScene(2);
                 break;
         }

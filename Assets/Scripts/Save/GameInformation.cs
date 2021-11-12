@@ -1,10 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 [System.Serializable]
 public class GameInformation
 {
+    public double playHours = 0;
     public string[][] worldMap;
     public string[][] enemies;
     public float[] playerPos;
@@ -30,7 +32,8 @@ public class GameInformation
     }
     void SaveManager(GameManager manager)
     {
-
+        TimeSpan playTime = System.DateTime.Now.Subtract(manager.startTime);
+        playHours = manager.hours + playTime.TotalHours;
     }
     void SaveWorld(ChunkGen gen)
     {
