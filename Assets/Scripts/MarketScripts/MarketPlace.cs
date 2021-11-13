@@ -27,7 +27,6 @@ public class MarketPlace : MonoBehaviour
     public Vendor vendor;
     public GameObject transferButton;
     GameManager manager;
-    bool open = true;
     // Start is called before the first frame update
     void Start()
     {
@@ -66,15 +65,18 @@ public class MarketPlace : MonoBehaviour
         }
         gameObject.SetActive(false);
     }
+    /// <summary>
+    /// Closes the market place and resumes the game
+    /// </summary>
+    /// <param name="ctx"></param>
     void Close(CallbackContext ctx)
     {
-        if (open)
-        {
-            manager.ResumeGame();
-            gameObject.SetActive(false);
-            open = false;
-        }
+        manager.ResumeGame();
+        gameObject.SetActive(false);
     }
+    /// <summary>
+    /// Updates images for page change
+    /// </summary>
     public void ChangeItems()
     {
         if (currentPage == 2)
@@ -89,12 +91,20 @@ public class MarketPlace : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// Changes item at given position and updates image
+    /// </summary>
+    /// <param name="refItem">Script for new item</param>
+    /// <param name="imgPos">Position to update</param>
     public void UpdateImage(ItemReference refItem, Vector4 imgPos)
     {
         marketItems[(int)imgPos.x, (int)imgPos.y, (int)imgPos.z, (int)imgPos.w].ChangeValues(refItem);
         if (imgPos.x.Equals(currentTab) && imgPos.y.Equals(currentPage))
             RefreshImage(itemImages[(int)imgPos.z, (int)imgPos.w], marketItems[(int)imgPos.x, (int)imgPos.y, (int)imgPos.z, (int)imgPos.w].itemSprite);
     }
+    /// <summary>
+    /// Updates players items using inventory
+    /// </summary>
     public void UpdateItems()
     {
         if (player)
@@ -114,11 +124,18 @@ public class MarketPlace : MonoBehaviour
         }
         ChangeItems();
     }
+    /// <summary>
+    /// Sets the vendor source script
+    /// </summary>
+    /// <param name="vendorSource">Vendor source script</param>
     public void SetVendor(Vendor vendorSource)
     {
         vendor = vendorSource;
         UpdateVendor();
     }
+    /// <summary>
+    /// Updates the vendor items with new vendor script
+    /// </summary>
     public void UpdateVendor()
     {
         ItemReference[,,,] vendorItems = vendor.vendorItems;
@@ -137,6 +154,10 @@ public class MarketPlace : MonoBehaviour
         }
         ChangeItems();
     }
+    /// <summary>
+    /// Updates chosen item values given new chosen item
+    /// </summary>
+    /// <param name="arrayPos">Array position of clicked item</param>
     public void ChooseItem(Vector2Int arrayPos)
     {
         currentItem.ChangeValues(marketItems[currentTab, currentPage, arrayPos.x, arrayPos.y]);
@@ -148,6 +169,11 @@ public class MarketPlace : MonoBehaviour
         }
         RefreshImage(chosenImage, currentItem.itemSprite);
     }
+    /// <summary>
+    /// Updates sprite of image
+    /// </summary>
+    /// <param name="image">Image to update</param>
+    /// <param name="sprite">Sprite to put in the image</param>
     public void RefreshImage(Image image, Sprite sprite)
     {
         image.sprite = sprite;
@@ -160,5 +186,10 @@ public class MarketPlace : MonoBehaviour
     {
         if (marketItems[0, 0, 0, 0] != null)
             UpdateItems();
+    }
+    private void OnDestroy()
+    {
+        if (controls != null)
+            controls.Disable();
     }
 }

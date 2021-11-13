@@ -21,24 +21,30 @@ public class ItemRotator : MonoBehaviour
     SwapRotators swapRotators;
     public Inventory inv;
     GameManager manager;
-    public int rotator;
+    [HideInInspector]
+    public int rotator = 0;
     // Start is called before the first frame update
     void Start()
+    {
+        StartMethod();
+    }
+
+    void StartMethod()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         rotatorImage = GetComponent<Image>();
         controls = new PlayerControls();
         swapRotators = GetComponentInParent<SwapRotators>();
-        foreach(Image img in images)
+        foreach (Image img in images)
         {
             img.gameObject.SetActive(false);
         }
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             items[i] = new ItemReference();
         }
-        controls.Inventory.ItemRotator.performed += Expanded;
-        controls.Inventory.ItemRotator.canceled += Canceled;
+        controls.Inventory.ItemRotator.performed += ExpandRotator;
+        controls.Inventory.ItemRotator.canceled += MinimizeRotator;
         controls.Inventory.ItemRotator.Enable();
         controls.Movement.MousePosition.Enable();
         fullRotator = swapRotators.fullRotators[current];
@@ -47,7 +53,11 @@ public class ItemRotator : MonoBehaviour
         if (swapRotators.current != rotator)
             gameObject.SetActive(false);
     }
-    void Expanded(CallbackContext ctx)
+    /// <summary>
+    /// Expands item rotator when 'Tab' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
+    void ExpandRotator(CallbackContext ctx)
     {
         rotatorImage.sprite = fullRotator;
         foreach(Image img in images)
@@ -56,7 +66,11 @@ public class ItemRotator : MonoBehaviour
         }
         open = true;
     }
-    void Canceled(CallbackContext ctx)
+    /// <summary>
+    /// Minimizes item rotator when 'Tab' is released
+    /// </summary>
+    /// <param name="ctx"></param>
+    void MinimizeRotator(CallbackContext ctx)
     {
         foreach (Image img in images)
         {
@@ -65,7 +79,6 @@ public class ItemRotator : MonoBehaviour
         rotatorImage.sprite = swapRotators.smallRotator;
         open = false;
     }
-    // Update is called once per frame
     float timechange = 0f;
     void FixedUpdate()
     {
@@ -112,8 +125,12 @@ public class ItemRotator : MonoBehaviour
             previous = current;
         }
     }
+    /// <summary>
+    /// Updates items within item rotator given inventory
+    /// </summary>
     public void UpdateItems()
     {
+        StartMethod();
         for (int i = 0; i < 5; i++)
         {
             items[i].ChangeValues(inv.chosenItems[rotator,i]);
@@ -123,10 +140,10 @@ public class ItemRotator : MonoBehaviour
             else
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
-        if (items[0].empty)
+        if (!items[current].empty)
             chosenItem = new ItemReference();
         else
-            chosenItem.ChangeValues(items[0]);
+            chosenItem.ChangeValues(items[current]);
         centralImage.sprite = chosenItem.itemSprite;
         fullRotator = swapRotators.fullRotators[0];
         if (chosenItem.itemSprite != null)
@@ -136,12 +153,14 @@ public class ItemRotator : MonoBehaviour
         if (swapRotators.current == rotator)
             CurrentItem();
     }
+    /// <summary>
+    /// Sets certain values given currently selected item
+    /// </summary>
     void CurrentItem()
     {
         manager.currentItem.ChangeValues(chosenItem);
         if (!chosenItem.empty)
         {
-            DisableRopes();
             DisableBlockPlacing();
             manager.fighting = false;
             switch (rotator)
@@ -167,18 +186,21 @@ public class ItemRotator : MonoBehaviour
         }
         else
         {
-            DisableRopes();
             DisableBlockPlacing();
+            manager.fighting = false;
         }
     }
-    public void DisableRopes()
-    {
-        manager.ResetRopes();
-        manager.ropeplacing = false;
-    }
+    /// <summary>
+    /// Resets everything when block placing is disabled
+    /// </summary>
     public void DisableBlockPlacing()
     {
-        manager.ResetPrev();
+        manager.ResetPreviousTile();
         manager.blockplacing = false;
+    }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
     }
 }

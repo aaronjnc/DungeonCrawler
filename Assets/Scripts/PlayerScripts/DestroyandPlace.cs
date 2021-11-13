@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UnityEngine.InputSystem.InputAction;
+using UnityEngine.AI;
 
 public class DestroyandPlace : MonoBehaviour
 {
@@ -21,6 +22,11 @@ public class DestroyandPlace : MonoBehaviour
     Tile destroy;
     Tile place;
     Tile refillTile;
+    bool breaking;
+    float blockHealth;
+    Vector3Int destroyPos;
+    Vector2Int destroyChunkPos;
+    int damage;
     void Awake()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -28,6 +34,7 @@ public class DestroyandPlace : MonoBehaviour
         mapz = manager.mapz;
         mapPos.z = mapz;
         controls.Interact.Press.performed += ReplaceTile;
+        controls.Interact.Press.canceled += StopBreaking;
         controls.Interact.Enable();
         destroy = new Tile();
         destroy.color = new Color(255, 0, 0);
@@ -36,6 +43,11 @@ public class DestroyandPlace : MonoBehaviour
         refillTile = new Tile();
         refillTile.color = new Color(255, 255, 255, 255);
     }
+    /// <summary>
+    /// Determines tile location and then calls methods to set position
+    /// </summary>
+    /// <param name="newPos">Chunk tile position</param>
+    /// <param name="chunkPos">Chunk position</param>
     public void Positioning(Vector3Int newPos, Vector2Int chunkPos)
     {
         Vector2Int chunkMod = new Vector2Int(0, 0);
@@ -63,9 +75,11 @@ public class DestroyandPlace : MonoBehaviour
         currentChunk = chunkPos + chunkMod;
         mapPos = newPos;
         mapPos.z = mapz;
+        if (breaking && mapPos != destroyPos)
+            ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
         if (prevmapPos != Vector3Int.zero)
         {
-            ResetPrev();
+            ResetPrevious();
         }
         if (manager.placing && GetTile(mapPos, currentChunk) == null)
         {
@@ -74,7 +88,7 @@ public class DestroyandPlace : MonoBehaviour
             UpdateCollider(mapPos, Tile.ColliderType.None, currentChunk);
             prevmapPos = mapPos;
         }
-        else if (!manager.placing && GetTile(mapPos, currentChunk) != null && manager.breakable(mapPos, currentChunk))
+        else if (!manager.placing && GetTile(mapPos, currentChunk) != null && manager.IsBreakable(mapPos, currentChunk))
         {
             UpdateColor(mapPos, destroy, currentChunk);
             prevmapPos = mapPos;
@@ -84,7 +98,19 @@ public class DestroyandPlace : MonoBehaviour
             prevmapPos = Vector3Int.zero;
         }
     }
-    public void ResetPrev()
+    private void FixedUpdate()
+    {
+        if (breaking)
+        {
+            blockHealth -= damage*Time.deltaTime;
+            if (blockHealth <= 0)
+                DestroyBlock(destroyPos, destroyChunkPos,GetBlock(destroyPos,destroyChunkPos));
+        }
+    }
+    /// <summary>
+    /// Resets previously chosen tile
+    /// </summary>
+    public void ResetPrevious()
     {
         if (manager.placing)
         {
@@ -96,9 +122,15 @@ public class DestroyandPlace : MonoBehaviour
         }
         prevmapPos = Vector3Int.zero;
     }
+    /// <summary>
+    /// Replaces tile on mouse click
+    /// </summary>
+    /// <param name="ctx"></param>
     void ReplaceTile(CallbackContext ctx)
     {
         if (manager.paused)
+            return;
+        if (manager.GetByte(mapPos, currentChunk) == 127)
             return;
         if (manager.blockplacing && !manager.inv.gameObject.activeInHierarchy)
         {
@@ -106,9 +138,7 @@ public class DestroyandPlace : MonoBehaviour
             {
                 if (GetTile(mapPos,currentChunk).color.b != 255)
                 {
-                    manager.inv.reduceDurability(new Vector2Int(swapRotators.current,swapRotators.chosen));
-                    manager.inv.AddItem(GetBlock(mapPos,currentChunk));
-                    UpdateTile(mapPos, 127, currentChunk);
+                    ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
                 }
             }
             else if (manager.placing && GetTile(mapPos, currentChunk).color.a != 255)
@@ -116,9 +146,32 @@ public class DestroyandPlace : MonoBehaviour
                 manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
                 UpdateTile(mapPos, manager.currentTileID, currentChunk);
                 UpdateColor(mapPos, refillTile, currentChunk);
+                if (manager.spawnEnemies)
+                    manager.BuildNavMesh();
             }
             prevmapPos = Vector3Int.zero;
         }
+    }
+    void ChangeBreaking(Vector3Int newPos, Vector2Int newChunk, byte newID)
+    {
+        breaking = true;
+        blockHealth = manager.GetItem(newID).durability;
+        destroyPos = newPos;
+        destroyChunkPos = newChunk;
+        damage = swapRotators.rotators[swapRotators.current].GetComponent<ItemRotator>().chosenItem.damage;
+    }
+    void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
+    {
+        breaking = false;
+        manager.inv.reduceDurability(new Vector2Int(swapRotators.current, swapRotators.chosen));
+        manager.inv.AddItem(blockID);
+        UpdateTile(newPos, 127, newChunk);
+        if (manager.spawnEnemies)
+            manager.BuildNavMesh();
+    }
+    void StopBreaking(CallbackContext ctx)
+    {
+        breaking = false;
     }
     private void OnDisable()
     {
@@ -130,24 +183,58 @@ public class DestroyandPlace : MonoBehaviour
         if (controls != null)
             controls.Enable();
     }
+    /// <summary>
+    /// Updates tile at given position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="tile">Tile ID</param>
+    /// <param name="chunkPos">Chunk position</param>
     void UpdateTile(Vector3Int tilePos, byte tile, Vector2Int chunkPos)
     {
         ChunkGen.currentWorld.UpdateByte(new Vector2Int(tilePos.x, tilePos.y),tile, chunkPos);
     }
+    /// <summary>
+    /// Updates color of tile at given position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="updateTile">Tile with new color scheme</param>
+    /// <param name="chunkPos">Chunk position</param>
     void UpdateColor(Vector3Int tilePos, Tile updateTile, Vector2Int chunkPos)
     {
         ChunkGen.currentWorld.UpdateColor(new Vector2Int(tilePos.x, tilePos.y), updateTile, chunkPos);
-    }
+    }/// <summary>
+    /// Updates collider of tile at given position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="tileCollider">New Tilecollider</param>
+    /// <param name="chunkPos">Chunk position</param>
     void UpdateCollider(Vector3Int tilePos, Tile.ColliderType tileCollider, Vector2Int chunkPos)
     {
         ChunkGen.currentWorld.UpdateCollider(tilePos, tileCollider, chunkPos);
     }
+    /// <summary>
+    /// Returns tile at given position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="chunkPos">Chunk position</param>
+    /// <returns></returns>
     Tile GetTile(Vector3Int tilePos, Vector2Int chunkPos)
     {
         return ChunkGen.currentWorld.GetTile(tilePos, chunkPos);
     }
+    /// <summary>
+    /// Returns the byte of block at given position
+    /// </summary>
+    /// <param name="tilePos">Chunk tile position</param>
+    /// <param name="chunkPos">Chunk position</param>
+    /// <returns></returns>
     byte GetBlock(Vector3Int tilePos, Vector2Int chunkPos)
     {
         return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), chunkPos);
+    }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
     }
 }

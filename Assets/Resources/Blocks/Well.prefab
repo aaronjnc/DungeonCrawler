@@ -45,7 +45,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tile: {fileID: 11400000, guid: a41a6c2b35fbe9242a0a06c567cc465d, type: 2}
   spawnable: 1
-  weight: 0.5
+  weight: 0.86
   scale: 1.75
   solid: 0
   onlyone: 0
@@ -54,5 +54,7 @@ MonoBehaviour:
   custom: 0
   prefab: 0
   index: 6
+  maxperchunk: 0
+  interactable: 0
   blockName: 
-  blockType: 1
+  blockType: 2

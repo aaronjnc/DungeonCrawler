@@ -27,6 +27,9 @@ public class InventoryChange : MonoBehaviour, IPointerDownHandler
         }
         inventory.ChangeInventory(invType);
     }
+    /// <summary>
+    /// Unselect other inventory tabs
+    /// </summary>
     public void ChangeSprite()
     {
         GetComponent<Image>().sprite = unclicked;

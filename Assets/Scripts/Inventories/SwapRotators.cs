@@ -20,6 +20,10 @@ public class SwapRotators : MonoBehaviour
         controls.Interact.SwitchItem.performed += SwitchRotator;
         controls.Interact.SwitchItem.Enable();
     }
+    /// <summary>
+    /// Switches between types of rotators when 'Q' or 'E' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void SwitchRotator(CallbackContext ctx)
     {
         previous = current;
@@ -31,8 +35,17 @@ public class SwapRotators : MonoBehaviour
         }
         UpdateRotator(current);
     }
+    /// <summary>
+    /// Updates rotator given new rotator position
+    /// </summary>
+    /// <param name="i">Rotator number</param>
     public void UpdateRotator(int i)
     {
         rotators[i].GetComponent<ItemRotator>().UpdateItems();
+    }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
     }
 }

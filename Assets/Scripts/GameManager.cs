@@ -1,37 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
+using System.IO;
+using System;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager currentManager;
     [Tooltip("Eliminate lone tiles")] public bool revisiting = false;
 
     [Header("Modes:")]
     public bool testingmode = true;
-    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize = 20;
+    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize;
     public bool spawnEnemies;
 
     [Header("Abilities:")]
-    public bool ropeplacing = false;
     [HideInInspector]
     public bool blockplacing = false;
     [HideInInspector]
     public bool placing = false;
     [HideInInspector]
     public byte currentTileID;
-    //public List<Blocks> blocks = new List<Blocks>();
     [HideInInspector]
     public Vector3Int pos = Vector3Int.zero;
     [Header("Script Refs:")]
     public DestroyandPlace destroyandPlace;
-    public RopeSystem ropesystem;
-    List<string> blockNames = new List<string>();
     Sprite[] sprites;
     Sprite[] posts;
     List<string> spriteNames = new List<string>();
-    [HideInInspector] public int mapz = 0;
-    [HideInInspector] public int floorz = 1;
+    [HideInInspector] public int mapz;
+    [HideInInspector] public int floorz;
     [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
     [HideInInspector] public Inventory inv;
     [HideInInspector] public bool fighting = false;
@@ -39,8 +40,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    public static GameManager Instance;
-    public GameObject invObject;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
@@ -48,10 +47,28 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public int gold = 0;
     [HideInInspector] public bool paused = false;
+    [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    [HideInInspector] public string fullText;
+    public TextAsset[] textFiles;
+    [HideInInspector] public bool loadFromFile = false;
+    GameInformation gameInfo;
+    [HideInInspector] public string worldName;
+    [HideInInspector] public DateTime startTime;
+    [HideInInspector] public double hours;
+    private string previousWorld = "";
+    public ChunkGen gen;
     // Start is called before the first frame update
     void Awake()
     {
-        Instance = this;
+        if (!Directory.Exists(Application.persistentDataPath + "/saves"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/saves");
+        }
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
+        mapz = 0;
+        floorz = 1;
+        currentManager = this;
         currentItem = new ItemReference();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
@@ -60,7 +77,6 @@ public class GameManager : MonoBehaviour
             {
                 item.durability = item.baseDurability;
                 item.currentStack = 1;
-                item.damage = 0;
                 itemScripts.Add(item.itemID, item);
             }
             Blocks blockComp = block.GetComponent<Blocks>();
@@ -71,9 +87,12 @@ public class GameManager : MonoBehaviour
             InventoryItem invItem = item.GetComponent<InventoryItem>();
             invItem.durability = invItem.baseDurability;
             invItem.currentStack = 1;
-            invItem.damage = 0;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
+        }
+        foreach(GameObject item in Resources.LoadAll("PremadeSections"))
+        {
+            sections.Add(item.GetComponent<PremadeSection>());
         }
         sprites = Resources.LoadAll<Sprite>("Images");
         posts = Resources.LoadAll<Sprite>("Images/Posts");
@@ -85,84 +104,36 @@ public class GameManager : MonoBehaviour
         {
             spriteNames.Add(post.name);
         }
+        if (testingmode)
+        {
+            GetComponent<WorldCreationTesting>().enabled = true;
+            GetComponent<WorldCreationTesting>().size = testingsize;
+        }
         //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
+    /// <summary>
+    /// Returns the tile related to the given ID
+    /// </summary>
+    /// <param name="tileID"> Block ID</param>
+    /// <returns></returns>
     public Tile GetTile(byte tileID)
     {
         return blocks[tileID].tile;
     }
-    public Sprite GetSprite(string spriteName)
-    {
-        if (spriteNames.Contains(spriteName))
-        {
-            int index = spriteNames.IndexOf(spriteName);
-            if (index >= sprites.Length)
-                return posts[index - sprites.Length];
-            else
-                return sprites[index];
-        }
-        return null;
-    }
-    public Tile GetSprite(Vector2 dir, string spriteName, int mod, Vector3Int spot, string tileName)
-    {
-        /*Tile tile = GetTile(tileName);
-        string postName = "";
-        if (tile.name == "Post")
-        {
-            postName = spriteName;
-        }
-        Tile postTile = GetTile("Post");
-        if (dir == Vector2.zero)
-        {
-            return tile;
-        }
-        string upName = map.GetTile(new Vector3Int(spot.x, spot.y+1, mapz)).name;
-        string rightName = map.GetTile(new Vector3Int(spot.x + 1, spot.y, mapz)).name; 
-        string downName = map.GetTile(new Vector3Int(spot.x, spot.y - 1, mapz)).name;
-        string leftName = map.GetTile(new Vector3Int(spot.x - 1, spot.y, mapz)).name;
-        bool UpandDown = (upName.Equals("Rope") || upName.Equals("Post")) && (downName.Equals("Post") || downName.Equals("Rope"));
-        bool LeftandRight = (rightName.Equals("Rope") || rightName.Equals("Post")) && (leftName.Equals("Post") || leftName.Equals("Rope"));
-        string position = "Images/Posts/";
-        if (postName.Contains("Up") || dir.y*mod == 1 || (dir.y == 0 && UpandDown))
-        {
-            position += "Up";
-        }
-        if (postName.Contains("Right") || dir.x * mod == 1 || (dir.x == 0 && LeftandRight))
-        {
-            position += "Right";
-        }
-        if (postName.Contains("Down") || dir.y * mod == -1 || (dir.y == 0 && UpandDown))
-        {
-            position += "Down";
-        }
-        if (postName.Contains("Left") || dir.x * mod == -1 || (dir.x == 0 && LeftandRight))
-        {
-            position += "Left";
-        }
-        postTile.sprite = Resources.Load<Sprite>(position);
-        return postTile;*/
-        return null;
-    }
-    public void ResetPrev()
+    /// <summary>
+    /// Resets the tile to what it previously was before highlighted
+    /// </summary>
+    public void ResetPreviousTile()
     {
         if (destroyandPlace.prevmapPos != Vector3Int.zero)
-            destroyandPlace.ResetPrev();
+            destroyandPlace.ResetPrevious();
         destroyandPlace.enabled = false;
     }
-    public void ResetRopes()
-    {
-        ropeplacing = false;
-        ropesystem.enabled = false;
-    }
-    public Sprite InventorySprite(string name)
-    {
-        foreach(InventoryItem item in items)
-        {
-            if (item.name == name)
-                return item.itemSprite;
-        }
-        return null;
-    }
+    /// <summary>
+    /// Returns the Script related to the Item name
+    /// </summary>
+    /// <param name="name">Name of the item wanted</param>
+    /// <returns></returns>
     public InventoryItem GetItem(string name)
     {
         foreach (InventoryItem item in items)
@@ -172,55 +143,113 @@ public class GameManager : MonoBehaviour
         }
         return null;
     }
+    /// <summary>
+    /// Returns the script related to the Item ID
+    /// </summary>
+    /// <param name="ID">ID of the item wanted</param>
+    /// <returns></returns>
     public InventoryItem GetItem(byte ID)
     {
         return itemScripts[ID];
     }
-    public List<InventoryItem> GetLevel(int level)
-    {
-        List<InventoryItem> levelItems = new List<InventoryItem>();
-        for (int i = 0; i < items.Count;i++)
-        {
-            if (items[i].level == level)
-                levelItems.Add(items[i]);
-        }
-        return levelItems;
-    }
-    public int GetID(string spriteName)
-    {
-        for (int i = 0; i < items.Count;i++)
-        {
-            if (items[i].itemSprite.name.Equals(spriteName))
-                return i;
-        }
-        return 0;
-    }
-    public bool breakable(Vector3Int pos, Vector2Int currentChunk)
+    /// <summary>
+    /// Determines if the block can be broken
+    /// </summary>
+    /// <param name="pos">World position</param>
+    /// <param name="currentChunk">Chunk position</param>
+    /// <returns></returns>
+    public bool IsBreakable(Vector3Int pos, Vector2Int currentChunk)
     {
         return blocks[GetByte(pos, currentChunk)].breakable;
     }
+    /// <summary>
+    /// Returns the block script related to the ID
+    /// </summary>
+    /// <param name="ID">ID of the desired block</param>
+    /// <returns></returns>
     public Blocks GetBlock(byte ID)
     {
-        if (ContainsByte(ID))
+        if (BlockExists(ID))
             return blocks[ID];
         return null;
     }
+    /// <summary>
+    /// Returns the block ID of the block at the given location
+    /// </summary>
+    /// <param name="tilePos">World position</param>
+    /// <param name="currentChunk">Chunk position</param>
+    /// <returns></returns>
     public byte GetByte(Vector3Int tilePos, Vector2Int currentChunk)
     {
         return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), currentChunk);
     }
-    public bool ContainsByte(byte ID)
+    /// <summary>
+    /// Returns true if there is a block with given ID
+    /// </summary>
+    /// <param name="ID">ID of block</param>
+    /// <returns></returns>
+    public bool BlockExists(byte ID)
     {
         return blocks.ContainsKey(ID);
     }
+    /// <summary>
+    /// Pauses the game and turns off Updates
+    /// </summary>
     public void PauseGame()
     {
         paused = true;
         Time.timeScale = 0;
     }
+    /// <summary>
+    /// Resumes the game and turns on Updates
+    /// </summary>
     public void ResumeGame()
     {
         paused = false;
         Time.timeScale = 1;
+    }
+    public void BuildNavMesh()
+    {
+        foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
+        {
+            surface.BuildNavMesh();
+        }
+    }
+    public void assignTextFile(string textName)
+    {
+        foreach(TextAsset text in textFiles)
+        {
+            if (text.name.Equals(textName))
+            {
+                fullText = text.text;
+            }
+        }
+    }
+    public void loadWorld(GameInformation info)
+    {
+        loadFromFile = true;
+        gameInfo = info;
+        SceneLoader.LoadScene(1);
+    }
+    public GameInformation GetGameInformation()
+    {
+        return gameInfo;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        ResumeGame();
+        if (!scene.name.Equals("World"))
+        {
+            gen.enabled = false;
+        }
+    }
+
+    public void LoadWorld()
+    {
+        destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
+        character = GameObject.Find("Player");
+        gen.enabled = true;
+        startTime = DateTime.Now;
     }
 }

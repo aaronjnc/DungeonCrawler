@@ -24,11 +24,17 @@ public class PlayerFight : MonoBehaviour
         healthSlider.value = health;
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        controls.Interact.Press.performed += MouseClick;
+        controls.Interact.Press.canceled += BaseAttack;
         controls.Interact.Press.Enable();
+        controls.Fight.AdvanceAttack.canceled += AdvancedAttack;
+        controls.Fight.AdvanceAttack.Enable();
         controls.Fight.Magic.performed += CastSpell;
         controls.Fight.Magic.Enable();
     }
+    /// <summary>
+    /// Cast spell when number is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void CastSpell(CallbackContext ctx)
     {
         int num;
@@ -36,22 +42,36 @@ public class PlayerFight : MonoBehaviour
         num--;
         GetComponent<Magic>().PerformSpell(num);
     }
-    void MouseClick(CallbackContext ctx)
+    /// <summary>
+    /// Player base attack when 'Left Mouse Button' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
+    void BaseAttack(CallbackContext ctx)
     {
-        if (manager.fighting && !manager.invOpen)
+        if (manager.fighting && !manager.paused)
         {
             invItem.ChangeValues(manager.currentItem);
             if (invItem.fighting)
             {
-                Collider2D[] enemies = Physics2D.OverlapCircleAll(transform.position, reach, enemy);
-                for(int i = 0; i < enemies.Length;i++)
-                {
-                    Destroy(enemies[i].gameObject);
-                    Debug.Log("enemy killed");
-                }
+                invItem.weaponScript.BaseAttack(gameObject.transform);
             }
         }
     }
+    /// <summary>
+    /// Player advanced attackw when 'Right Mouse Button' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
+    void AdvancedAttack(CallbackContext ctx)
+    {
+        if (manager.fighting && !manager.paused)
+        {
+            invItem.ChangeValues(manager.currentItem);
+            if (invItem.fighting)
+            {
+                invItem.weaponScript.AdvancedAttack(gameObject.transform);
+            }
+        }
+    }        
     public void TakeDamage(float amount)
     {
         health = Mathf.Clamp(health - amount, 0, maxHealth);
@@ -61,8 +81,9 @@ public class PlayerFight : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    private void OnDrawGizmos()
+
+    private void OnDestroy()
     {
-        Gizmos.DrawWireSphere(transform.position, reach);
+        controls.Disable();
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Magic : MonoBehaviour
 {
-    int[] enabledSpells = new int[5];
+    [HideInInspector] public int[] enabledSpells = new int[5];
     delegate void Actions();
     bool[] charged = new bool[5];
     public float[] chargeTime = new float[15];
@@ -46,7 +46,6 @@ public class Magic : MonoBehaviour
                 currentCharge[disabledSpells[i]] += Time.deltaTime;
                 if (currentCharge[disabledSpells[i]] >= chargeTime[disabledSpells[i]])
                 {
-                    Debug.Log("reached");
                     currentCharge[disabledSpells[i]] = 0;
                     charged[disabledSpells[i]] = true;
                     Animator animator = cooldownTimers[disabledSpells[i]].GetComponent<Animator>();
@@ -61,6 +60,12 @@ public class Magic : MonoBehaviour
         magic = Mathf.Clamp(magic + magicRegen * Time.deltaTime, 0, maxMagic);
         magicSlider.value = magic;
     }
+    /// <summary>
+    /// Adds spell to chosen spells
+    /// </summary>
+    /// <param name="pos">Spell position</param>
+    /// <param name="i">Chosen position</param>
+    /// <param name="sprite">Spell sprite</param>
     public void EnableSpell(int pos, int i, Sprite sprite)
     {
         chosenImages[i].sprite = sprite;
@@ -76,6 +81,10 @@ public class Magic : MonoBehaviour
         charged[i] = true;
         spells[i] = allSpells[pos];
     }
+    /// <summary>
+    /// Casts spell
+    /// </summary>
+    /// <param name="i">Spell position</param>
     public void PerformSpell(int i)
     {
         int loc = enabledSpells[i];
@@ -92,17 +101,27 @@ public class Magic : MonoBehaviour
             ReduceMagic(magicCost[loc]);
         }
     }
+    /// <summary>
+    /// Performs fireball
+    /// </summary>
     void Fireball()
     {
         GameObject ball = Instantiate(fireball);
         ball.transform.position = new Vector3(transform.position.x, transform.position.y, ball.transform.position.z);
         ball.transform.up = -transform.right;
     }
+    /// <summary>
+    /// Performs fire ring spell
+    /// </summary>
     void FireRing()
     {
         GameObject ring = Instantiate(fireRing);
         ring.transform.position = new Vector3(transform.position.x, transform.position.y, ring.transform.position.z);
     }
+    /// <summary>
+    /// Reduces amount of magic
+    /// </summary>
+    /// <param name="amount">Amount to reduce magic by</param>
     void ReduceMagic(float amount)
     {
         magic = Mathf.Clamp(magic - amount, 0, maxMagic);

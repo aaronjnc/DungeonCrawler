@@ -17,6 +17,7 @@ public class ItemReference
     public int cost;
     public string itemName;
     public byte itemID;
+    public WeaponInterface<Transform,PlayerFight> weaponScript;
     public enum Type
     {
         Pickaxe,
@@ -25,6 +26,10 @@ public class ItemReference
         Sword,
         Bow
     }
+    /// <summary>
+    /// Update values given ItemReference script
+    /// </summary>
+    /// <param name="newScript">Item script</param>
     public void ChangeValues(ItemReference newScript)
     {
         itemSprite = newScript.itemSprite;
@@ -39,7 +44,12 @@ public class ItemReference
         level = newScript.level;
         cost = newScript.cost;
         itemID = newScript.itemID;
+        weaponScript = newScript.weaponScript;
     }
+    /// <summary>
+    /// Sets value given InventoryItem script
+    /// </summary>
+    /// <param name="newScript">Item script</param>
     public void SetValues(InventoryItem newScript)
     {
         itemSprite = newScript.itemSprite;
@@ -53,5 +63,6 @@ public class ItemReference
         level = newScript.level;
         cost = newScript.cost;
         itemID = newScript.itemID;
+        weaponScript = newScript.weaponScript;
     }
 }

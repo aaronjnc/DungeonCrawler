@@ -23,13 +23,7 @@ public class Blocks : MonoBehaviour
     {
         Wall,
         Empty,
+        Floor,
     }
     public Type blockType;
-    public void SetSolid()
-    {
-        if (solid)
-            tile.colliderType = Tile.ColliderType.Grid;
-        else
-            tile.colliderType = Tile.ColliderType.None;
-    }
 }

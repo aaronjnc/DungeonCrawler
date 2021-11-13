@@ -15,6 +15,7 @@ public class EnemyInfo : MonoBehaviour
     public float firechance;
     public float weight;
     public float scale;
+    public Vector2Int chunk;
     public enum EnemyType
     {
         Troll,
@@ -27,13 +28,22 @@ public class EnemyInfo : MonoBehaviour
         slider.minValue = 0;
         slider.value = health;
     }
+    /// <summary>
+    /// Reduce health of enemy by given amount
+    /// </summary>
+    /// <param name="amount">Amount to reduce health by</param>
     public void ReduceHealth(float amount)
     {
         health = Mathf.Clamp(health-amount,0,maxHealth);
         slider.value = health;
         if (health <= 0)
-            Destroy(gameObject);
+        {
+            ChunkGen.currentWorld.GetChunk(chunk).KillEnemy(this.gameObject);
+        }
     }
+    /// <summary>
+    /// Determines if enemy is on fire
+    /// </summary>
     public void FireDamage()
     {
         if (Random.value < firechance)
@@ -51,5 +61,12 @@ public class EnemyInfo : MonoBehaviour
                 firetime = 0f;
             }    
         }
+    }
+    public override string ToString()
+    {
+        string enemy = "*" + gameObject.name + "\n";
+        enemy += gameObject.transform.position + "\n";
+        enemy += gameObject.transform.rotation + "\n";
+        return enemy;
     }
 }

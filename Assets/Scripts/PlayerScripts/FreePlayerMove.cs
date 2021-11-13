@@ -15,27 +15,22 @@ public class FreePlayerMove : MonoBehaviour
     Vector2 previousDir = Vector2.zero;
     public float speed = 5f;
     public float rotSpeed = 10f;
-    RopeSystem ropesystem;
     DestroyandPlace blockplacing;
     public Vector3Int pos = Vector3Int.zero;
     Vector3Int prevpos = Vector3Int.zero;
-    GameObject canvas;
+    public GameObject canvas;
     Vector2 rotDir = Vector2.zero;
     public GameObject menu;
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
-    Vector2Int currentChunk = Vector2Int.zero;
-    Vector3Int prevPos = Vector3Int.zero;
-    // Start is called before the first frame update
+    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        canvas = manager.invObject;
-        ropesystem = grid.GetComponent<RopeSystem>();
         blockplacing = grid.GetComponent<DestroyandPlace>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
@@ -46,7 +41,7 @@ public class FreePlayerMove : MonoBehaviour
         controls.Interact.Inventory.performed += Inventory;
         controls.Interact.Inventory.Enable();
         controls.Movement.MousePosition.Enable();
-        controls.Interact.Enter.canceled += Enter;
+        controls.Interact.Enter.canceled += Interact;
         controls.Interact.Enter.Enable();
         controls.Interact.Menu.performed += ActivateMenu;
         controls.Interact.Menu.Enable();
@@ -54,7 +49,15 @@ public class FreePlayerMove : MonoBehaviour
         controls.Fight.MagicMenu.Enable();
         pos.z = manager.mapz;
         prevpos.z = manager.mapz;
+        if (manager.loadFromFile)
+        {
+            loadFromFile(manager.GetGameInformation());
+        }
     }
+    /// <summary>
+    /// Activates the spell menu when 'X' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void SpellMenu(CallbackContext ctx)
     {
         if (magicTree.activeInHierarchy)
@@ -68,6 +71,10 @@ public class FreePlayerMove : MonoBehaviour
             manager.PauseGame();
         }
     }
+    /// <summary>
+    /// Activates menu when 'Esc' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void ActivateMenu(CallbackContext ctx)
     {
         if (menu.activeInHierarchy)
@@ -81,7 +88,11 @@ public class FreePlayerMove : MonoBehaviour
             manager.PauseGame();
         }
     }
-    void Enter(CallbackContext ctx)
+    /// <summary>
+    /// Interacts with special tile when 'Space' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
+    void Interact(CallbackContext ctx)
     { 
         if (!manager.paused)
         {
@@ -91,7 +102,10 @@ public class FreePlayerMove : MonoBehaviour
             }
         }
     }
-        
+    /// <summary>
+    /// Opens inventory when 'I' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     void Inventory(CallbackContext ctx)
     {
         if (canvas.activeInHierarchy)
@@ -124,6 +138,9 @@ public class FreePlayerMove : MonoBehaviour
                 prevpos = pos;
         }
     }
+    /// <summary>
+    /// Calls actions that are affected on player movement
+    /// </summary>
     void Actions()
     {
         Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
@@ -146,17 +163,19 @@ public class FreePlayerMove : MonoBehaviour
                 blockplacing.enabled = true;
                 blockplacing.Positioning(lookPos,currentChunk);
             }
-            else if (manager.ropeplacing)
-            {
-                if (!ropesystem.enabled)
-                    ropesystem.enabled = true;
-                if (pos != prevpos)
-                    ropesystem.Roping(pos);
-            }
             prevlookPos = lookPos;
         }
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 
+    private void loadFromFile(GameInformation info)
+    {
+        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
+        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
+    }
 }
