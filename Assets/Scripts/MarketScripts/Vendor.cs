@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Vendor
 {
-    public ItemReference[,,,] vendorItems = new ItemReference[5, 3, 3, 5];
+    public ItemSlot[,,,] vendorItems = new ItemSlot[5, 3, 3, 5];
     GameManager manager;
     List<InventoryItem>[] separatedItems = new List<InventoryItem>[5];
     float[] chance = new float[] { .8f,.1f,.01f,.001f,.0001f};
@@ -46,7 +46,7 @@ public class Vendor
                 {
                     for (int col = 0; col < 5; col++)
                     {
-                        vendorItems[tab, page, row, col] = new ItemReference();
+                        vendorItems[tab, page, row, col] = new ItemSlot();
                     }
                 }
             }
@@ -57,10 +57,10 @@ public class Vendor
     /// </summary>
     /// <param name="itemRef">New item script</param>
     /// <param name="itemPos">Item position</param>
-    public void UpdateItem(ItemReference itemRef, Vector4 itemPos)
+    public void UpdateItem(ItemSlot itemRef, Vector4 itemPos)
     {
-        vendorItems[(int)itemPos.x, (int)itemPos.y, (int)itemPos.z, (int)itemPos.w].ChangeValues(itemRef);
-        if (vendorItems[(int)itemPos.x, (int)itemPos.y, (int)itemPos.z, (int)itemPos.w].itemSprite == null)
+        vendorItems[(int)itemPos.x, (int)itemPos.y, (int)itemPos.z, (int)itemPos.w].addExisting(itemRef);
+        if (vendorItems[(int)itemPos.x, (int)itemPos.y, (int)itemPos.z, (int)itemPos.w].getSprite() == null)
         {
             itemCount[(int)itemPos.x]--;
             full[(int)itemPos.x] = false;
@@ -99,10 +99,10 @@ public class Vendor
     /// Adds items to inventory given item script
     /// </summary>
     /// <param name="itemRef">New item script</param>
-    public void AddItem(ItemReference itemRef)
+    public void AddItem(ItemSlot itemRef)
     {
         int tab = 0;
-        switch (itemRef.invType)
+        switch (itemRef.getInvType())
         {
             case Inventory.InventoryType.Weapons:
                 tab = 0;
@@ -124,7 +124,7 @@ public class Vendor
         int page = (int)(tabCount / 15);
         int marketrow = (tabCount % 15) / 5;
         int marketcol = (tabCount % 15) % 5;
-        vendorItems[tab, page, marketrow, marketcol].ChangeValues(itemRef);
+        vendorItems[tab, page, marketrow, marketcol].addItem(itemRef.getItem());
         if (!full[tab])
             itemCount[tab]++;
         if (itemCount[tab] == 35)
@@ -136,8 +136,8 @@ public class Vendor
     /// <param name="newItem">New item script</param>
     public void AddItem(InventoryItem newItem)
     {
-        ItemReference itemRef = new ItemReference();
-        itemRef.SetValues(newItem);
+        ItemSlot itemRef = new ItemSlot();
+        itemRef.addItem(newItem);
         AddItem(itemRef);  
     }
 }
