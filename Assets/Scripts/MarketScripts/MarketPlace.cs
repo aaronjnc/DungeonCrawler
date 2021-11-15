@@ -7,7 +7,7 @@ using static UnityEngine.InputSystem.InputAction;
 public class MarketPlace : MonoBehaviour
 {
     PlayerControls controls;
-    [HideInInspector] public ItemReference[,,,] marketItems = new ItemReference[5, 3, 3, 5];
+    [HideInInspector] public ItemSlot[,,,] marketItems = new ItemSlot[5, 3, 3, 5];
     [HideInInspector] public Image[,] itemImages = new Image[3, 5];
     public float xstart;
     public float ystart;
@@ -17,7 +17,6 @@ public class MarketPlace : MonoBehaviour
     public int currentPage = 0;
     public Transform imageParent;
     public Image chosenImage;
-    public ItemReference currentItem;
     public Vector3Int currentLoc = Vector3Int.zero;
     public bool player;
     public Inventory inventory;
@@ -35,7 +34,6 @@ public class MarketPlace : MonoBehaviour
         //controls.Interact.Enter.performed += ctx => open = true;
         controls.Interact.Enter.performed += Close;
         controls.Interact.Enter.Enable();
-        currentItem = new ItemReference();
         baseImage = GetComponent<Image>().sprite;
         for (int tab = 0; tab < 5; tab++)
         {
@@ -45,7 +43,7 @@ public class MarketPlace : MonoBehaviour
                 {
                     for (int col = 0; col < 5; col++)
                     {
-                        marketItems[tab, page, row, col] = new ItemReference();
+                        marketItems[tab, page, row, col] = new ItemSlot();
                     }
                 }
             }
@@ -87,7 +85,7 @@ public class MarketPlace : MonoBehaviour
         {
             for (int col = 0; col < 5; col++)
             {
-                RefreshImage(itemImages[row, col], marketItems[currentTab, currentPage, row, col].itemSprite);
+                RefreshImage(itemImages[row, col], marketItems[currentTab, currentPage, row, col].getSprite());
             }
         }
     }
@@ -96,11 +94,11 @@ public class MarketPlace : MonoBehaviour
     /// </summary>
     /// <param name="refItem">Script for new item</param>
     /// <param name="imgPos">Position to update</param>
-    public void UpdateImage(ItemReference refItem, Vector4 imgPos)
+    public void UpdateImage(ItemSlot refItem, Vector4 imgPos)
     {
-        marketItems[(int)imgPos.x, (int)imgPos.y, (int)imgPos.z, (int)imgPos.w].ChangeValues(refItem);
+        marketItems[(int)imgPos.x, (int)imgPos.y, (int)imgPos.z, (int)imgPos.w].addExisting(refItem);
         if (imgPos.x.Equals(currentTab) && imgPos.y.Equals(currentPage))
-            RefreshImage(itemImages[(int)imgPos.z, (int)imgPos.w], marketItems[(int)imgPos.x, (int)imgPos.y, (int)imgPos.z, (int)imgPos.w].itemSprite);
+            RefreshImage(itemImages[(int)imgPos.z, (int)imgPos.w], marketItems[(int)imgPos.x, (int)imgPos.y, (int)imgPos.z, (int)imgPos.w].getSprite());
     }
     /// <summary>
     /// Updates players items using inventory
@@ -118,7 +116,7 @@ public class MarketPlace : MonoBehaviour
                     int marketcol = (pos % 15) % 5;
                     int invrow = (pos / 7);
                     int invcol = (pos % 7);
-                    marketItems[tab, page, marketrow, marketcol].ChangeValues(inventory.invItems[tab, invrow, invcol]);
+                    marketItems[tab, page, marketrow, marketcol].addExisting(inventory.getItemSlot(tab, invrow, invcol));
                 }
             }
         }
@@ -138,7 +136,7 @@ public class MarketPlace : MonoBehaviour
     /// </summary>
     public void UpdateVendor()
     {
-        ItemReference[,,,] vendorItems = vendor.vendorItems;
+        ItemSlot[,,,] vendorItems = vendor.vendorItems;
         for (int tab = 0; tab < 5; tab++)
         {
             for (int page = 0; page < 3; page++)
@@ -147,7 +145,7 @@ public class MarketPlace : MonoBehaviour
                 {
                     for (int col = 0; col < 5; col++)
                     {
-                        marketItems[tab, page, row, col].ChangeValues(vendorItems[tab, page, row, col]);
+                        marketItems[tab, page, row, col].addExisting(vendorItems[tab, page, row, col]);
                     }
                 }
             }
@@ -160,14 +158,14 @@ public class MarketPlace : MonoBehaviour
     /// <param name="arrayPos">Array position of clicked item</param>
     public void ChooseItem(Vector2Int arrayPos)
     {
-        currentItem.ChangeValues(marketItems[currentTab, currentPage, arrayPos.x, arrayPos.y]);
         currentLoc = new Vector3Int(currentPage, arrayPos.x, arrayPos.y);
-        if ((transferButton.GetComponent<BuyandSell>().buy && manager.gold >= currentItem.cost) || !transferButton.GetComponent<BuyandSell>().buy)
+        ItemSlot currentItem = marketItems[currentTab, currentPage, currentLoc.x, currentLoc.y];
+        if ((transferButton.GetComponent<BuyandSell>().buy && manager.gold >= currentItem.getCost()) || !transferButton.GetComponent<BuyandSell>().buy)
         {
-            transferButton.GetComponent<BuyandSell>().currentItem.ChangeValues(currentItem);
+            transferButton.GetComponent<BuyandSell>().currentItem.addExisting(currentItem);
             transferButton.SetActive(true);
         }
-        RefreshImage(chosenImage, currentItem.itemSprite);
+        RefreshImage(chosenImage, currentItem.getSprite());
     }
     /// <summary>
     /// Updates sprite of image
@@ -186,5 +184,10 @@ public class MarketPlace : MonoBehaviour
     {
         if (marketItems[0, 0, 0, 0] != null)
             UpdateItems();
+    }
+    private void OnDestroy()
+    {
+        if (controls != null)
+            controls.Disable();
     }
 }

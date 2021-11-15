@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8959315299849118077}
   - component: {fileID: 8959315299849118078}
   - component: {fileID: 6088184386100634782}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FireRing
   m_TagString: Untagged
   m_Icon: {fileID: 0}

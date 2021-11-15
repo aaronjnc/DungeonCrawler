@@ -1,10 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Tilemaps;
+using UnityEngine.SceneManagement;
+using System.IO;
+using System;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager currentManager;
     [Tooltip("Eliminate lone tiles")] public bool revisiting = false;
 
     [Header("Modes:")]
@@ -23,7 +28,6 @@ public class GameManager : MonoBehaviour
     public Vector3Int pos = Vector3Int.zero;
     [Header("Script Refs:")]
     public DestroyandPlace destroyandPlace;
-    List<string> blockNames = new List<string>();
     Sprite[] sprites;
     Sprite[] posts;
     List<string> spriteNames = new List<string>();
@@ -32,12 +36,10 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
     [HideInInspector] public Inventory inv;
     [HideInInspector] public bool fighting = false;
-    [HideInInspector] public ItemReference currentItem;
+    [HideInInspector] public ItemSlot currentItem;
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    public static GameManager Instance;
-    public GameObject invObject;
     [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
     [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
@@ -45,13 +47,29 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public int gold = 0;
     [HideInInspector] public bool paused = false;
+    [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    [HideInInspector] public string fullText;
+    public TextAsset[] textFiles;
+    [HideInInspector] public bool loadFromFile = false;
+    GameInformation gameInfo;
+    [HideInInspector] public string worldName;
+    [HideInInspector] public DateTime startTime;
+    [HideInInspector] public double hours;
+    private string previousWorld = "";
+    public ChunkGen gen;
     // Start is called before the first frame update
     void Awake()
     {
+        if (!Directory.Exists(Application.persistentDataPath + "/saves"))
+        {
+            Directory.CreateDirectory(Application.persistentDataPath + "/saves");
+        }
+        DontDestroyOnLoad(gameObject);
+        SceneManager.sceneLoaded += OnSceneLoaded;
         mapz = 0;
         floorz = 1;
-        Instance = this;
-        currentItem = new ItemReference();
+        currentManager = this;
+        currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
             InventoryItem item;
@@ -59,7 +77,6 @@ public class GameManager : MonoBehaviour
             {
                 item.durability = item.baseDurability;
                 item.currentStack = 1;
-                item.damage = 0;
                 itemScripts.Add(item.itemID, item);
             }
             Blocks blockComp = block.GetComponent<Blocks>();
@@ -70,9 +87,12 @@ public class GameManager : MonoBehaviour
             InventoryItem invItem = item.GetComponent<InventoryItem>();
             invItem.durability = invItem.baseDurability;
             invItem.currentStack = 1;
-            invItem.damage = 0;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
+        }
+        foreach(GameObject item in Resources.LoadAll("PremadeSections"))
+        {
+            sections.Add(item.GetComponent<PremadeSection>());
         }
         sprites = Resources.LoadAll<Sprite>("Images");
         posts = Resources.LoadAll<Sprite>("Images/Posts");
@@ -187,5 +207,49 @@ public class GameManager : MonoBehaviour
     {
         paused = false;
         Time.timeScale = 1;
+    }
+    public void BuildNavMesh()
+    {
+        foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
+        {
+            surface.BuildNavMesh();
+        }
+    }
+    public void assignTextFile(string textName)
+    {
+        foreach(TextAsset text in textFiles)
+        {
+            if (text.name.Equals(textName))
+            {
+                fullText = text.text;
+            }
+        }
+    }
+    public void loadWorld(GameInformation info)
+    {
+        loadFromFile = true;
+        gameInfo = info;
+        SceneLoader.LoadScene(1);
+    }
+    public GameInformation GetGameInformation()
+    {
+        return gameInfo;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
+    {
+        ResumeGame();
+        if (!scene.name.Equals("World"))
+        {
+            gen.enabled = false;
+        }
+    }
+
+    public void LoadWorld()
+    {
+        destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
+        character = GameObject.Find("Player");
+        gen.enabled = true;
+        startTime = DateTime.Now;
     }
 }

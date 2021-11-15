@@ -10,13 +10,13 @@ public class BuyandSell : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     Sprite unclickedSprite;
     public bool buy;
     public MarketPlace marketPlace;
-    public ItemReference currentItem;
+    public ItemSlot currentItem;
     public Inventory inventory;
     public MarketPlace otherMarket;
     GameManager manager;
     void Start()
     {
-        currentItem = new ItemReference();
+        currentItem = new ItemSlot();
         unclickedSprite = GetComponent<Image>().sprite;
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         gameObject.SetActive(false);
@@ -31,20 +31,19 @@ public class BuyandSell : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         Vector4 loc = new Vector4(marketPlace.currentTab, marketPlace.currentLoc.x, marketPlace.currentLoc.y, marketPlace.currentLoc.z);
         if (buy)
         {
-            manager.gold -= currentItem.cost;
-            inventory.AddItem(currentItem);
-            marketPlace.UpdateImage(new ItemReference(), loc);
-            marketPlace.vendor.UpdateItem(new ItemReference(), loc);
+            manager.gold -= currentItem.getCost();
+            inventory.AddItem(currentItem.getItemId());
+            marketPlace.UpdateImage(new ItemSlot(), loc);
+            marketPlace.vendor.UpdateItem(new ItemSlot(), loc);
             marketPlace.RefreshImage(marketPlace.chosenImage, null);
             otherMarket.UpdateItems();
         }
         else
         {
-            manager.gold += currentItem.cost;
+            manager.gold += currentItem.getCost();
             int pos = marketPlace.currentLoc.x * 15 + marketPlace.currentLoc.y * 5 + marketPlace.currentLoc.z;
             inventory.RemoveChosenItem(marketPlace.currentTab, pos);
-            marketPlace.UpdateImage(new ItemReference(), loc);
-            marketPlace.currentItem.ChangeValues(new ItemReference());
+            marketPlace.UpdateImage(new ItemSlot(), loc);
             marketPlace.RefreshImage(marketPlace.chosenImage, null);
             otherMarket.vendor.AddItem(currentItem);
             otherMarket.UpdateVendor();

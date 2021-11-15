@@ -18,22 +18,19 @@ public class FreePlayerMove : MonoBehaviour
     DestroyandPlace blockplacing;
     public Vector3Int pos = Vector3Int.zero;
     Vector3Int prevpos = Vector3Int.zero;
-    GameObject canvas;
+    public GameObject canvas;
     Vector2 rotDir = Vector2.zero;
     public GameObject menu;
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
-    Vector2Int currentChunk = Vector2Int.zero;
-    Vector3Int prevPos = Vector3Int.zero;
-    // Start is called before the first frame update
+    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        canvas = manager.invObject;
         blockplacing = grid.GetComponent<DestroyandPlace>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
@@ -52,6 +49,10 @@ public class FreePlayerMove : MonoBehaviour
         controls.Fight.MagicMenu.Enable();
         pos.z = manager.mapz;
         prevpos.z = manager.mapz;
+        if (manager.loadFromFile)
+        {
+            loadFromFile(manager.GetGameInformation());
+        }
     }
     /// <summary>
     /// Activates the spell menu when 'X' is pressed
@@ -167,5 +168,14 @@ public class FreePlayerMove : MonoBehaviour
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
 
+    private void loadFromFile(GameInformation info)
+    {
+        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
+        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
+    }
 }

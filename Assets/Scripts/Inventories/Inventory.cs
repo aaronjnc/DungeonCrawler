@@ -14,14 +14,15 @@ public class Inventory : MonoBehaviour
     public float ydistance;
     GameManager manager;
     public GameObject[,] images = new GameObject[5, 7];
-    public ItemReference[,,] invItems = new ItemReference[5,5,7];
+    //public ItemReference[,,] invItems = new ItemReference[5,5,7];
+    private ItemSlot[,,] itemSlots = new ItemSlot[5, 5, 7];
     public MonoBehaviour[,] spells = new MonoBehaviour[5, 7];
     public Transform mainInv;
-    public ItemReference[,] chosenItems = new ItemReference[5,5];
+    //public ItemReference[,] chosenItems = new ItemReference[5,5];
     public MonoBehaviour[] chosenSpells = new MonoBehaviour[5];
     public Image[] chosenImages = new Image[5];
-    public ItemReference emptyitem;
-    Vector2Int[,] chosenPos = new Vector2Int[5,5];
+    //public ItemReference emptyitem;
+    public Vector2Int[,] chosenPos = new Vector2Int[5,5];
     public SwapRotators swapRotators;
     public Magic magic;
     public GameObject invImage;
@@ -40,6 +41,7 @@ public class Inventory : MonoBehaviour
     void Awake()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        manager.LoadWorld();
         manager.inv = this;
         for(int row = 0; row < 5; row++)
         {
@@ -58,18 +60,23 @@ public class Inventory : MonoBehaviour
         {
             for (int row = 0; row < 5; row++)
             {
-                chosenItems[i,row] = new ItemReference();
+                chosenPos[i, row] = new Vector2Int(10, 10);
                 for (int col = 0; col < 7; col++)
                 {
-                    invItems[i, row, col] = new ItemReference();
+                    itemSlots[i, row, col] = new ItemSlot();
                 }
             }
         }
-        ItemReference item = new ItemReference();
-        item.SetValues(manager.GetItem("BasePickaxe"));
-        AddItem(item);
-        item.SetValues(manager.GetItem("Sword"));
-        AddItem(item);
+        if (manager.loadFromFile)
+        {
+            loadFromFile(manager.GetGameInformation());
+        } else
+        {
+            InventoryItem item = manager.GetItem("BasePickaxe");
+            AddItem(item,1,item.baseDurability);
+            item = manager.GetItem("ExtendoSword");
+            AddItem(item,1, item.baseDurability);
+        }
         gameObject.SetActive(false);
     }
     /// <summary>
@@ -78,21 +85,19 @@ public class Inventory : MonoBehaviour
     /// <param name="ID">Item ID to add to inventory</param>
     public void AddItem(byte ID)
     {
-        ItemReference item = new ItemReference();
-        item.SetValues(manager.GetItem(ID));
-        AddItem(item);
+        InventoryItem newItem = manager.GetItem(ID);
+        AddItem(newItem, 1, newItem.baseDurability);
     }
     /// <summary>
     /// Adds item based on item script
     /// </summary>
     /// <param name="itemRef">Script of item to add to inventory</param>
-    public void AddItem(ItemReference itemRef)
+    public void AddItem(InventoryItem itemRef, int currentStack, int durability)
     {
         InventoryType type = itemRef.invType;
-        ItemReference item = null;
         bool found = false;
         Vector2Int spot = Vector2Int.zero;
-        Vector2 empty = Vector2.zero;
+        Vector2Int empty = Vector2Int.zero;
         int invNum;
         bool emptySpot = false;
         switch(type)
@@ -118,31 +123,31 @@ public class Inventory : MonoBehaviour
         {
             for (int col = 0; col < 7; col++)
             {
-                item = invItems[invNum, row, col];
-                if (itemRef.itemID == item.itemID && !item.empty && item.currentStack != item.stackSize)
+                if (itemRef.itemID == itemSlots[invNum, row, col].getItemId() && !itemSlots[invNum, row, col].isFull())
                 {
                     spot = new Vector2Int(row, col);
                     found = true;
                     break;
                 }
-                if (item.empty && !emptySpot)
+                if (itemSlots[invNum, row,col].isEmpty() && !emptySpot)
                 {
-                    empty = new Vector2(row, col);
+                    empty = new Vector2Int(row, col);
                     emptySpot = true;
                 }
             }
         }
         if (found)
         {
-            invItems[invNum, spot.x, spot.y].currentStack++;
+            int leftOver = itemSlots[invNum, spot.x, spot.y].addToStack((byte)currentStack);
+            if (leftOver > 0)
+                AddItem(itemRef, leftOver, durability);
         }
         else if (emptySpot)
         {
-            invItems[invNum, (int)empty.x, (int)empty.y].ChangeValues(itemRef);
-            invItems[invNum, (int)empty.x, (int)empty.y].empty = false;
+            itemSlots[invNum, empty.x, empty.y].addItem(itemRef, (byte)currentStack, (byte)durability);
             if (invType == type)
             {
-                UpdateImage(new Vector2Int((int)empty.x, (int)empty.y), itemRef.itemSprite);
+                UpdateImage(new Vector2Int(empty.x, empty.y), itemRef.itemSprite);
             }
         }
     }
@@ -200,30 +205,19 @@ public class Inventory : MonoBehaviour
         invType = type;
         for(int row = 0; row < 5; row++)
         {
-            UpdateChosen(row, chosenItems[currentInv, row].itemSprite);
+            Vector2Int currentInvPos = chosenPos[currentInv, row];
+            if (currentInvPos != new Vector2Int(10, 10))
+            {
+                UpdateChosen(row, itemSlots[currentInv, currentInvPos.x, currentInvPos.y].getSprite());
+            } else
+            {
+                UpdateChosen(row, null);
+            }
             for (int col = 0; col < 7; col++)
             {
-                UpdateImage(new Vector2Int(row, col), invItems[currentInv, row, col].itemSprite);
+                UpdateImage(new Vector2Int(row, col), itemSlots[currentInv, row, col].getSprite());
             }
         }
-    }
-    /// <summary>
-    /// Determines number of items in current stack
-    /// </summary>
-    /// <param name="pos">Chosen item position</param>
-    /// <returns></returns>
-    public int currentStack(Vector2Int pos)
-    {
-        return chosenItems[pos.x, pos.y].currentStack;
-    }
-    /// <summary>
-    /// Determines durability of current item
-    /// </summary>
-    /// <param name="pos">Chosen item position</param>
-    /// <returns></returns>
-    public int currentDurability(Vector2Int pos)
-    {
-        return chosenItems[pos.x, pos.y].durability;
     }
     /// <summary>
     /// Removes item at position
@@ -231,8 +225,9 @@ public class Inventory : MonoBehaviour
     /// <param name="pos">Item position</param>
     public void RemoveItem(Vector2Int pos)
     {
-        invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y] = new ItemReference();
-        chosenItems[pos.x, pos.y] = new ItemReference();
+        Vector2Int chosenItemPos = chosenPos[pos.x, pos.y];
+        itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].emptySlot();
+        chosenPos[pos.x, pos.y] = new Vector2Int(10, 10);
         if (pos.x == currentInv)
         {
             UpdateImage(chosenPos[pos.x, pos.y], null);
@@ -246,9 +241,9 @@ public class Inventory : MonoBehaviour
     /// <param name="pos">Chosen item position</param>
     public void reduceDurability(Vector2Int pos)
     {
-        invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].durability--;
-        if (invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].durability == 0)
-            RemoveItem(pos);
+        Vector2Int chosenItemPos = chosenPos[pos.x, pos.y];
+        itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].reduceDurability(1);
+        bool empty = itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].isEmpty();
     }
     /// <summary>
     /// Reduce stack count
@@ -256,9 +251,13 @@ public class Inventory : MonoBehaviour
     /// <param name="pos">Chosen item position</param>
     public void reduceStack(Vector2Int pos)
     {
-        invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].currentStack--;
-        if (invItems[currentInv, chosenPos[pos.x, pos.y].x, chosenPos[pos.x, pos.y].y].currentStack == 0)
-            RemoveItem(pos);
+        Vector2Int chosenItemPos = chosenPos[pos.x, pos.y];
+        itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].reduceStack(1);
+        bool empty = itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].isEmpty();
+        if (empty)
+        {
+            swapRotators.UpdateRotator(swapRotators.current);
+        }
     }
     /// <summary>
     /// Removes chosen item
@@ -269,15 +268,14 @@ public class Inventory : MonoBehaviour
     {
         int invrow = (i / 7);
         int invcol = (i % 7);
-        invItems[tab, invrow, invcol].ChangeValues(new ItemReference());
+        itemSlots[currentInv, invrow, invcol].emptySlot();
         if (tab == currentInv)
-            UpdateImage(new Vector2Int(invrow, invcol), invItems[tab, invrow, invcol].itemSprite);
+            UpdateImage(new Vector2Int(invrow, invcol), null);
         for (int spot = 0; spot < 5; spot++)
         {
             if (chosenPos[tab,i].Equals(new Vector2Int(invrow,invcol)))
             {
                 chosenPos[tab, i] = new Vector2Int(10, 10);
-                chosenItems[tab, i] = new ItemReference();
                 if (tab == currentInv)
                     UpdateChosen(spot, null);
                 swapRotators.UpdateRotator(tab);
@@ -305,12 +303,12 @@ public class Inventory : MonoBehaviour
                         break;
                     }
                 }
-                invItems[currentInv, row, col].empty = false;
-                invItems[currentInv, arrayPos.x, arrayPos.y] = new ItemReference();
+                ItemSlot item = itemSlots[currentInv, arrayPos.x, arrayPos.y];
+                itemSlots[currentInv, row, col].addItem(item.getItem(), item.getCurrentCount(), item.getDurability());
+                itemSlots[currentInv, arrayPos.x, arrayPos.y].emptySlot();
                 images[arrayPos.x, arrayPos.y].GetComponent<Image>().sprite = null;
                 UpdateImage(arrayPos, null);
-                invItems[currentInv, row, col].ChangeValues(invItems[currentInv, arrayPos.x, arrayPos.y]);
-                UpdateImage(new Vector2Int(row, col), invItems[currentInv, row, col].itemSprite);
+                UpdateImage(new Vector2Int(row, col), itemSlots[currentInv, row, col].getSprite());
             }
         }
         else if (row >= 5)
@@ -338,15 +336,12 @@ public class Inventory : MonoBehaviour
                     if (i != chosen && chosenPos[currentInv,i].Equals(arrayPos))
                     {
                         chosenPos[currentInv, i] = new Vector2Int(10,10);
-                        chosenItems[currentInv, i] = new ItemReference();
                         UpdateChosen(i, null);
                         break;
                     }
                 }
-                chosenItems[currentInv, chosen].ChangeValues(invItems[currentInv, arrayPos.x, arrayPos.y]);
-                UpdateChosen(chosen, chosenItems[currentInv, chosen].itemSprite);
+                UpdateChosen(chosen, itemSlots[currentInv, arrayPos.x, arrayPos.y].getSprite());
                 chosenPos[currentInv, chosen] = arrayPos;
-                chosenItems[currentInv, chosen].empty = false;
                 swapRotators.UpdateRotator(currentInv);
             }
         }       
@@ -362,5 +357,42 @@ public class Inventory : MonoBehaviour
             return true;
         else
             return false;
+    }
+
+    private void loadFromFile(GameInformation info)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 5; j++)
+            {
+                for (int k = 0; k < 7; k++)
+                {
+                    byte infoItem = info.inventory[i, j, k];
+                    if (infoItem != 127)
+                    {
+                        InventoryItem item = manager.GetItem(infoItem);
+                        AddItem(item, info.stackSize[i,j,k], info.durability[i,j,k]);
+                    }
+                }
+                if (info.chosenPos[i, j, 0] != int.MaxValue)
+                {
+                    chosenPos[i, j] = new Vector2Int(info.chosenPos[i, j, 0], info.chosenPos[i, j, 1]);
+                }
+            }
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            if (chosenPos[0,i] != new Vector2Int(10,10))
+            {
+                Vector2Int chosenItemPos = chosenPos[0, i];
+                if (chosenItemPos != new Vector2Int(10,10))
+                    UpdateChosen(i, itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].getSprite());
+            }
+        }
+        swapRotators.UpdateRotator(info.rotator);
+    }
+    public ItemSlot getItemSlot(int invNum, int row, int col)
+    {
+        return itemSlots[invNum, row, col];
     }
 }
