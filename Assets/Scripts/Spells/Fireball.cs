@@ -51,7 +51,5 @@ public class Fireball : MonoBehaviour
             }
         }
         Destroy(gameObject);
-        if (manager.spawnEnemies)
-            manager.BuildNavMesh();
     }
 }

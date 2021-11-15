@@ -15,12 +15,10 @@ public class EnemyAttack : MonoBehaviour
     public float attackSpeed;
     float attackCount = 0f;
     bool attackCharged = true;
-    NavMeshAgent agent;
     EnemyMovement movement;
     // Start is called before the first frame update
     void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
         fightScript = GameObject.Find("Player").GetComponent<PlayerFight>();
         movement = GetComponent<EnemyMovement>();
     }
@@ -35,11 +33,7 @@ public class EnemyAttack : MonoBehaviour
         }
         if (spotted)
         {
-            if (agent.remainingDistance <= reach && attackCharged)
-            {
-                fightScript.TakeDamage(damage);
-                attackCharged = false;
-            }
+
         }
     }
     private void OnTriggerEnter2D(Collider2D collision)
@@ -57,7 +51,6 @@ public class EnemyAttack : MonoBehaviour
                 {
                     lastLocation = pos;
                     spotted = true;
-                    SetLocation();
                 }
             }
         }
@@ -77,7 +70,6 @@ public class EnemyAttack : MonoBehaviour
                 {
                     lastLocation = pos;
                     spotted = true;
-                    SetLocation();
                 }
             }
         }
@@ -85,15 +77,5 @@ public class EnemyAttack : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         spotted = false;
-    }
-    /// <summary>
-    /// Sets agent destination to last seen player location
-    /// </summary>
-    void SetLocation()
-    {
-        agent.SetDestination(lastLocation);
-        if (agent.remainingDistance < 1f)
-            agent.isStopped = true;
-        movement.Rotate();
     }
 }

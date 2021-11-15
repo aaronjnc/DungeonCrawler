@@ -208,13 +208,6 @@ public class GameManager : MonoBehaviour
         paused = false;
         Time.timeScale = 1;
     }
-    public void BuildNavMesh()
-    {
-        foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
-        {
-            surface.BuildNavMesh();
-        }
-    }
     public void assignTextFile(string textName)
     {
         foreach(TextAsset text in textFiles)
