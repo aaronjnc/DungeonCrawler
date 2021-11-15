@@ -8,7 +8,7 @@ public class PlayerFight : MonoBehaviour
 {
     PlayerControls controls;
     GameManager manager;
-    ItemReference invItem;
+    ItemSlot invItem;
     public float health;
     public float maxHealth = 100;
     public Slider healthSlider;
@@ -17,7 +17,7 @@ public class PlayerFight : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        invItem = new ItemReference();
+        invItem = new ItemSlot();
         health = maxHealth;
         healthSlider.maxValue = maxHealth;
         healthSlider.minValue = 0;
@@ -50,10 +50,10 @@ public class PlayerFight : MonoBehaviour
     {
         if (manager.fighting && !manager.paused)
         {
-            invItem.ChangeValues(manager.currentItem);
-            if (invItem.fighting)
+            invItem.addExisting(manager.currentItem);
+            if (invItem.fighting())
             {
-                invItem.weaponScript.BaseAttack(gameObject.transform);
+                invItem.getWeaponScript().BaseAttack(gameObject.transform);
             }
         }
     }
@@ -65,10 +65,10 @@ public class PlayerFight : MonoBehaviour
     {
         if (manager.fighting && !manager.paused)
         {
-            invItem.ChangeValues(manager.currentItem);
-            if (invItem.fighting)
+            invItem.addExisting(manager.currentItem);
+            if (invItem.fighting())
             {
-                invItem.weaponScript.AdvancedAttack(gameObject.transform);
+                invItem.getWeaponScript().AdvancedAttack(gameObject.transform);
             }
         }
     }        

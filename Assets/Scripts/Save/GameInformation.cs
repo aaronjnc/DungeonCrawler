@@ -63,18 +63,18 @@ public class GameInformation
             {
                 chosenPos[i, j, 0] = inv.chosenPos[i, j].x;
                 chosenPos[i, j, 1] = inv.chosenPos[i, j].y;
-                if (inv.chosenItems[i,j].empty)
+                if (inv.chosenPos[i,j] != new Vector2Int(10,10))
                 {
                     chosenPos[i, j, 0] = int.MaxValue;
                 }
                 for (int k = 0; k < 7; k++)
                 {
-                    ItemReference iRef = inv.invItems[i, j, k];
-                    if (!iRef.empty)
+                    ItemSlot iRef = inv.getItemSlot(i,j,k);
+                    if (!iRef.isEmpty())
                     {
-                        inventory[i, j, k] = iRef.itemID;
-                        stackSize[i, j, k] = iRef.currentStack;
-                        durability[i, j, k] = iRef.durability;
+                        inventory[i, j, k] = iRef.getItemId();
+                        stackSize[i, j, k] = iRef.getCurrentCount();
+                        durability[i, j, k] = iRef.getDurability();
                     } else
                     {
                         inventory[i, j, k] = 127;

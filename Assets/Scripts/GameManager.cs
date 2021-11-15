@@ -36,7 +36,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
     [HideInInspector] public Inventory inv;
     [HideInInspector] public bool fighting = false;
-    [HideInInspector] public ItemReference currentItem;
+    [HideInInspector] public ItemSlot currentItem;
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour
         mapz = 0;
         floorz = 1;
         currentManager = this;
-        currentItem = new ItemReference();
+        currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
             InventoryItem item;

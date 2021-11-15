@@ -158,7 +158,7 @@ public class DestroyandPlace : MonoBehaviour
         blockHealth = manager.GetItem(newID).durability;
         destroyPos = newPos;
         destroyChunkPos = newChunk;
-        damage = swapRotators.rotators[swapRotators.current].GetComponent<ItemRotator>().chosenItem.damage;
+        damage = swapRotators.rotators[swapRotators.current].GetComponent<ItemRotator>().getChosen().getDamage();
     }
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
