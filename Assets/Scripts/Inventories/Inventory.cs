@@ -377,7 +377,6 @@ public class Inventory : MonoBehaviour
                 if (info.chosenPos[i, j, 0] != int.MaxValue)
                 {
                     chosenPos[i, j] = new Vector2Int(info.chosenPos[i, j, 0], info.chosenPos[i, j, 1]);
-                    swapRotators.UpdateRotator(i);
                 }
             }
         }
@@ -390,6 +389,7 @@ public class Inventory : MonoBehaviour
                     UpdateChosen(i, itemSlots[currentInv, chosenItemPos.x, chosenItemPos.y].getSprite());
             }
         }
+        swapRotators.UpdateRotator(info.rotator);
     }
     public ItemSlot getItemSlot(int invNum, int row, int col)
     {
