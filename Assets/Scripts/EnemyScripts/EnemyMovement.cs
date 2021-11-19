@@ -2,50 +2,47 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-public class EnemyMovement : MonoBehaviour
+public abstract class EnemyMovement : MonoBehaviour
 {
-    public float radius;
-    Vector2 centerpos;
-    EnemyAttack attack;
-    public bool activated = false;
-    public float rotateSpeed;
-    // Start is called before the first frame update
-    void Start()
+    public float speed;
+    public float turnSpeed;
+    public float maxMoveDistance;
+    public float minMoveDistance;
+    protected Vector2 centerPos;
+    protected EnemyAttack attack;
+    protected Vector2 nextPoint;
+    protected Quaternion endRot;
+    protected bool attacking;
+    protected float zPos;
+    protected bool moving;
+    protected bool waiting;
+    public float waitTime;
+    protected void SetNextPoint()
     {
-        attack = GetComponent<EnemyAttack>();
-        centerpos = transform.position;
-        Vector2 newPosition = centerpos + Random.insideUnitCircle * radius;
-        Vector2 dir = (centerpos - newPosition).normalized;
-        float magnitude = (centerpos - newPosition).magnitude;
-    }
-    float waittime = 10f;
-    float timewaited = 0f;
-    float lookTime = 5f;
-    float lookwait = 0f;
-    float lookAngle;
-    Vector2 nextPoint;
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-
-    }
-    /// <summary>
-    /// Determine whether or not to rotate enemy
-    /// </summary>
-    public void Rotate()
-    {
-
-    }
-    /// <summary>
-    /// Rotate while waiting
-    /// </summary>
-    /// <returns></returns>
-    IEnumerator StandRotate()
-    {
-        while (transform.localEulerAngles.z < lookAngle - .1f || transform.localEulerAngles.z > lookAngle + .1f)
+        Vector3 point = centerPos + maxMoveDistance * Random.insideUnitCircle;
+        point.z = zPos;
+        Vector3 dir = (point - transform.position).normalized;
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, dir, Vector2.Distance(transform.position, point));
+        if (hit.collider == null)
         {
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.Euler(0, 0, lookAngle), rotateSpeed * Time.deltaTime);
-            yield return null;
+            nextPoint = new Vector2(point.x, point.y);
+            getEndRotation();
+            moving = true;
         }
+    }
+
+    protected void getEndRotation()
+    {
+        Vector3 point = new Vector3(nextPoint.x, nextPoint.y, zPos);
+        Vector3 dir = (point - transform.position).normalized;
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        endRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, angle - 90);
+    }
+
+    protected void OnDrawGizmos()
+    {
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(centerPos, maxMoveDistance);
+        Gizmos.DrawWireSphere(centerPos, minMoveDistance);
     }
 }
