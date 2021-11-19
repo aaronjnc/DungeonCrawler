@@ -15,7 +15,7 @@ public class CameraTrigger : MonoBehaviour
         EnemyMovement enemy;
         if (collision.gameObject.TryGetComponent(out enemy))
         {
-            enemy.activated = true;
+            enemy.enabled = true;
         }
         if (collision.gameObject.tag.Equals("MapCollider"))
             ChunkGen.currentWorld.LoadChunk(collision.gameObject.transform.parent.transform.position);
@@ -25,7 +25,7 @@ public class CameraTrigger : MonoBehaviour
         EnemyMovement enemy;
         if (collision.gameObject.TryGetComponent(out enemy))
         {
-            enemy.activated = false;
+            enemy.enabled = false;
         }
         if (collision.gameObject.tag.Equals("MapCollider"))
             ChunkGen.currentWorld.UnloadChunk(collision.gameObject.transform.parent.transform.position);

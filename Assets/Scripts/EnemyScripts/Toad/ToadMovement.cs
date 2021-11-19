@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TrollMovement : EnemyMovement
+public class ToadMovement : EnemyMovement
 {
-    // Start is called before the first frame update
+    public float readyJump;
+    bool readying = true;
+    bool jumping;
     void Start()
     {
-        attack = GetComponent<TrollAttack>();
+        attack = GetComponent<ToadAttack>();
         centerPos = transform.position;
         zPos = transform.position.z;
         endRot = Quaternion.identity;
     }
 
-    // Update is called once per frame
     void FixedUpdate()
     {
         attacking = attack.spotted;
@@ -32,16 +33,35 @@ public class TrollMovement : EnemyMovement
             Vector3 target = new Vector3(nextPoint.x, nextPoint.y, zPos);
             if (endRot != transform.rotation)
             {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, endRot, turnSpeed*Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, endRot, turnSpeed * Time.deltaTime);
             }
             if (endRot == transform.rotation)
             {
-                Vector2 pos = new Vector2(transform.position.x, transform.position.y);
+                if (readying)
+                {
+                    readying = false;
+                    wait(readyJump);
+                    jumping = true;
+                } 
+                if (jumping)
+                {
+                    transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
+                    Vector2 pos = new Vector2(transform.position.x, transform.position.y);
+                    if (Mathf.Abs(Vector2.Distance(pos, nextPoint)) < .5f)
+                    {
+                        waiting = true;
+                        moving = false;
+                        StartCoroutine(wait(waitTime));
+                    }
+                }
+
+                /*Vector2 pos = new Vector2(transform.position.x, transform.position.y);
                 if (attacking && Mathf.Abs(Vector2.Distance(pos, nextPoint)) < attack.reach)
                 {
                     moving = false;
                     attack.attack();
-                } else
+                }
+                else
                 {
                     transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
                 }
@@ -50,15 +70,15 @@ public class TrollMovement : EnemyMovement
                 {
                     waiting = true;
                     moving = false;
-                    StartCoroutine(wait());
-                }
+                    StartCoroutine(wait(waitTime));
+                }*/
             }
         }
     }
 
-    IEnumerator wait()
+    IEnumerator wait(float time)
     {
-        yield return new WaitForSeconds(waitTime);
+        yield return new WaitForSeconds(time);
         waiting = false;
     }
 }

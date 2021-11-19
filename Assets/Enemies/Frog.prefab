@@ -231,14 +231,17 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1644744142854790570}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 587bd157260a9a544bedeea5347023c6, type: 3}
+  m_Script: {fileID: 11500000, guid: 55946b4cc51e0a245883cbcdf4f70770, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  radius: 10
-  activated: 0
-  rotateSpeed: 0
+  speed: 3
+  turnSpeed: 10
+  maxMoveDistance: 5
+  minMoveDistance: 1
+  waitTime: 3
+  readyJump: 2
 --- !u!114 &2225010519859716518
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,20 +272,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 1644744142854790570}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fda10339f68918459e30c10cc184ca3, type: 3}
+  m_Script: {fileID: 11500000, guid: ceaaca74797f5c345a3d40a897490070, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 5
-  viewangle: 90
-  damage: 20
+  reach: 0
+  viewangle: 0
+  damage: 0
   player:
     serializedVersion: 2
-    m_Bits: 4096
+    m_Bits: 0
   tile:
     serializedVersion: 2
-    m_Bits: 512
+    m_Bits: 0
+  lastLocation: {x: 0, y: 0, z: 0}
   spotted: 0
-  attackSpeed: 3
+  attackSpeed: 0
 --- !u!58 &5791240082856816750
 CircleCollider2D:
   m_ObjectHideFlags: 0
