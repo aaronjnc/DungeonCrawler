@@ -215,7 +215,7 @@ GameObject:
   - component: {fileID: 4063174041652437069}
   - component: {fileID: 8431762998876700618}
   - component: {fileID: -658363201265995387}
-  - component: {fileID: 8749311350456138140}
+  - component: {fileID: -5859135990583417614}
   m_Layer: 10
   m_Name: Troll
   m_TagString: Enemy
@@ -343,7 +343,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3481517882367892545}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 587bd157260a9a544bedeea5347023c6, type: 3}
   m_Name: 
@@ -364,7 +364,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: 0
-  maxHealth: 40
+  maxHealth: 50
   slider: {fileID: 3911207121298609842}
   firedamage: 2
   firelength: 4
@@ -381,20 +381,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 3481517882367892545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fda10339f68918459e30c10cc184ca3, type: 3}
+  m_Script: {fileID: 11500000, guid: a4dac699b770d8541bfcce6f606655da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  reach: 5
-  viewangle: 90
-  damage: 20
+  reach: 1.3
+  viewangle: 45
+  damage: 5
   player:
     serializedVersion: 2
     m_Bits: 4096
   tile:
     serializedVersion: 2
     m_Bits: 512
+  lastLocation: {x: 0, y: 0, z: 0}
   spotted: 0
-  attackSpeed: 3
+  attackSpeed: 5
 --- !u!58 &-658363201265995387
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -410,29 +411,23 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1
---- !u!195 &8749311350456138140
-NavMeshAgent:
+  m_Radius: 2
+--- !u!114 &-5859135990583417614
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3481517882367892545}
   m_Enabled: 1
-  m_AgentTypeID: -1372625422
-  m_Radius: 0.22
-  m_Speed: 1.75
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 0.4800001
-  m_BaseOffset: 0.24
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 3
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1cdf6f425edbd746b6b7d99bc9d830d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
+  turnSpeed: 8
+  waitTime: 3
+  moveRadius: 6
 --- !u!1 &4845891840385269652
 GameObject:
   m_ObjectHideFlags: 0

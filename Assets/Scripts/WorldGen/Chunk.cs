@@ -594,8 +594,6 @@ public class Chunk
                     SetTile(floorPos, floor[x,y]);
             }
         }
-        if (manager.spawnEnemies)
-            BuildNavMeshes();
     }
     /// <summary>
     /// Changes the tile at the given position using the new block index (used during inital generation)
@@ -786,16 +784,6 @@ public class Chunk
             worldPos.y = y + (chunkPos.y) * height;
         worldPos.z = z;
         return worldPos;
-    }
-    /// <summary>
-    /// Bakes all active nav meshes
-    /// </summary>
-    void BuildNavMeshes()
-    {
-        foreach (NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces.ToArray())
-        {
-            surface.BuildNavMesh();
-        }
     }
     /// <summary>
     /// Called to kill enemy and open up spawn spot

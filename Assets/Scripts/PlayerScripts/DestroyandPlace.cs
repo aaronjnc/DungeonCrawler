@@ -146,8 +146,6 @@ public class DestroyandPlace : MonoBehaviour
                 manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
                 UpdateTile(mapPos, manager.currentTileID, currentChunk);
                 UpdateColor(mapPos, refillTile, currentChunk);
-                if (manager.spawnEnemies)
-                    manager.BuildNavMesh();
             }
             prevmapPos = Vector3Int.zero;
         }
@@ -166,8 +164,6 @@ public class DestroyandPlace : MonoBehaviour
         manager.inv.reduceDurability(new Vector2Int(swapRotators.current, swapRotators.chosen));
         manager.inv.AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
-        if (manager.spawnEnemies)
-            manager.BuildNavMesh();
     }
     void StopBreaking(CallbackContext ctx)
     {
