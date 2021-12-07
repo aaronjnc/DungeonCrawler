@@ -25,6 +25,7 @@ public class FreePlayerMove : MonoBehaviour
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
+    public bool canMove = true;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
@@ -122,7 +123,7 @@ public class FreePlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!manager.paused)
+        if (!manager.paused && canMove)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(controls.Movement.MousePosition.ReadValue<Vector2>());
             float angleRad = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x);

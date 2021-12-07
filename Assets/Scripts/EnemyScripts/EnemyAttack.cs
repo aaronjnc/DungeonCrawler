@@ -85,7 +85,7 @@ public abstract class EnemyAttack : MonoBehaviour
         spotted = false;
     }
 
-    private void OnDrawGizmos()
+    protected void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Vector3 line = transform.position + (transform.up * reach);
