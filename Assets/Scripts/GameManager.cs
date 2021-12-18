@@ -206,15 +206,9 @@ public class GameManager : MonoBehaviour
         paused = false;
         Time.timeScale = 1;
     }
-    public void assignTextFile(string textName)
+    public void assignTextFile(TextAsset text)
     {
-        foreach(TextAsset text in textFiles)
-        {
-            if (text.name.Equals(textName))
-            {
-                fullText = text.text;
-            }
-        }
+        fullText = text.text;
     }
     public void loadWorld(GameInformation info)
     {
