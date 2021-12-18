@@ -582,6 +582,10 @@ public class Chunk
     /// </summary>
     void DrawMap()
     {
+        if (map == null)
+        {
+            GenerateMaps();
+        }
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -746,6 +750,10 @@ public class Chunk
     /// <param name="y">Chunk tile position y</param>
     public void AddInteractable(int x, int y)
     {
+        if (map == null)
+        {
+            GenerateMaps();
+        }
         if (blocks[x, y] == 127)
             return;
         Blocks interactBlock = manager.GetBlock(blocks[x, y]);

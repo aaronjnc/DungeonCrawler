@@ -7,6 +7,8 @@ public class MarketInteract : InteractableTile
 {
     public override void Interact()
     {
+        manager.assignTextFile("Market");
+        SaveSystem.Save();
         SceneLoader.LoadScene(2);
     }
 

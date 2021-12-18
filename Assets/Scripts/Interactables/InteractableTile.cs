@@ -5,6 +5,10 @@ using UnityEngine.SceneManagement;
 
 public abstract class InteractableTile : MonoBehaviour
 {
-    GameManager manager;
+    protected GameManager manager;
+    private void Start()
+    {
+        manager = GameObject.Find("GameController").GetComponent<GameManager>();
+    }
     public abstract void Interact();
 }
