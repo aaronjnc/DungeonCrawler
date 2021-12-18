@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Vendor
+public class Vendor : MonoBehaviour
 {
     public ItemSlot[,,,] vendorItems = new ItemSlot[5, 3, 3, 5];
     GameManager manager;
@@ -10,10 +10,7 @@ public class Vendor
     float[] chance = new float[] { .8f,.1f,.01f,.001f,.0001f};
     int[] itemCount = new int[] { 0, 0, 0, 0, 0 };
     bool[] full = new bool[] { false, false, false, false, false };
-    /// <summary>
-    /// Sets up vendor script and generates new items
-    /// </summary>
-    public Vendor()
+    private void Start()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         for (int i = 0; i < 5; i++)

@@ -24,6 +24,7 @@ public class FreePlayerMove : MonoBehaviour
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
+    public LayerMask interactable;
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public bool canMove = true;
     void Start()
@@ -97,9 +98,10 @@ public class FreePlayerMove : MonoBehaviour
     { 
         if (!manager.paused)
         {
-            if (manager.GetByte(lookPos,currentChunk) != 127)
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 2, interactable);
+            if (hit.collider != null)
             {
-                ChunkGen.currentWorld.Interact(lookPos, currentChunk);
+                hit.collider.gameObject.GetComponent<InteractableTile>().Interact();
             }
         }
     }

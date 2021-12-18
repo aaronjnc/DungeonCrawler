@@ -92,6 +92,7 @@ public class Chunk
     /// </summary>
     public void GenerateChunk()
     {
+        GenerateMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -581,7 +582,10 @@ public class Chunk
     /// </summary>
     void DrawMap()
     {
-        GenerateMaps();
+        if (map == null)
+        {
+            GenerateMaps();
+        }
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -746,23 +750,21 @@ public class Chunk
     /// <param name="y">Chunk tile position y</param>
     public void AddInteractable(int x, int y)
     {
+        if (map == null)
+        {
+            GenerateMaps();
+        }
         if (blocks[x, y] == 127)
             return;
-        if (manager.GetBlock(blocks[x, y]).interactable)
+        Blocks interactBlock = manager.GetBlock(blocks[x, y]);
+        if (interactBlock.interactable)
         {
-            InteractableTile newInteract = new InteractableTile();
-            newInteract.SetUp(blocks[x, y]);
-            specialTiles.Add(new Vector2Int(x, y), newInteract);
+            Vector3 interactablePos = map.GetCellCenterWorld(new Vector3Int(x, y, mapz));
+            interactablePos.z = mapz - 1;
+            Transform interactParent = GameObject.Find("Interactables").transform;
+            GameObject interactable = GameObject.Instantiate(interactBlock.gameObject.GetComponent<InteractReference>().interactable, interactParent);
+            interactable.transform.position = interactablePos;
         }
-    }
-    /// <summary>
-    /// Interact with tile at given position
-    /// </summary>
-    /// <param name="interactPos">Chunk tile position</param>
-    public void Interact(Vector2Int interactPos)
-    {
-        if (specialTiles.ContainsKey(interactPos))
-            specialTiles[interactPos].Interact();
     }
     /// <summary>
     /// Returns the world position given chunk relative position

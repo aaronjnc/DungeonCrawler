@@ -40,8 +40,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
-    [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
     Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;

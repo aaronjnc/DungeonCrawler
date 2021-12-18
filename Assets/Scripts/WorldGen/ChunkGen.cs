@@ -328,16 +328,6 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).UpdateCollider(tilePos.x, tilePos.y,tileCollider);
         }
     }
-    /// <summary>
-    /// Interacts with tile at given location in given chunk
-    /// </summary>
-    /// <param name="tilePos">Chunk tile position</param>
-    /// <param name="chunkPos">Chunk position</param>
-    public void Interact(Vector3Int tilePos,Vector2Int chunkPos)
-    {
-        if (ChunkGenerated(chunkPos))
-            GetChunk(chunkPos).Interact(new Vector2Int(tilePos.x, tilePos.y));
-    }
     void PresetTiles(Vector2Int startPos, PremadeSection section)
     {
         if (section.textmap != null)
