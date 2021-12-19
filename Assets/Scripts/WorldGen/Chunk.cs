@@ -51,30 +51,7 @@ public abstract class Chunk
         biomes = new byte[width, height];
         floor = new byte[width, height];
         numEnemies = UnityEngine.Random.Range(1, maxenemies+1);
-        if (Mathf.Abs(chunkPos.x) % 2 == 0 && Mathf.Abs(chunkPos.y) % 2 == 0)
-        {
-            GenerateBiome();
-        }
-        else if (Mathf.Abs(chunkPos.x) % 2 == 1 && Mathf.Abs(chunkPos.y % 2) == 1)
-        {
-            GenerateBiome();
-        }
-    }
 
-    private void GenerateBiome()
-    {
-        float lowest = 100;
-        byte index = 0;
-        float randomNum = UnityEngine.Random.Range(0, 100f);
-        for (int i = 0; i < biomeScripts.Length; i++)
-        {
-            if (biomeScripts[i].chance >= randomNum/100 && biomeScripts[i].chance < lowest)
-            {
-                index = (byte)i;
-                lowest = biomeScripts[i].chance;
-            }
-        }
-        biome = index;
     }
     /// <summary>
     /// Saves the position and type of tile that should be located at that position

@@ -151,15 +151,7 @@ public class ChunkGen : MonoBehaviour
         if (!ChunkCreated(chunkPos))
         {
             int hash = chunkPos.ToString().GetHashCode();
-            if ((Mathf.Abs(chunkPos.x) % 2 == 0 && Mathf.Abs(chunkPos.y) % 2 == 0) || (Mathf.Abs(chunkPos.x) % 2 == 1 && Mathf.Abs(chunkPos.y % 2) == 1))
-            {
-                int id = DetermineBiome(chunkPos);
-                GenerateBiome(chunkPos, hash, id);
-            }
-            else
-            {
-                chunks.Add(hash, new MixedBiome(chunkPos));
-            }
+            CreateChunk(chunkPos);
             ((Chunk)chunks[hash]).GenerateChunk();
         }
         else
@@ -184,6 +176,7 @@ public class ChunkGen : MonoBehaviour
     }
     private void GenerateBiome(Vector2Int chunkPos, int hash, int biomeIdx)
     {
+        Debug.Log(biomeIdx);
         switch(biomeIdx)
         {
             default:
@@ -212,7 +205,15 @@ public class ChunkGen : MonoBehaviour
     public void CreateChunk(Vector2Int chunkPos)
     {
         int hash = chunkPos.ToString().GetHashCode();
-        //chunks.Add(hash, new Chunk(chunkPos));
+        if ((Mathf.Abs(chunkPos.x) % 2 == 0 && Mathf.Abs(chunkPos.y) % 2 == 0) || (Mathf.Abs(chunkPos.x) % 2 == 1 && Mathf.Abs(chunkPos.y % 2) == 1))
+        {
+            int id = DetermineBiome(chunkPos);
+            GenerateBiome(chunkPos, hash, id);
+        }
+        else
+        {
+            chunks.Add(hash, new MixedBiome(chunkPos));
+        }
     }
     /// <summary>
     /// Returns true if Chunk has already been generated

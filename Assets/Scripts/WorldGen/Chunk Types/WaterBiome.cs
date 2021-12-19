@@ -20,5 +20,6 @@ public class WaterBiome : Chunk
     }
     public WaterBiome(Vector2Int pos) : base(pos)
     {
+        biome = 1;
     }
 }

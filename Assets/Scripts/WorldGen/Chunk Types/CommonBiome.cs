@@ -6,6 +6,7 @@ public class CommonBiome : Chunk
 {
     public CommonBiome(Vector2Int pos) : base(pos)
     {
+        biome = 0;
     }
 
     public override float chance {
