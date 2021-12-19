@@ -15,7 +15,6 @@ public class WaterBiome : Chunk
     public WaterBiome(Vector2Int pos) : base(pos)
     {
         biomeId = 1;
-        FillBiomeMap();
     }
 
     protected override void FillBiomeMap()
@@ -31,6 +30,7 @@ public class WaterBiome : Chunk
 
     public override void GenerateChunk()
     {
+        FillBiomeMap();
         GenerateMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
