@@ -5,36 +5,38 @@ using UnityEngine.Tilemaps;
 using UnityEngine.AI;
 using System;
 
-public class Chunk
+public abstract class Chunk
 {
-    GameManager manager { get { return ChunkGen.currentWorld.manager; } }
+    public abstract float chance { get; }
+    public abstract byte biomeId { get; }
+    protected GameManager manager { get { return ChunkGen.currentWorld.manager; } }
     public Tilemap map;
-    GameObject tilemap { get { return ChunkGen.currentWorld.map; } }
-    Transform grid { get { return ChunkGen.currentWorld.grid; } }
-    Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
-    int mapz = 0;
-    int floorz = 1;
-    int width { get { return ChunkGen.currentWorld.chunkWidth; } }
-    int height { get { return ChunkGen.currentWorld.chunkHeight; } }
-    int randomFillPercent { get { return ChunkGen.currentWorld.randomFillPercent; } }
-    int smooths { get { return ChunkGen.currentWorld.smooths; } }
-    int biomesmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
-    float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
-    int maxenemies { get { return ChunkGen.currentWorld.maxenemies; } }
-    Transform enemyParent { get { return ChunkGen.currentWorld.enemyParent; } }
-    byte[,] blocks;
-    byte[,] biomes;
-    byte[,] floor;
-    byte biome = 127;
-    int seed;
-    int biomeseed;
-    int numEnemies;
+    protected GameObject tilemap { get { return ChunkGen.currentWorld.map; } }
+    protected Transform grid { get { return ChunkGen.currentWorld.grid; } }
+    protected Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
+    protected int mapz = 0;
+    protected int floorz = 1;
+    protected int width { get { return ChunkGen.currentWorld.chunkWidth; } }
+    protected int height { get { return ChunkGen.currentWorld.chunkHeight; } }
+    protected int randomFillPercent { get { return ChunkGen.currentWorld.randomFillPercent; } }
+    protected int smooths { get { return ChunkGen.currentWorld.smooths; } }
+    protected int biomesmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
+    protected float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
+    protected int maxenemies { get { return ChunkGen.currentWorld.maxenemies; } }
+    protected Transform enemyParent { get { return ChunkGen.currentWorld.enemyParent; } }
+    protected byte[,] blocks;
+    protected byte[,] biomes;
+    protected byte[,] floor;
+    protected byte biome = 127;
+    protected int seed;
+    protected int biomeseed;
+    protected int numEnemies;
     public bool generated = false;
     public Vector2Int chunkPos;
-    List<Vector3Int> presetTiles = new List<Vector3Int>();
-    Dictionary<Vector2Int, InteractableTile> specialTiles = new Dictionary<Vector2Int, InteractableTile>();
-    Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
-    System.Random random;
+    protected List<Vector3Int> presetTiles = new List<Vector3Int>();
+    protected Dictionary<Vector2Int, InteractableTile> specialTiles = new Dictionary<Vector2Int, InteractableTile>();
+    protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    protected System.Random random;
     /// <summary>
     /// Initializes chunk script at given chunk position
     /// </summary>
