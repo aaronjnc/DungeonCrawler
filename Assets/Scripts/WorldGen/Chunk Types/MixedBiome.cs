@@ -7,7 +7,6 @@ public class MixedBiome : Chunk
     public MixedBiome(Vector2Int pos) : base(pos)
     {
         biomeId = 127;
-        FillBiomeMap();
     }
 
     public override float chance => throw new System.NotImplementedException();
@@ -15,6 +14,7 @@ public class MixedBiome : Chunk
 
     public override void GenerateChunk()
     {
+        FillBiomeMap();
         GenerateMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)

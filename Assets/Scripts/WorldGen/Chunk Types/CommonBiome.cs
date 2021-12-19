@@ -7,7 +7,6 @@ public class CommonBiome : Chunk
     public CommonBiome(Vector2Int pos) : base(pos)
     {
         biomeId = 0;
-        FillBiomeMap();
     }
 
     public override float chance {
@@ -18,6 +17,7 @@ public class CommonBiome : Chunk
     }
     public override void GenerateChunk()
     {
+        FillBiomeMap();
         GenerateMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
