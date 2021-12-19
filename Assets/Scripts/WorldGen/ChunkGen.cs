@@ -38,7 +38,6 @@ public class ChunkGen : MonoBehaviour
     public int maxenemies;
     public Transform enemyParent;
     public int specialTileChance;
-    public List<Chunk> biomeScripts = new List<Chunk>();
     private void OnEnable()
     {
         currentWorld = this;
@@ -164,11 +163,11 @@ public class ChunkGen : MonoBehaviour
         float lowest = 100;
         int index = 0;
         float randomNum = UnityEngine.Random.Range(0, 100f);
-        foreach (Chunk biomeScript in biomeScripts)
+        foreach (Biomes biomeScript in biomes)
         {
             if (biomeScript.chance >= randomNum / 100 && biomeScript.chance < lowest)
             {
-                index = biomeScript.biomeId;
+                index = biomeScript.biomeID;
                 lowest = biomeScript.chance;
             }
         }
@@ -176,7 +175,6 @@ public class ChunkGen : MonoBehaviour
     }
     private void GenerateBiome(Vector2Int chunkPos, int hash, int biomeIdx)
     {
-        Debug.Log(biomeIdx);
         switch(biomeIdx)
         {
             default:
