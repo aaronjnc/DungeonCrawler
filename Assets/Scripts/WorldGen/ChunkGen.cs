@@ -150,12 +150,40 @@ public class ChunkGen : MonoBehaviour
         if (!ChunkCreated(chunkPos))
         {
             int hash = chunkPos.ToString().GetHashCode();
-            chunks.Add(hash, new Chunk(chunkPos));
+            CreateChunk(chunkPos);
             ((Chunk)chunks[hash]).GenerateChunk();
         }
         else
         {
             GetChunk(chunkPos).GenerateChunk();
+        }
+    }
+    private int DetermineBiome(Vector2Int chunkPos)
+    {
+        float lowest = 100;
+        int index = 0;
+        float randomNum = UnityEngine.Random.Range(0, 100f);
+        foreach (Biomes biomeScript in biomes)
+        {
+            if (biomeScript.chance >= randomNum / 100 && biomeScript.chance < lowest)
+            {
+                index = biomeScript.biomeID;
+                lowest = biomeScript.chance;
+            }
+        }
+        return index;
+    }
+    private void GenerateBiome(Vector2Int chunkPos, int hash, int biomeIdx)
+    {
+        switch(biomeIdx)
+        {
+            default:
+            case 0:
+                chunks.Add(hash, new CommonBiome(chunkPos));
+                break;
+            case 1:
+                chunks.Add(hash, new WaterBiome(chunkPos));
+                break;
         }
     }
     /// <summary>
@@ -175,7 +203,15 @@ public class ChunkGen : MonoBehaviour
     public void CreateChunk(Vector2Int chunkPos)
     {
         int hash = chunkPos.ToString().GetHashCode();
-        chunks.Add(hash, new Chunk(chunkPos));
+        if ((Mathf.Abs(chunkPos.x) % 2 == 0 && Mathf.Abs(chunkPos.y) % 2 == 0) || (Mathf.Abs(chunkPos.x) % 2 == 1 && Mathf.Abs(chunkPos.y % 2) == 1))
+        {
+            int id = DetermineBiome(chunkPos);
+            GenerateBiome(chunkPos, hash, id);
+        }
+        else
+        {
+            chunks.Add(hash, new MixedBiome(chunkPos));
+        }
     }
     /// <summary>
     /// Returns true if Chunk has already been generated
