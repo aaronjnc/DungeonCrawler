@@ -8,8 +8,7 @@ using UnityEngine.InputSystem;
 public class ItemRotator : MonoBehaviour
 {
     Sprite fullRotator;
-    //public ItemReference[] items = new ItemReference[5];
-    public ItemSlot[] itemSlots = new ItemSlot[5];
+    public ItemSlot[] itemSlots;
     public List<Image> images = new List<Image>();
     //public ItemReference chosenItem;
     public Image centralImage;
@@ -25,6 +24,13 @@ public class ItemRotator : MonoBehaviour
     [HideInInspector]
     public int rotator = 0;
     bool started = false;
+    public enum RotatorType
+    {
+        Weapon,
+        Consumable,
+        Tool,
+    }
+    public RotatorType type;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,6 +40,15 @@ public class ItemRotator : MonoBehaviour
 
     void StartMethod()
     {
+        switch (type)
+        {
+            case RotatorType.Consumable:
+                itemSlots = new ItemSlot[3];
+                break;
+            default:
+                itemSlots = new ItemSlot[2];
+                break;
+        }
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         rotatorImage = GetComponent<Image>();
         controls = new PlayerControls();
@@ -135,15 +150,15 @@ public class ItemRotator : MonoBehaviour
             StartMethod();
         for (int i = 0; i < 5; i++)
         {
-            Vector2Int chosenItemPos = inv.chosenPos[rotator, i];
+            /*Vector2Int chosenItemPos = inv.chosenPos[rotator, i];
             if (chosenItemPos == new Vector2Int(10, 10))
                 continue;
-            itemSlots[i].addExisting(inv.getItemSlot(rotator, chosenItemPos.x, chosenItemPos.y));
+            itemSlots[i].addExisting(inv.getItemSlot(chosenItemPos.x, chosenItemPos.y));
             images[i].sprite = itemSlots[i].getSprite();
             if (images[i].sprite != null)
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 255);
             else
-                images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
+                images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);*/
         }
         centralImage.sprite = itemSlots[current].getSprite();
         fullRotator = swapRotators.fullRotators[0];

@@ -99,24 +99,6 @@ public class Vendor : MonoBehaviour
     public void AddItem(ItemSlot itemRef)
     {
         int tab = 0;
-        switch (itemRef.getInvType())
-        {
-            case Inventory.InventoryType.Weapons:
-                tab = 0;
-                break;
-            case Inventory.InventoryType.Blocks:
-                tab = 1;
-                break;
-            case Inventory.InventoryType.Tools:
-                tab = 2;
-                break;
-            case Inventory.InventoryType.Food:
-                tab = 3;
-                break;
-            case Inventory.InventoryType.Armor:
-                tab = 4;
-                break;
-        }
         int tabCount = itemCount[tab];
         int page = (int)(tabCount / 15);
         int marketrow = (tabCount % 15) / 5;

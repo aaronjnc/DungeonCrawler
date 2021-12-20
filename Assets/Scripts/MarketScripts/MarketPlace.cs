@@ -116,7 +116,7 @@ public class MarketPlace : MonoBehaviour
                     int marketcol = (pos % 15) % 5;
                     int invrow = (pos / 7);
                     int invcol = (pos % 7);
-                    marketItems[tab, page, marketrow, marketcol].addExisting(inventory.getItemSlot(tab, invrow, invcol));
+                    marketItems[tab, page, marketrow, marketcol].addExisting(inventory.getItemSlot(invrow, invcol));
                 }
             }
         }

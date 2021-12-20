@@ -11,7 +11,6 @@ public class InventoryItem : MonoBehaviour
     public byte currentStack = 1;
     public byte damage;
     public bool fighting;
-    public Inventory.InventoryType invType;
     public bool empty = true;
     public int level;
     public int cost;
