@@ -16,12 +16,11 @@ public class InventoryItem : MonoBehaviour
     public int cost;
     public byte itemID;
     public WeaponInterface<Transform,PlayerFight> weaponScript { get { return (WeaponInterface<Transform, PlayerFight>)gameObject.GetComponent(typeof(WeaponInterface<Transform, PlayerFight>)); } }
-    public enum Type
+    public enum ItemType
     {
-        Pickaxe,
-        Block,
-        Post,
-        Sword,
-        Bow
+        Weapon,
+        Consumable,
+        Tool,
     }
+    public ItemType itemType;
 }

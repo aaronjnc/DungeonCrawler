@@ -14,32 +14,40 @@ public class Inventory : MonoBehaviour
     public GameObject[] consumableImages = new GameObject[3];
     public GameObject[] toolImages = new GameObject[2];
     private ItemSlot[,] itemSlots = new ItemSlot[5, 7];
+    [HideInInspector]
     public List<Vector2Int> chosenWeapons = new List<Vector2Int>();
+    [HideInInspector]
     public List<Vector2Int> chosenConsumables = new List<Vector2Int>();
+    [HideInInspector]
     public List<Vector2Int> chosenTools = new List<Vector2Int>();
+    public SwapRotators swapRotators;
     void Awake()
     {
         chosenWeapons.Capacity = 2;
         chosenConsumables.Capacity = 3;
         chosenTools.Capacity = 2;
+        for (int i = 0; i < 3; i++)
+        {
+            if (i != 3)
+            {
+                chosenWeapons.Add(new Vector2Int(int.MaxValue, int.MaxValue));
+                chosenTools.Add(new Vector2Int(int.MaxValue, int.MaxValue));
+            }
+            chosenConsumables.Add(new Vector2Int(int.MaxValue, int.MaxValue));
+        }
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         manager.LoadWorld();
         manager.inv = this;
         int imgnum = 0;
-        for(int row = 0; row < 5; row++)
+        foreach (ImageMover imageMover in GetComponentsInChildren<ImageMover>())
         {
-            for (int col = 0; col < 7;col++)
-            {
-                if (imgnum == 0)
-                {
-                    images[row, col] = GameObject.Find("Image");
-                } else
-                {
-                    images[row, col] = GameObject.Find("Image (" + imgnum + ")");
-                }
-                images[row, col].GetComponent<ImageMover>().SetArrayPos(new Vector2Int(row, col));
-                imgnum++;
-            }
+            if (imgnum >= 35)
+                break;
+            int row = imgnum / 7;
+            int col = imgnum % 7;
+            images[row, col] = imageMover.gameObject;
+            imageMover.SetArrayPos(new Vector2Int(row, col));
+            imgnum++;
         }
         for (int i = 0; i < 5; i++)
         {
@@ -130,6 +138,7 @@ public class Inventory : MonoBehaviour
             weaponImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
         else
             weaponImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
+        swapRotators.UpdateRotator(0);
     }
     private void UpdateConsumables(int pos, Sprite itemSprite)
     {
@@ -138,6 +147,7 @@ public class Inventory : MonoBehaviour
             consumableImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
         else
             consumableImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
+        swapRotators.UpdateRotator(1);
     }
     private void UpdateTools(int pos, Sprite itemSprite)
     {
@@ -146,6 +156,7 @@ public class Inventory : MonoBehaviour
             toolImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
         else
             toolImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
+        swapRotators.UpdateRotator(2);
     }
     public void reduceWeaponDurability(int pos)
     {
@@ -196,7 +207,7 @@ public class Inventory : MonoBehaviour
         Vector2Int chosenItemPos = chosenConsumables[pos];
         itemSlots[chosenItemPos.x, chosenItemPos.y].emptySlot();
         UpdateImage(chosenItemPos, null);
-        UpdateTools(pos, null);
+        UpdateConsumables(pos, null);
     }
     /// <summary>
     /// Moves item to new location in inventory
@@ -207,6 +218,34 @@ public class Inventory : MonoBehaviour
     {
         if (IsEmpty(arrayPos))
         {
+            return;
+        }
+        if (dropPos.x >= 10)
+        {
+            ItemSlot slot = itemSlots[arrayPos.x, arrayPos.y];
+            int chosenType = dropPos.x / 10;
+            int chosenSpot = dropPos.y;
+            switch(chosenType)
+            {
+                case 1:
+                    if (slot.GetItemType() != InventoryItem.ItemType.Weapon)
+                        return;
+                    chosenWeapons[chosenSpot] = arrayPos;
+                    UpdateWeapon(chosenSpot, slot.getSprite());
+                    break;
+                case 2:
+                    if (slot.GetItemType() != InventoryItem.ItemType.Consumable)
+                        return;
+                    chosenConsumables[chosenSpot] = arrayPos;
+                    UpdateConsumables(chosenSpot, slot.getSprite());
+                    break;
+                case 3:
+                    if (slot.GetItemType() != InventoryItem.ItemType.Tool)
+                        return;
+                    chosenTools[chosenSpot] = arrayPos;
+                    UpdateTools(chosenSpot, slot.getSprite());
+                    break;
+            }
             return;
         }
         if (IsEmpty(dropPos))

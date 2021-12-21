@@ -7,12 +7,12 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(BoxCollider2D))]
 public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+    public bool movable = true;
     GameManager manager;
     bool mouseDown = false;
     Vector3 startpos = Vector3.zero;
-    Vector2Int itemPos;
+    public Vector2Int itemPos;
     Inventory inv;
-    List<GameObject> otherImages = new List<GameObject>();
     void Start()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -33,7 +33,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (!inv.IsEmpty(itemPos))
+        if (movable && !inv.IsEmpty(itemPos))
         {
             mouseDown = true;
         }
@@ -55,32 +55,29 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             transform.position = new Vector3(pos.x, pos.y, startpos.z);
         }
     }
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        otherImages.Add(other.gameObject);
-    }
-    void OnTriggerExit2D(Collider2D other)
-    {
-        otherImages.Remove(other.gameObject);
-    }
     private void DropItem()
     {
-        int closestObj = -1;
+        var old = Physics2D.queriesHitTriggers;
+        Physics2D.queriesHitTriggers = true;
+        Collider2D[] collisions = Physics2D.OverlapCircleAll(transform.position, 30);
+        Physics2D.queriesHitTriggers = old;
         float closestDistance = int.MaxValue;
-        for (int i = 0; i < otherImages.Count; i++)
+        GameObject closestObj = null;
+        for (int i = 0; i < collisions.Length; i++)
         {
-            float dist = Vector2.Distance(otherImages[i].transform.position, transform.position);
+            if (collisions[i].gameObject == gameObject)
+                continue;
+            float dist = Vector2.Distance(collisions[i].gameObject.transform.position, transform.position);
             if (dist < closestDistance && dist < 20)
             {
-                closestObj = i;
+                closestObj = collisions[i].gameObject;
                 closestDistance = dist;
             }
         }
-        if (closestObj != -1)
+        if (closestObj != null)
         {
-            inv.DropItem(getArrayPos(), otherImages[closestObj].GetComponent<ImageMover>().getArrayPos());
+            inv.DropItem(getArrayPos(), closestObj.GetComponent<ImageMover>().getArrayPos());
         }
-        otherImages.Clear();
         transform.position = startpos;
     }
 }

@@ -121,4 +121,8 @@ public class ItemSlot
             return null;
         return itemRef.weaponScript;
     }
+    public InventoryItem.ItemType GetItemType()
+    {
+        return itemRef.itemType;
+    }
 }

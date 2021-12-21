@@ -90,7 +90,7 @@ public class GameInformation
             chosenConsumables[i, 0] = inv.chosenConsumables[i].x;
             chosenConsumables[i, 1] = inv.chosenConsumables[i].y;
         }
-        //rotator = inv.swapRotators.current;
-        //currentChoice = inv.swapRotators.chosen;
+        rotator = inv.swapRotators.current;
+        currentChoice = inv.swapRotators.chosen;
     }
 }
