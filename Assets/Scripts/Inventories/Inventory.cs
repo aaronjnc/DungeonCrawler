@@ -311,11 +311,11 @@ public class Inventory : MonoBehaviour
                     UpdateWeapon(i, itemSlots[chosenWeapons[i].x, chosenWeapons[i].y].getSprite());
                 chosenTools[i] = new Vector2Int(info.chosenTools[i, 0], info.chosenTools[i, 1]);
                 if (chosenTools[i] != new Vector2Int(int.MaxValue, int.MaxValue))
-                    UpdateWeapon(i, itemSlots[chosenTools[i].x, chosenTools[i].y].getSprite());
+                    UpdateTools(i, itemSlots[chosenTools[i].x, chosenTools[i].y].getSprite());
             }
             chosenConsumables[i] = new Vector2Int(info.chosenConsumables[i, 0], info.chosenConsumables[i, 1]);
             if (chosenConsumables[i] != new Vector2Int(int.MaxValue, int.MaxValue))
-                UpdateWeapon(i, itemSlots[chosenConsumables[i].x, chosenConsumables[i].y].getSprite());
+                UpdateConsumables(i, itemSlots[chosenConsumables[i].x, chosenConsumables[i].y].getSprite());
         }
         swapRotators.UpdateRotator(info.rotator);
     }

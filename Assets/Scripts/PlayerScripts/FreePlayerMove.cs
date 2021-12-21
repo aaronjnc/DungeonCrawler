@@ -161,7 +161,7 @@ public class FreePlayerMove : MonoBehaviour
         lookPos = pos + lookDir;
         if (lookPos != prevlookPos)
         {
-            if (manager.blockplacing)
+            if (manager.blockBreaking)
             {
                 blockplacing.enabled = true;
                 blockplacing.Positioning(lookPos,currentChunk);

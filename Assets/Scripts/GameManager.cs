@@ -19,9 +19,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Abilities:")]
     [HideInInspector]
-    public bool blockplacing = false;
-    [HideInInspector]
-    public bool placing = false;
+    public bool blockBreaking = false;
     [HideInInspector]
     public byte currentTileID;
     [HideInInspector]
@@ -70,13 +68,6 @@ public class GameManager : MonoBehaviour
         currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
-            InventoryItem item;
-            if (block.TryGetComponent<InventoryItem>(out item))
-            {
-                item.durability = item.baseDurability;
-                item.currentStack = 1;
-                itemScripts.Add(item.itemID, item);
-            }
             Blocks blockComp = block.GetComponent<Blocks>();
             blocks.Add(blockComp.index, blockComp);
         }

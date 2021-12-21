@@ -56,6 +56,7 @@ MonoBehaviour:
   index: 1
   maxperchunk: 0
   interactable: 0
+  durability: 50
   drops:
   - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
   chances:

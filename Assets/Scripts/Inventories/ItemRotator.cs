@@ -233,8 +233,7 @@ public class ItemRotator : MonoBehaviour
                     //consumable
                     break;
                 case RotatorType.Tool:
-                    manager.blockplacing = true;
-                    manager.placing = false;
+                    manager.blockBreaking = true;
                     break;
             }
         }
@@ -254,7 +253,7 @@ public class ItemRotator : MonoBehaviour
     public void DisableBlockPlacing()
     {
         manager.ResetPreviousTile();
-        manager.blockplacing = false;
+        manager.blockBreaking = false;
     }
 
     private void OnDestroy()
