@@ -198,6 +198,7 @@ public class Inventory : MonoBehaviour
         images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateWeapon(pos, null);
+        chosenWeapons[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
     }
     private void RemoveTool(int pos)
     {
@@ -206,6 +207,7 @@ public class Inventory : MonoBehaviour
         images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateTools(pos, null);
+        chosenTools[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
     }
     private void RemoveConsumable(int pos)
     {
@@ -214,6 +216,7 @@ public class Inventory : MonoBehaviour
         images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateConsumables(pos, null);
+        chosenConsumables[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
     }
     /// <summary>
     /// Moves item to new location in inventory
@@ -291,36 +294,30 @@ public class Inventory : MonoBehaviour
         {
             for (int j = 0; j < 5; j++)
             {
-                for (int k = 0; k < 7; k++)
+                byte infoItem = info.inventory[i, j];
+                if (infoItem != 127)
                 {
-                    byte infoItem = info.inventory[i, j, k];
-                    if (infoItem != 127)
-                    {
-                        InventoryItem item = manager.GetItem(infoItem);
-                        AddItem(item, info.stackSize[i,j,k], info.durability[i,j,k]);
-                    }
+                    InventoryItem item = manager.GetItem(infoItem);
+                    AddItem(item, info.stackSize[i, j], info.durability[i, j]);
                 }
             }
         }
-        /*for (int i = 0; i < 5; i++)
-        {
-            if (chosenPos[0,i] != new Vector2Int(10,10))
-            {
-                Vector2Int chosenItemPos = chosenPos[0, i];
-                if (chosenItemPos != new Vector2Int(10,10))
-                    UpdateChosen(i, itemSlots[chosenItemPos.x, chosenItemPos.y].getSprite());
-            }
-        }*/
         for (int i = 0; i < 3; i++)
         {
-            if (i != 3)
+            if (i != 2)
             {
                 chosenWeapons[i] = new Vector2Int(info.chosenWeapons[i, 0], info.chosenWeapons[i, 1]);
+                if (chosenWeapons[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                    UpdateWeapon(i, itemSlots[chosenWeapons[i].x, chosenWeapons[i].y].getSprite());
                 chosenTools[i] = new Vector2Int(info.chosenTools[i, 0], info.chosenTools[i, 1]);
+                if (chosenTools[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                    UpdateWeapon(i, itemSlots[chosenTools[i].x, chosenTools[i].y].getSprite());
             }
             chosenConsumables[i] = new Vector2Int(info.chosenConsumables[i, 0], info.chosenConsumables[i, 1]);
+            if (chosenConsumables[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                UpdateWeapon(i, itemSlots[chosenConsumables[i].x, chosenConsumables[i].y].getSprite());
         }
-        //swapRotators.UpdateRotator(info.rotator);
+        swapRotators.UpdateRotator(info.rotator);
     }
     public ItemSlot getItemSlot(int row, int col)
     {

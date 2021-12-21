@@ -29,7 +29,6 @@ public class SwapRotators : MonoBehaviour
     {
         previous = current;
         current = Mathf.Clamp(current + (int)ctx.ReadValue<float>(), 0, 2);
-        Debug.Log(current);
         if (current != previous)
         {
             rotators[previous].SetActive(false);
