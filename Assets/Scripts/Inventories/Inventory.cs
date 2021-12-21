@@ -99,6 +99,7 @@ public class Inventory : MonoBehaviour
                     spot = new Vector2Int(row, col);
                     found = true;
                     int leftOver = itemSlots[spot.x, spot.y].addToStack((byte)currentStack);
+                    images[spot.x, spot.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[spot.x, spot.y].getCurrentCount());
                     if (leftOver > 0)
                         AddItem(itemRef, leftOver, durability);
                     break;
@@ -115,6 +116,7 @@ public class Inventory : MonoBehaviour
         if (emptySpot)
         {
             itemSlots[empty.x, empty.y].addItem(itemRef, (byte)currentStack, (byte)durability);
+            images[empty.x, empty.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[empty.x, empty.y].getCurrentCount());
             UpdateImage(new Vector2Int(empty.x, empty.y), itemRef.itemSprite);
         }
     }
@@ -182,6 +184,7 @@ public class Inventory : MonoBehaviour
     {
         Vector2Int chosenItemPos = chosenConsumables[pos];
         itemSlots[chosenItemPos.x, chosenItemPos.y].reduceStack(1);
+        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[chosenItemPos.x, chosenItemPos.y].getCurrentCount());
         bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
         if (empty)
         {
@@ -192,6 +195,7 @@ public class Inventory : MonoBehaviour
     {
         Vector2Int chosenItemPos = chosenWeapons[pos];
         itemSlots[chosenItemPos.x,chosenItemPos.y].emptySlot();
+        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateWeapon(pos, null);
     }
@@ -199,6 +203,7 @@ public class Inventory : MonoBehaviour
     {
         Vector2Int chosenItemPos = chosenTools[pos];
         itemSlots[chosenItemPos.x, chosenItemPos.y].emptySlot();
+        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateTools(pos, null);
     }
@@ -206,6 +211,7 @@ public class Inventory : MonoBehaviour
     {
         Vector2Int chosenItemPos = chosenConsumables[pos];
         itemSlots[chosenItemPos.x, chosenItemPos.y].emptySlot();
+        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateConsumables(pos, null);
     }

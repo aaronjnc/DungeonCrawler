@@ -59,8 +59,8 @@ MonoBehaviour:
   interactable: 0
   drops:
   - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
-  chance:
-  - 0.5
+  chances:
+  - 0.2
   blockName: 
   blockType: 0
 --- !u!114 &4806325385433669802

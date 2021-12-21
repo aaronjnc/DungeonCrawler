@@ -169,7 +169,6 @@ public class DestroyandPlace : MonoBehaviour
     {
         Blocks block = manager.GetBlock(blockId);
         float randomVal = UnityEngine.Random.value;
-        Debug.Log(randomVal);
         for (int i = 0; i < block.drops.Count; i++)
         {
             if (randomVal < block.chances[i])
