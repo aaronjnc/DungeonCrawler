@@ -56,6 +56,11 @@ MonoBehaviour:
   prefab: 0
   index: 2
   maxperchunk: 0
+  interactable: 0
+  drops:
+  - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
+  chances:
+  - 0.2
   blockName: 
   blockType: 0
 --- !u!114 &-1220340356492543505
@@ -77,8 +82,8 @@ MonoBehaviour:
   currentStack: 1
   damage: 0
   fighting: 0
-  invType: 1
   empty: 0
   level: 0
   cost: 0
   itemID: 2
+  itemType: 0

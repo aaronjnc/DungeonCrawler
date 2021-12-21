@@ -162,8 +162,21 @@ public class DestroyandPlace : MonoBehaviour
     {
         breaking = false;
         manager.inv.ReduceToolDurability(swapRotators.chosen);
-        manager.inv.AddItem(blockID);
+        AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
+    }
+    private void AddItem(byte blockId)
+    {
+        Blocks block = manager.GetBlock(blockId);
+        float randomVal = UnityEngine.Random.value;
+        for (int i = 0; i < block.drops.Count; i++)
+        {
+            if (randomVal < block.chances[i])
+            {
+                manager.inv.AddItem(block.drops[i].itemID);
+                return;
+            }
+        }
     }
     void StopBreaking(CallbackContext ctx)
     {

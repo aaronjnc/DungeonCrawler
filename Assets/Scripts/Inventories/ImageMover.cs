@@ -4,9 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
+using System;
+
 [RequireComponent(typeof(BoxCollider2D))]
 public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+    public Text itemCount;
+    private GameObject itemCounter;
     public bool movable = true;
     GameManager manager;
     bool mouseDown = false;
@@ -26,6 +30,10 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     public void SetArrayPos(Vector2Int arrayPos)
     {
         itemPos = arrayPos;
+        if (itemPos.x < 10)
+        {
+            itemCounter = Instantiate(itemCount.gameObject, transform);
+        }
     }
     public Vector2Int getArrayPos()
     {
@@ -79,5 +87,21 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             inv.DropItem(getArrayPos(), closestObj.GetComponent<ImageMover>().getArrayPos());
         }
         transform.position = startpos;
+    }
+    public void UpdateCount(int count)
+    {
+        if (count == 0)
+        {
+            itemCounter.SetActive(false);
+            return;
+        }
+        try
+        {
+            itemCounter.GetComponent<Text>().text = count.ToString();
+        } catch (NullReferenceException e)
+        {
+            Debug.Log(gameObject.name);
+        }
+        itemCounter.SetActive(true);
     }
 }
