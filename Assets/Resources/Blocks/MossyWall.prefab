@@ -60,6 +60,6 @@ MonoBehaviour:
   drops:
   - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
   chances:
-  - 0.2
+  - 1
   blockName: 
   blockType: 0

@@ -33,8 +33,8 @@ public abstract class Chunk
     public bool generated = false;
     public Vector2Int chunkPos;
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
-    protected Dictionary<Vector2Int, InteractableTile> specialTiles = new Dictionary<Vector2Int, InteractableTile>();
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    protected List<GameObject> interactables = new List<GameObject>();
     protected System.Random random;
     protected abstract void FillBiomeMap();
     /// <summary>
@@ -508,6 +508,10 @@ public abstract class Chunk
         {
             enemy.SetActive(false);
         }
+        foreach(GameObject interactable in interactables)
+        {
+            interactable.SetActive(false);
+        }
     }
     /// <summary>
     /// Activates the map renderer and enemies
@@ -518,6 +522,10 @@ public abstract class Chunk
         foreach(GameObject enemy in enemies.Values)
         {
             enemy.SetActive(true);
+        }
+        foreach (GameObject interactable in interactables)
+        {
+            interactable.SetActive(true);
         }
     }
     /// <summary>
@@ -573,6 +581,7 @@ public abstract class Chunk
             Transform interactParent = GameObject.Find("Interactables").transform;
             GameObject interactable = GameObject.Instantiate(interactBlock.gameObject.GetComponent<InteractReference>().interactable, interactParent);
             interactable.transform.position = interactablePos;
+            interactables.Add(interactable);
         }
     }
     /// <summary>

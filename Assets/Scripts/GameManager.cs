@@ -19,9 +19,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Abilities:")]
     [HideInInspector]
-    public bool blockplacing = false;
-    [HideInInspector]
-    public bool placing = false;
+    public bool blockBreaking = false;
     [HideInInspector]
     public byte currentTileID;
     [HideInInspector]
