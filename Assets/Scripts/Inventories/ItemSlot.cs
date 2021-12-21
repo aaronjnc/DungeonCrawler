@@ -85,12 +85,6 @@ public class ItemSlot
             return 0;
         return itemRef.cost;
     }
-    public Inventory.InventoryType getInvType()
-    {
-        if (itemRef == null)
-            return Inventory.InventoryType.Blocks;
-        return itemRef.invType;
-    }
     public byte getItemId()
     {
         if (itemRef == null)
@@ -126,5 +120,9 @@ public class ItemSlot
         if (itemRef == null)
             return null;
         return itemRef.weaponScript;
+    }
+    public InventoryItem.ItemType GetItemType()
+    {
+        return itemRef.itemType;
     }
 }

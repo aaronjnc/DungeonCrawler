@@ -23,7 +23,9 @@ public class GameInformation
     public byte[,,] durability = new byte[5,5,7];
     public int rotator;
     public int currentChoice;
-    public int[,,] chosenPos = new int[5,5,2];
+    public int[,] chosenWeapons = new int[2, 2];
+    public int[,] chosenConsumables = new int[3, 2];
+    public int[,] chosenTools = new int[2, 2];
     public GameInformation(GameObject manager)
     {
         SaveWorld(manager.GetComponent<ChunkGen>());
@@ -61,15 +63,9 @@ public class GameInformation
         {
             for (int j = 0; j < 5; j++)
             {
-                chosenPos[i, j, 0] = inv.chosenPos[i, j].x;
-                chosenPos[i, j, 1] = inv.chosenPos[i, j].y;
-                if (inv.chosenPos[i,j] != new Vector2Int(10,10))
-                {
-                    chosenPos[i, j, 0] = int.MaxValue;
-                }
                 for (int k = 0; k < 7; k++)
                 {
-                    ItemSlot iRef = inv.getItemSlot(i,j,k);
+                    ItemSlot iRef = inv.getItemSlot(j,k);
                     if (!iRef.isEmpty())
                     {
                         inventory[i, j, k] = iRef.getItemId();
@@ -81,6 +77,18 @@ public class GameInformation
                     }
                 }
             }
+        }
+        for (int i = 0; i < 3; i++)
+        {
+            if (i != 3)
+            {
+                chosenWeapons[i, 0] = inv.chosenWeapons[i].x;
+                chosenWeapons[i, 1] = inv.chosenWeapons[i].y;
+                chosenTools[i, 0] = inv.chosenTools[i].x;
+                chosenTools[i,1] = inv.chosenTools[i].y;
+            }
+            chosenConsumables[i, 0] = inv.chosenConsumables[i].x;
+            chosenConsumables[i, 1] = inv.chosenConsumables[i].y;
         }
         rotator = inv.swapRotators.current;
         currentChoice = inv.swapRotators.chosen;

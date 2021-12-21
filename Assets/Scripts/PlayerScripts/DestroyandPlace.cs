@@ -143,7 +143,7 @@ public class DestroyandPlace : MonoBehaviour
             }
             else if (manager.placing && GetTile(mapPos, currentChunk).color.a != 255)
             {
-                manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
+                //manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
                 UpdateTile(mapPos, manager.currentTileID, currentChunk);
                 UpdateColor(mapPos, refillTile, currentChunk);
             }
@@ -161,7 +161,7 @@ public class DestroyandPlace : MonoBehaviour
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
         breaking = false;
-        manager.inv.reduceDurability(new Vector2Int(swapRotators.current, swapRotators.chosen));
+        manager.inv.ReduceToolDurability(swapRotators.chosen);
         manager.inv.AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
     }
