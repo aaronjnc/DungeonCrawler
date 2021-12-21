@@ -21,6 +21,7 @@ public class InventoryItem : MonoBehaviour
         Weapon,
         Consumable,
         Tool,
+        Mineral,
     }
     public ItemType itemType;
 }
