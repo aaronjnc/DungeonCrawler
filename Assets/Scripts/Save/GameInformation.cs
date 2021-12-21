@@ -18,9 +18,9 @@ public class GameInformation
     public int[] enabledSpells;
     public int seed;
     public int biomeSeed;
-    public byte[,,] inventory = new byte[5,5,7];
-    public byte[,,] stackSize = new byte[5, 5, 7];
-    public byte[,,] durability = new byte[5,5,7];
+    public byte[,] inventory = new byte[5,7];
+    public byte[,] stackSize = new byte[5, 7];
+    public byte[,] durability = new byte[5,7];
     public int rotator;
     public int currentChoice;
     public int[,] chosenWeapons = new int[2, 2];
@@ -61,26 +61,24 @@ public class GameInformation
     {
         for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 7; j++)
             {
-                for (int k = 0; k < 7; k++)
+                ItemSlot iRef = inv.getItemSlot(i, j);
+                if (!iRef.isEmpty())
                 {
-                    ItemSlot iRef = inv.getItemSlot(j,k);
-                    if (!iRef.isEmpty())
-                    {
-                        inventory[i, j, k] = iRef.getItemId();
-                        stackSize[i, j, k] = iRef.getCurrentCount();
-                        durability[i, j, k] = iRef.getDurability();
-                    } else
-                    {
-                        inventory[i, j, k] = 127;
-                    }
+                    inventory[i, j] = iRef.getItemId();
+                    stackSize[i, j] = iRef.getCurrentCount();
+                    durability[i,j] = iRef.getDurability();
+                } 
+                else
+                {
+                    inventory[i, j] = 127;
                 }
             }
         }
         for (int i = 0; i < 3; i++)
         {
-            if (i != 3)
+            if (i != 2)
             {
                 chosenWeapons[i, 0] = inv.chosenWeapons[i].x;
                 chosenWeapons[i, 1] = inv.chosenWeapons[i].y;
