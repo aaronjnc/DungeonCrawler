@@ -12,7 +12,7 @@ public class DestroyandPlace : MonoBehaviour
     public Vector3Int prevmapPos = Vector3Int.zero;
     Vector3Int mapPos = Vector3Int.zero;
     int mapz;
-    public SwapRotators swapRotators;
+    public ItemRotator rotator;
     public Inventory inventory;
     Vector2Int currentChunk = Vector2Int.zero;
     Vector2Int prevChunk = Vector2Int.zero;
@@ -125,13 +125,13 @@ public class DestroyandPlace : MonoBehaviour
         blockHealth = manager.GetBlock(newID).durability;
         destroyPos = newPos;
         destroyChunkPos = newChunk;
-        damage = swapRotators.rotators[swapRotators.current].GetComponent<ItemRotator>().getChosen().getDamage();
+        damage = rotator.getChosen().getDamage();
         breaking = true;
     }
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
         breaking = false;
-        manager.inv.ReduceToolDurability(swapRotators.chosen);
+        manager.inv.ReduceChosen(rotator.current);
         AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
     }

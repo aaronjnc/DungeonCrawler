@@ -10,30 +10,17 @@ public class Inventory : MonoBehaviour
 {
     private GameManager manager;
     private GameObject[,] images = new GameObject[5, 7];
-    public GameObject[] weaponImages = new GameObject[2];
-    public GameObject[] consumableImages = new GameObject[3];
-    public GameObject[] toolImages = new GameObject[2];
+    public GameObject[] chosenImages = new GameObject[7];
     private ItemSlot[,] itemSlots = new ItemSlot[5, 7];
     [HideInInspector]
-    public List<Vector2Int> chosenWeapons = new List<Vector2Int>();
-    [HideInInspector]
-    public List<Vector2Int> chosenConsumables = new List<Vector2Int>();
-    [HideInInspector]
-    public List<Vector2Int> chosenTools = new List<Vector2Int>();
-    public SwapRotators swapRotators;
+    public List<Vector2Int> chosenItems = new List<Vector2Int>();
+    public ItemRotator itemRotator;
     void Awake()
     {
-        chosenWeapons.Capacity = 2;
-        chosenConsumables.Capacity = 3;
-        chosenTools.Capacity = 2;
-        for (int i = 0; i < 3; i++)
+        chosenItems.Capacity = 7;
+        for (int i = 0; i < 7; i++)
         {
-            if (i != 3)
-            {
-                chosenWeapons.Add(new Vector2Int(int.MaxValue, int.MaxValue));
-                chosenTools.Add(new Vector2Int(int.MaxValue, int.MaxValue));
-            }
-            chosenConsumables.Add(new Vector2Int(int.MaxValue, int.MaxValue));
+            chosenItems.Add(new Vector2Int(int.MaxValue, int.MaxValue));
         }
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         manager.LoadWorld();
@@ -133,90 +120,46 @@ public class Inventory : MonoBehaviour
         else
             images[newPos.x, newPos.y].GetComponent<Image>().color = new Color(255, 255, 255, 0);
     }
-    private void UpdateWeapon(int pos, Sprite itemSprite)
+    private void UpdateChosen(int pos, Sprite itemSprite)
     {
-        weaponImages[pos].GetComponent<Image>().sprite = itemSprite;
+        chosenImages[pos].GetComponent<Image>().sprite = itemSprite;
         if (itemSprite != null)
-            weaponImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
+            chosenImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
         else
-            weaponImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
-        swapRotators.UpdateRotator(0);
+            chosenImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
+        itemRotator.UpdateItems();
     }
-    private void UpdateConsumables(int pos, Sprite itemSprite)
+    public void ReduceChosen(int pos)
     {
-        consumableImages[pos].GetComponent<Image>().sprite = itemSprite;
-        if (itemSprite != null)
-            consumableImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
-        else
-            consumableImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
-        swapRotators.UpdateRotator(1);
-    }
-    private void UpdateTools(int pos, Sprite itemSprite)
-    {
-        toolImages[pos].GetComponent<Image>().sprite = itemSprite;
-        if (itemSprite != null)
-            toolImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 255);
-        else
-            toolImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
-        swapRotators.UpdateRotator(2);
-    }
-    public void reduceWeaponDurability(int pos)
-    {
-        Vector2Int chosenItemPos = chosenWeapons[pos];
-        itemSlots[chosenItemPos.x, chosenItemPos.y].reduceDurability(1);
-        bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
-        if (empty)
+        Vector2Int chosenItemPos = chosenItems[pos];
+        if (itemSlots[chosenItemPos.x, chosenItemPos.y].GetItemType() == InventoryItem.ItemType.Consumable)
         {
-            RemoveWeapon(pos);
+            itemSlots[chosenItemPos.x, chosenItemPos.y].reduceStack(1);
+            images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[chosenItemPos.x, chosenItemPos.y].getCurrentCount());
+            bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
+            if (empty)
+            {
+                RemoveChosen(pos);
+            }
+        } 
+        else
+        {
+            itemSlots[chosenItemPos.x, chosenItemPos.y].reduceDurability(1);
+            bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
+            if (empty)
+            {
+                RemoveChosen(pos);
+            }
         }
     }
-    public void ReduceToolDurability(int pos)
+    private void RemoveChosen(int pos)
     {
-        Vector2Int chosenItemPos = chosenTools[pos];
-        itemSlots[chosenItemPos.x, chosenItemPos.y].reduceDurability(1);
-        bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
-        if (empty)
-        {
-            RemoveTool(pos);
-        }
-    }
-    public void ReduceConsumableStack(int pos)
-    {
-        Vector2Int chosenItemPos = chosenConsumables[pos];
-        itemSlots[chosenItemPos.x, chosenItemPos.y].reduceStack(1);
-        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[chosenItemPos.x, chosenItemPos.y].getCurrentCount());
-        bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
-        if (empty)
-        {
-            RemoveConsumable(pos);
-        }
-    }
-    private void RemoveWeapon(int pos)
-    {
-        Vector2Int chosenItemPos = chosenWeapons[pos];
-        itemSlots[chosenItemPos.x,chosenItemPos.y].emptySlot();
-        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
-        UpdateImage(chosenItemPos, null);
-        UpdateWeapon(pos, null);
-        chosenWeapons[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
-    }
-    private void RemoveTool(int pos)
-    {
-        Vector2Int chosenItemPos = chosenTools[pos];
+        Vector2Int chosenItemPos = chosenItems[pos];
         itemSlots[chosenItemPos.x, chosenItemPos.y].emptySlot();
         images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
-        UpdateTools(pos, null);
-        chosenTools[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
-    }
-    private void RemoveConsumable(int pos)
-    {
-        Vector2Int chosenItemPos = chosenConsumables[pos];
-        itemSlots[chosenItemPos.x, chosenItemPos.y].emptySlot();
-        images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
-        UpdateImage(chosenItemPos, null);
-        UpdateConsumables(pos, null);
-        chosenConsumables[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
+        UpdateChosen(pos, null);
+        chosenItems[pos] = new Vector2Int(int.MaxValue, int.MaxValue);
     }
     /// <summary>
     /// Moves item to new location in inventory
@@ -234,25 +177,17 @@ public class Inventory : MonoBehaviour
             ItemSlot slot = itemSlots[arrayPos.x, arrayPos.y];
             int chosenType = dropPos.x / 10;
             int chosenSpot = dropPos.y;
-            switch(chosenType)
+            switch(slot.GetItemType())
             {
-                case 1:
-                    if (slot.GetItemType() != InventoryItem.ItemType.Weapon)
-                        return;
-                    chosenWeapons[chosenSpot] = arrayPos;
-                    UpdateWeapon(chosenSpot, slot.getSprite());
-                    break;
-                case 2:
-                    if (slot.GetItemType() != InventoryItem.ItemType.Consumable)
-                        return;
-                    chosenConsumables[chosenSpot] = arrayPos;
-                    UpdateConsumables(chosenSpot, slot.getSprite());
-                    break;
-                case 3:
-                    if (slot.GetItemType() != InventoryItem.ItemType.Tool)
-                        return;
-                    chosenTools[chosenSpot] = arrayPos;
-                    UpdateTools(chosenSpot, slot.getSprite());
+                case InventoryItem.ItemType.Mineral:
+                    return;
+                default:
+                    if (chosenItems.Contains(arrayPos))
+                    {
+                        chosenItems[chosenItems.IndexOf(arrayPos)] = new Vector2Int(int.MaxValue, int.MaxValue);
+                    }
+                    chosenItems[chosenSpot] = arrayPos;
+                    UpdateChosen(chosenSpot, slot.getSprite());
                     break;
             }
             return;
@@ -261,17 +196,9 @@ public class Inventory : MonoBehaviour
         {
             itemSlots[dropPos.x, dropPos.y].addExisting(itemSlots[arrayPos.x, arrayPos.y]);
             itemSlots[arrayPos.x, arrayPos.y].emptySlot();
-            if (chosenWeapons.Contains(arrayPos))
+            if (chosenItems.Contains(arrayPos))
             {
-                chosenWeapons[chosenWeapons.IndexOf(arrayPos)] = dropPos;
-            }
-            if (chosenTools.Contains(arrayPos))
-            {
-                chosenTools[chosenTools.IndexOf(arrayPos)] = dropPos;
-            }
-            if (chosenConsumables.Contains(arrayPos))
-            {
-                chosenConsumables[chosenConsumables.IndexOf(arrayPos)] = dropPos;
+                chosenItems[chosenItems.IndexOf(arrayPos)] = dropPos;
             }
         }
     }
@@ -302,22 +229,13 @@ public class Inventory : MonoBehaviour
                 }
             }
         }
-        for (int i = 0; i < 3; i++)
+        for (int i = 0; i < 7; i++)
         {
-            if (i != 2)
-            {
-                chosenWeapons[i] = new Vector2Int(info.chosenWeapons[i, 0], info.chosenWeapons[i, 1]);
-                if (chosenWeapons[i] != new Vector2Int(int.MaxValue, int.MaxValue))
-                    UpdateWeapon(i, itemSlots[chosenWeapons[i].x, chosenWeapons[i].y].getSprite());
-                chosenTools[i] = new Vector2Int(info.chosenTools[i, 0], info.chosenTools[i, 1]);
-                if (chosenTools[i] != new Vector2Int(int.MaxValue, int.MaxValue))
-                    UpdateTools(i, itemSlots[chosenTools[i].x, chosenTools[i].y].getSprite());
-            }
-            chosenConsumables[i] = new Vector2Int(info.chosenConsumables[i, 0], info.chosenConsumables[i, 1]);
-            if (chosenConsumables[i] != new Vector2Int(int.MaxValue, int.MaxValue))
-                UpdateConsumables(i, itemSlots[chosenConsumables[i].x, chosenConsumables[i].y].getSprite());
+            chosenItems[i] = new Vector2Int(info.chosenItems[i, 0], info.chosenItems[i, 1]);
+            if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
         }
-        swapRotators.UpdateRotator(info.rotator);
+        itemRotator.UpdateItems();
     }
     public ItemSlot getItemSlot(int row, int col)
     {
