@@ -536,6 +536,9 @@ public abstract class Chunk
     /// <param name="newTile">Tile with new color scheme</param>
     public void UpdateColor(int x, int y, Tile newTile)
     {
+        Tile t = map.GetTile<Tile>(new Vector3Int(x, y, mapz));
+        if (t == null)
+            return;
         newTile.sprite = map.GetTile<Tile>(new Vector3Int(x, y, mapz)).sprite;
         map.SetTile(new Vector3Int(x, y, mapz),newTile);
         map.RefreshTile(new Vector3Int(x, y, mapz));
