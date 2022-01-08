@@ -29,7 +29,6 @@ public class CommonBiome : Chunk
         DrawMap();
         generated = true;
     }
-
     protected override void FillBiomeMap()
     {
         for (int i = 0; i < width; i++)

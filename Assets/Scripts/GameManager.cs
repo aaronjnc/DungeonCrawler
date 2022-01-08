@@ -75,8 +75,6 @@ public class GameManager : MonoBehaviour
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
             InventoryItem invItem = item.GetComponent<InventoryItem>();
-            invItem.durability = invItem.baseDurability;
-            invItem.currentStack = 1;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
         }

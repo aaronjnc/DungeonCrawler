@@ -4,5 +4,6 @@ using UnityEngine;
 
 public class InteractReference : MonoBehaviour
 {
+    //reference to interactable prefab game object
     public GameObject interactable;
 }

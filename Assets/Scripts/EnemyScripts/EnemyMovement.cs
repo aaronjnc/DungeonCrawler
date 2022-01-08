@@ -20,11 +20,19 @@ public abstract class EnemyMovement : MonoBehaviour
     protected Vector2 nextPoint;
     //quaternion rotating to
     protected Quaternion endRot;
+    //if enemy is attacking
     protected bool attacking;
+    //z coordinate
     protected float zPos;
+    //true if moving
     protected bool moving;
+    //true if waiting
     protected bool waiting;
+    //how long to wait between moves
     public float waitTime;
+    /// <summary>
+    /// sets next travel point
+    /// </summary>
     protected void SetNextPoint()
     {
         Vector3 point = centerPos + maxMoveDistance * Random.insideUnitCircle;
@@ -38,7 +46,9 @@ public abstract class EnemyMovement : MonoBehaviour
             moving = true;
         }
     }
-
+    /// <summary>
+    /// gets rotation to travel to next point
+    /// </summary>
     protected void getEndRotation()
     {
         Vector3 point = new Vector3(nextPoint.x, nextPoint.y, zPos);
@@ -46,7 +56,9 @@ public abstract class EnemyMovement : MonoBehaviour
         float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         endRot = Quaternion.Euler(transform.eulerAngles.x, transform.eulerAngles.y, angle - 90);
     }
-
+    /// <summary>
+    /// draws movement spheres
+    /// </summary>
     protected void OnDrawGizmos()
     {
         Gizmos.color = Color.green;

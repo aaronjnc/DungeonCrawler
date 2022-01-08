@@ -120,6 +120,12 @@ public class DestroyandPlace : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// change the block being broken
+    /// </summary>
+    /// <param name="newPos">new vector position of object being broken</param>
+    /// <param name="newChunk">new chunk position of object being broken</param>
+    /// <param name="newID">new item id</param>
     void ChangeBreaking(Vector3Int newPos, Vector2Int newChunk, byte newID)
     {
         blockHealth = manager.GetBlock(newID).durability;
@@ -128,6 +134,12 @@ public class DestroyandPlace : MonoBehaviour
         damage = rotator.getChosen().getDamage();
         breaking = true;
     }
+    /// <summary>
+    /// Destroys block at given position
+    /// </summary>
+    /// <param name="newPos">position to destroy at</param>
+    /// <param name="newChunk">chunk position of block</param>
+    /// <param name="blockID">id of block being broken</param>
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
         breaking = false;
@@ -135,6 +147,10 @@ public class DestroyandPlace : MonoBehaviour
         AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
     }
+    /// <summary>
+    /// Adds broken block item to inventory
+    /// </summary>
+    /// <param name="blockId"></param>
     private void AddItem(byte blockId)
     {
         Blocks block = manager.GetBlock(blockId);
@@ -148,6 +164,10 @@ public class DestroyandPlace : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// stops the breaking action
+    /// </summary>
+    /// <param name="ctx"></param>
     void StopBreaking(CallbackContext ctx)
     {
         breaking = false;
