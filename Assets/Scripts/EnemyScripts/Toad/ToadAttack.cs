@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class ToadAttack : EnemyAttack
 {
+    /// <summary>
+    /// toad performs attack
+    /// </summary>
     protected override void performAttack()
     {
         

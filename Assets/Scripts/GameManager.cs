@@ -19,9 +19,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Abilities:")]
     [HideInInspector]
-    public bool blockplacing = false;
-    [HideInInspector]
-    public bool placing = false;
+    public bool blockBreaking = false;
     [HideInInspector]
     public byte currentTileID;
     [HideInInspector]
@@ -55,6 +53,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public double hours;
     private string previousWorld = "";
     public ChunkGen gen;
+    private List<ItemSlot> stallItems = new List<ItemSlot>();
     // Start is called before the first frame update
     void Awake()
     {
@@ -70,21 +69,12 @@ public class GameManager : MonoBehaviour
         currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
-            InventoryItem item;
-            if (block.TryGetComponent<InventoryItem>(out item))
-            {
-                item.durability = item.baseDurability;
-                item.currentStack = 1;
-                itemScripts.Add(item.itemID, item);
-            }
             Blocks blockComp = block.GetComponent<Blocks>();
             blocks.Add(blockComp.index, blockComp);
         }
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
             InventoryItem invItem = item.GetComponent<InventoryItem>();
-            invItem.durability = invItem.baseDurability;
-            invItem.currentStack = 1;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
         }
@@ -136,7 +126,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (InventoryItem item in items)
         {
-            if (item.name.Equals(name))
+            if (item.itemName.Equals(name))
                 return item;
         }
         return null;
@@ -236,5 +226,21 @@ public class GameManager : MonoBehaviour
         character = GameObject.Find("Player");
         gen.enabled = true;
         startTime = DateTime.Now;
+    }
+
+    public List<InventoryItem> GetItemScripts()
+    {
+        return items;
+    }
+    public void AddStallItems(List<ItemSlot> items)
+    {
+        foreach (ItemSlot item in items)
+        {
+            stallItems.Add(item);
+        }
+    }
+    public List<ItemSlot> GetStallItems()
+    {
+        return stallItems;
     }
 }

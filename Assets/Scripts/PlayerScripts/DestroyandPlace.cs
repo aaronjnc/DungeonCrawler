@@ -3,24 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using static UnityEngine.InputSystem.InputAction;
-using UnityEngine.AI;
 
 public class DestroyandPlace : MonoBehaviour
 {
     GameManager manager;
     PlayerControls controls;
     public string spriteName;
-    string prevspriteName;
     public Vector3Int prevmapPos = Vector3Int.zero;
     Vector3Int mapPos = Vector3Int.zero;
     int mapz;
-    ItemRotator currentRotator;
-    public SwapRotators swapRotators;
+    public ItemRotator rotator;
     public Inventory inventory;
     Vector2Int currentChunk = Vector2Int.zero;
     Vector2Int prevChunk = Vector2Int.zero;
     Tile destroy;
-    Tile place;
     Tile refillTile;
     bool breaking;
     float blockHealth;
@@ -38,8 +34,6 @@ public class DestroyandPlace : MonoBehaviour
         controls.Interact.Enable();
         destroy = new Tile();
         destroy.color = new Color(255, 0, 0);
-        place = new Tile();
-        place.color = new Color(255, 255, 255, 100);
         refillTile = new Tile();
         refillTile.color = new Color(255, 255, 255, 255);
     }
@@ -50,6 +44,10 @@ public class DestroyandPlace : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     public void Positioning(Vector3Int newPos, Vector2Int chunkPos)
     {
+        if (!breaking && prevmapPos != Vector3Int.zero && ChunkGen.currentWorld.GetBlock(new Vector2Int(prevmapPos.x, prevmapPos.y), currentChunk) != 127)
+        {
+            ResetPrevious();
+        }
         Vector2Int chunkMod = new Vector2Int(0, 0);
         if (newPos.x < 0)
         {
@@ -77,18 +75,7 @@ public class DestroyandPlace : MonoBehaviour
         mapPos.z = mapz;
         if (breaking && mapPos != destroyPos)
             ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
-        if (prevmapPos != Vector3Int.zero)
-        {
-            ResetPrevious();
-        }
-        if (manager.placing && GetTile(mapPos, currentChunk) == null)
-        {
-            UpdateTile(mapPos, manager.currentTileID, currentChunk);
-            UpdateColor(mapPos, place, currentChunk);
-            UpdateCollider(mapPos, Tile.ColliderType.None, currentChunk);
-            prevmapPos = mapPos;
-        }
-        else if (!manager.placing && GetTile(mapPos, currentChunk) != null && manager.IsBreakable(mapPos, currentChunk))
+        if (GetTile(mapPos, currentChunk) != null && manager.IsBreakable(mapPos, currentChunk))
         {
             UpdateColor(mapPos, destroy, currentChunk);
             prevmapPos = mapPos;
@@ -112,14 +99,7 @@ public class DestroyandPlace : MonoBehaviour
     /// </summary>
     public void ResetPrevious()
     {
-        if (manager.placing)
-        {
-            UpdateTile(prevmapPos, 127, prevChunk);
-        }
-        else
-        {
-            UpdateColor(prevmapPos, refillTile, prevChunk);
-        }
+        UpdateColor(prevmapPos, refillTile, prevChunk);
         prevmapPos = Vector3Int.zero;
     }
     /// <summary>
@@ -132,39 +112,62 @@ public class DestroyandPlace : MonoBehaviour
             return;
         if (manager.GetByte(mapPos, currentChunk) == 127)
             return;
-        if (manager.blockplacing && !manager.inv.gameObject.activeInHierarchy)
+        if (manager.blockBreaking && !manager.inv.gameObject.activeInHierarchy)
         {
-            if (!manager.placing)
+            if (GetTile(mapPos,currentChunk).color.b != 255)
             {
-                if (GetTile(mapPos,currentChunk).color.b != 255)
-                {
-                    ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
-                }
+                ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
             }
-            else if (manager.placing && GetTile(mapPos, currentChunk).color.a != 255)
-            {
-                manager.inv.reduceStack(new Vector2Int(swapRotators.current, swapRotators.chosen));
-                UpdateTile(mapPos, manager.currentTileID, currentChunk);
-                UpdateColor(mapPos, refillTile, currentChunk);
-            }
-            prevmapPos = Vector3Int.zero;
         }
     }
+    /// <summary>
+    /// change the block being broken
+    /// </summary>
+    /// <param name="newPos">new vector position of object being broken</param>
+    /// <param name="newChunk">new chunk position of object being broken</param>
+    /// <param name="newID">new item id</param>
     void ChangeBreaking(Vector3Int newPos, Vector2Int newChunk, byte newID)
     {
-        breaking = true;
-        blockHealth = manager.GetItem(newID).durability;
+        blockHealth = manager.GetBlock(newID).durability;
         destroyPos = newPos;
         destroyChunkPos = newChunk;
-        damage = swapRotators.rotators[swapRotators.current].GetComponent<ItemRotator>().getChosen().getDamage();
+        damage = rotator.getChosen().getDamage();
+        breaking = true;
     }
+    /// <summary>
+    /// Destroys block at given position
+    /// </summary>
+    /// <param name="newPos">position to destroy at</param>
+    /// <param name="newChunk">chunk position of block</param>
+    /// <param name="blockID">id of block being broken</param>
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
         breaking = false;
-        manager.inv.reduceDurability(new Vector2Int(swapRotators.current, swapRotators.chosen));
-        manager.inv.AddItem(blockID);
+        manager.inv.ReduceChosen(rotator.current);
+        AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
     }
+    /// <summary>
+    /// Adds broken block item to inventory
+    /// </summary>
+    /// <param name="blockId"></param>
+    private void AddItem(byte blockId)
+    {
+        Blocks block = manager.GetBlock(blockId);
+        float randomVal = UnityEngine.Random.value;
+        for (int i = 0; i < block.drops.Count; i++)
+        {
+            if (randomVal < block.chances[i])
+            {
+                manager.inv.AddItem(block.drops[i].itemID);
+                return;
+            }
+        }
+    }
+    /// <summary>
+    /// stops the breaking action
+    /// </summary>
+    /// <param name="ctx"></param>
     void StopBreaking(CallbackContext ctx)
     {
         breaking = false;

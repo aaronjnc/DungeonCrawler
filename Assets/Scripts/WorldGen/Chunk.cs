@@ -33,8 +33,8 @@ public abstract class Chunk
     public bool generated = false;
     public Vector2Int chunkPos;
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
-    protected Dictionary<Vector2Int, InteractableTile> specialTiles = new Dictionary<Vector2Int, InteractableTile>();
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    protected List<GameObject> interactables = new List<GameObject>();
     protected System.Random random;
     protected abstract void FillBiomeMap();
     /// <summary>
@@ -508,6 +508,10 @@ public abstract class Chunk
         {
             enemy.SetActive(false);
         }
+        foreach(GameObject interactable in interactables)
+        {
+            interactable.SetActive(false);
+        }
     }
     /// <summary>
     /// Activates the map renderer and enemies
@@ -519,6 +523,10 @@ public abstract class Chunk
         {
             enemy.SetActive(true);
         }
+        foreach (GameObject interactable in interactables)
+        {
+            interactable.SetActive(true);
+        }
     }
     /// <summary>
     /// Changes the tile at location to be a new color of the same tile to indicate it being highlighted/unhighlighted
@@ -528,6 +536,9 @@ public abstract class Chunk
     /// <param name="newTile">Tile with new color scheme</param>
     public void UpdateColor(int x, int y, Tile newTile)
     {
+        Tile t = map.GetTile<Tile>(new Vector3Int(x, y, mapz));
+        if (t == null)
+            return;
         newTile.sprite = map.GetTile<Tile>(new Vector3Int(x, y, mapz)).sprite;
         map.SetTile(new Vector3Int(x, y, mapz),newTile);
         map.RefreshTile(new Vector3Int(x, y, mapz));
@@ -573,6 +584,7 @@ public abstract class Chunk
             Transform interactParent = GameObject.Find("Interactables").transform;
             GameObject interactable = GameObject.Instantiate(interactBlock.gameObject.GetComponent<InteractReference>().interactable, interactParent);
             interactable.transform.position = interactablePos;
+            interactables.Add(interactable);
         }
     }
     /// <summary>
@@ -605,7 +617,10 @@ public abstract class Chunk
         enemies.Remove(enemy.GetHashCode());
         GameObject.Destroy(enemy);
     }
-
+    /// <summary>
+    /// returns string array containing wall id, floor id, and biome id for each position in chunk
+    /// </summary>
+    /// <returns></returns>
     public string[] getChunkMap()
     {
         string[] chunkString = new string[3];
@@ -632,6 +647,10 @@ public abstract class Chunk
         }
         return chunkString;
     }
+    /// <summary>
+    /// returns array of all enemies' information
+    /// </summary>
+    /// <returns></returns>
     public string[] getEnemies()
     {
         string[] enemyString = new string[enemies.Count];
@@ -641,6 +660,10 @@ public abstract class Chunk
         }
         return enemyString;
     }
+    /// <summary>
+    /// loads chunk from file
+    /// </summary>
+    /// <param name="stringMap">string array holding chunk information</param>
     public void loadFromFile(string[] stringMap)
     {
         string[] blockMap = stringMap[0].Split('\n');

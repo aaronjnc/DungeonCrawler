@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class BlacksmithInteract : InteractableTile
 {
+    //text asset containing lines for blacksmith
+    public TextAsset text;
+    /// <summary>
+    /// method called when object is interacted with, opening new scene
+    /// </summary>
     public override void Interact()
     {
-        throw new System.NotImplementedException();
+        GameObject.Find("GameController").GetComponent<GameManager>().AddStallItems(GetComponent<Stall>().stallItems);
+        manager.assignTextFile(text);
+        SceneLoader.LoadScene(2);
     }
 }
