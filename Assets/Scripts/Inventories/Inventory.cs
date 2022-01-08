@@ -51,9 +51,9 @@ public class Inventory : MonoBehaviour
             LoadFromFile(manager.GetGameInformation());
         } else
         {
-            InventoryItem item = manager.GetItem("BasePickaxe");
+            InventoryItem item = manager.GetItem("Base Pickaxe");
             AddItem(item,1,item.baseDurability);
-            item = manager.GetItem("ExtendoSword");
+            item = manager.GetItem("Extendo Sword");
             AddItem(item,1, item.baseDurability);
         }
         gameObject.SetActive(false);
@@ -102,7 +102,7 @@ public class Inventory : MonoBehaviour
         }
         if (emptySpot)
         {
-            itemSlots[empty.x, empty.y].addItem(itemRef, (byte)currentStack, (byte)durability);
+            itemSlots[empty.x, empty.y].AddItem(itemRef, (byte)currentStack, (byte)durability);
             images[empty.x, empty.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[empty.x, empty.y].getCurrentCount());
             UpdateImage(new Vector2Int(empty.x, empty.y), itemRef.itemSprite);
         }

@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class InventoryItem : MonoBehaviour
 {
+    public string itemName;
     public Sprite itemSprite;
     public byte stackSize;
     public byte baseDurability;
@@ -14,7 +15,10 @@ public class InventoryItem : MonoBehaviour
     public bool empty = true;
     public int level;
     public int cost;
+    public int craftcost;
     public byte itemID;
+    public List<InventoryItem> ingredients = new List<InventoryItem>();
+    public List<int> ingredientCount = new List<int>();
     public WeaponInterface<Transform,PlayerFight> weaponScript { get { return (WeaponInterface<Transform, PlayerFight>)gameObject.GetComponent(typeof(WeaponInterface<Transform, PlayerFight>)); } }
     public enum ItemType
     {
