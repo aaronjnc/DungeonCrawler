@@ -6,6 +6,7 @@ public class BlacksmithInteract : InteractableTile
 {
     public override void Interact()
     {
-        throw new System.NotImplementedException();
+        GameObject.Find("GameController").GetComponent<GameManager>().AddStallItems(GetComponent<Stall>().stallItems);
+        SceneLoader.LoadScene(2);
     }
 }

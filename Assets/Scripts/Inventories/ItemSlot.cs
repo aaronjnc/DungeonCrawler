@@ -7,13 +7,13 @@ public class ItemSlot
     private byte currentStack = 0;
     private InventoryItem itemRef;
     private byte durability;
-    public void addItem(InventoryItem itemRef)
+    public void AddItem(InventoryItem itemRef)
     {
         this.itemRef = itemRef;
         currentStack = 1;
         durability = itemRef.baseDurability;
     }
-    public void addItem(InventoryItem itemRef, byte count, byte durability)
+    public void AddItem(InventoryItem itemRef, byte count, byte durability)
     {
         this.itemRef = itemRef;
         currentStack = count;
@@ -124,5 +124,21 @@ public class ItemSlot
     public InventoryItem.ItemType GetItemType()
     {
         return itemRef.itemType;
+    }
+    public List<InventoryItem> GetIngredients()
+    {
+        return itemRef.ingredients;
+    }
+    public List<int> GetIngredientCount()
+    {
+        return itemRef.ingredientCount;
+    }
+    public float GetCraftCost()
+    {
+        return itemRef.craftcost;
+    }
+    public string GetItemName()
+    {
+        return itemRef.itemName;
     }
 }

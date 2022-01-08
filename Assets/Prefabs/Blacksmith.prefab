@@ -12,9 +12,11 @@ GameObject:
   - component: {fileID: 5088211645042076023}
   - component: {fileID: 7771221683111996514}
   - component: {fileID: 2251325409300978097}
-  m_Layer: 0
+  - component: {fileID: -5349487191949888155}
+  - component: {fileID: -6734105819410718146}
+  m_Layer: 14
   m_Name: Blacksmith
-  m_TagString: Untagged
+  m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -177,3 +179,28 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 4.0000005, y: 4}
   m_EdgeRadius: 0
+--- !u!114 &-5349487191949888155
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242078278216627155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cf0377ab5bb7b7948a4623781f206482, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-6734105819410718146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8242078278216627155}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 727ee641aae25da44afe6d8fce06c3be, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stallType: 0

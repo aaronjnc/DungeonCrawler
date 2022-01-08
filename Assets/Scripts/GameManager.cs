@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public double hours;
     private string previousWorld = "";
     public ChunkGen gen;
+    private List<ItemSlot> stallItems = new List<ItemSlot>();
     // Start is called before the first frame update
     void Awake()
     {
@@ -127,7 +128,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (InventoryItem item in items)
         {
-            if (item.name.Equals(name))
+            if (item.itemName.Equals(name))
                 return item;
         }
         return null;
@@ -227,5 +228,21 @@ public class GameManager : MonoBehaviour
         character = GameObject.Find("Player");
         gen.enabled = true;
         startTime = DateTime.Now;
+    }
+
+    public List<InventoryItem> GetItemScripts()
+    {
+        return items;
+    }
+    public void AddStallItems(List<ItemSlot> items)
+    {
+        foreach (ItemSlot item in items)
+        {
+            stallItems.Add(item);
+        }
+    }
+    public List<ItemSlot> GetStallItems()
+    {
+        return stallItems;
     }
 }
