@@ -13,17 +13,28 @@ public class ChosenItem : MonoBehaviour
     public Text[] ingredients;
     public GameObject buyButton;
     public GameObject craftButton;
+    public void Awake()
+    {
+        chosenImage.gameObject.SetActive(false);
+        itemName.gameObject.SetActive(false);
+        ingredient.gameObject.SetActive(false);
+        foreach (Text ing in ingredients)
+        {
+            ing.gameObject.SetActive(false);
+        }
+        buyButton.gameObject.SetActive(false);
+        craftButton.gameObject.SetActive(false);
+    }
     public void ChooseItem(ItemSlot item)
     {
         chosenItem = new ItemSlot();
         chosenItem.addExisting(item);
         chosenImage.sprite = chosenItem.getSprite();
         chosenImage.color = new Color(255, 255, 255, 255);
+        chosenImage.gameObject.SetActive(true);
         itemName.text = "Item: " + chosenItem.GetItemName();
-        if (chosenItem.GetItemType() == InventoryItem.ItemType.Mineral)
-        {
-            ingredient.gameObject.SetActive(false);
-        }
+        itemName.gameObject.SetActive(true);
+        ingredient.gameObject.SetActive(chosenItem.GetIngredients().Count > 0);
         for (int i = 0; i < chosenItem.GetIngredients().Count; i++)
         {
             if (chosenItem.GetItemType() == InventoryItem.ItemType.Mineral || i >= chosenItem.GetIngredients().Count)
@@ -38,5 +49,7 @@ public class ChosenItem : MonoBehaviour
         }
         buyButton.GetComponentInChildren<Text>().text = chosenItem.getCost() + " gold";
         craftButton.GetComponentInChildren<Text>().text = chosenItem.GetCraftCost() + " gold";
+        buyButton.SetActive(true);
+        craftButton.SetActive(true);
     }
 }

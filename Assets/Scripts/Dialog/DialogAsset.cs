@@ -7,6 +7,8 @@ using UnityEngine.SceneManagement;
 
 public class DialogAsset : MonoBehaviour
 {
+    public StallManager stall;
+    public GameObject dialogBox;
     GameManager manager;
     string fullText;
     string[] currentGroupings;
@@ -86,6 +88,10 @@ public class DialogAsset : MonoBehaviour
                         case "Leave":
                             string path = Application.persistentDataPath + "/saves/" + manager.worldName + ".txt";
                             SaveSystem.Load(path);
+                            break;
+                        case "Buy":
+                            stall.AddItems(manager.GetStallItems());
+                            dialogBox.SetActive(false);
                             break;
                         default:
                             break;

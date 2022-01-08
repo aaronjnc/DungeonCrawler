@@ -26,7 +26,7 @@ public class Stall : MonoBehaviour
         List<InventoryItem> items = new List<InventoryItem>();
         foreach (InventoryItem item in manager.GetItemScripts())
         {
-            if (item.itemType == InventoryItem.ItemType.Mineral)
+            if (item.itemType == InventoryItem.ItemType.Consumable)
                 continue;
             items.Add(item);
         }

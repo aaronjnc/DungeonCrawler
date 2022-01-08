@@ -18,7 +18,6 @@ public class StallManager : MonoBehaviour
             inventoryItems.Add(new ItemSlot());
             images[i].gameObject.SetActive(false);
         }
-        AddItems(manager.GetStallItems());
     }
     public void AddItems(List<ItemSlot> items)
     {
