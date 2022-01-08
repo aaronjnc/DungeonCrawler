@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class SpiderMovement : EnemyMovement
 {
-    // Start is called before the first frame update
+    /// <summary>
+    /// sets up basic movement information
+    /// </summary>
     void Start()
     {
         attack = GetComponent<SpiderAttack>();
@@ -13,7 +15,9 @@ public class SpiderMovement : EnemyMovement
         endRot = Quaternion.identity;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Moves spider on patrol path, once player is spotted begin following
+    /// </summary>
     void FixedUpdate()
     {
         attacking = attack.spotted;
@@ -56,7 +60,10 @@ public class SpiderMovement : EnemyMovement
             }
         }
     }
-
+    /// <summary>
+    /// wait at end of patrol point
+    /// </summary>
+    /// <returns></returns>
     IEnumerator wait()
     {
         yield return new WaitForSeconds(waitTime);

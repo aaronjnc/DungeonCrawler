@@ -4,10 +4,17 @@ using UnityEngine;
 
 public class SpiderAttack : EnemyAttack
 {
+    //damage count for the stinger
     public float stingerDamage;
+    //shoot distance for web
     public float webReach;
+    //how long webbing lasts
     public float webTime;
+    //how long posion lasts
     public float poisonTime;
+    /// <summary>
+    /// Determines type of attack to perform based on player location
+    /// </summary>
     protected override void performAttack()
     {
         Collider2D playerColl = Physics2D.OverlapCircle(transform.position, webReach, player);
@@ -54,6 +61,9 @@ public class SpiderAttack : EnemyAttack
             playerMove.canMove = true;
         }
     }
+    /// <summary>
+    /// Draws spheres to show spider range
+    /// </summary>
     private void OnDrawGizmos()
     {
         base.OnDrawGizmos();

@@ -6,13 +6,23 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class DialogManager : MonoBehaviour
 {
+    //controls reference
     PlayerControls controls;
+    //reference to dialog asset script associated with this manager
     DialogAsset asset;
+    //textbox to display text
     Text textbox;
+    //name box to display name
     public Text namebox;
+    // boolean to determine if player is speaking
     bool player = false;
+    //lines to display
     List<string> lines = new List<string>();
+    //selected line
     int selectedLine = 0;
+    /// <summary>
+    /// sets ups controls and updates lines with retrieved asset
+    /// </summary>
     private void Start()
     {
         controls = new PlayerControls();
@@ -24,6 +34,9 @@ public class DialogManager : MonoBehaviour
         asset = GetComponent<DialogAsset>();
         updateLines();
     }
+    /// <summary>
+    /// updates textbox text with lines list
+    /// </summary>
     void updateLines()
     {
         lines = asset.getLineOptions();
@@ -39,6 +52,9 @@ public class DialogManager : MonoBehaviour
         trimLines();
         setUpTextbox();
     }
+    /// <summary>
+    /// sets up textbox with given lines, and highlights chosen line
+    /// </summary>
     void setUpTextbox()
     {
         textbox.text = "";
@@ -66,6 +82,10 @@ public class DialogManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// updates line choice and highlights new line when key is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     private void changeLineChoice(CallbackContext ctx)
     {
         selectedLine += (int)ctx.ReadValue<float>();
@@ -79,6 +99,10 @@ public class DialogManager : MonoBehaviour
         }
         setUpTextbox();
     }
+    /// <summary>
+    /// updates lines when line is chosen
+    /// </summary>
+    /// <param name="ctx"></param>
     void updateLines(CallbackContext ctx)
     {
         asset.chooseLine(selectedLine);
@@ -86,6 +110,9 @@ public class DialogManager : MonoBehaviour
         player = false;
         updateLines();
     }
+    /// <summary>
+    /// removes brackets at end of strings
+    /// </summary>
     void trimLines()
     {
         for (int i = 0; i < lines.Count; i++)
@@ -100,6 +127,9 @@ public class DialogManager : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// disable controls
+    /// </summary>
     private void OnDestroy()
     {
         controls.Disable();

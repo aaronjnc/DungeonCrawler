@@ -4,13 +4,21 @@ using UnityEngine;
 using UnityEngine.AI;
 public abstract class EnemyMovement : MonoBehaviour
 {
+    //movement speed of enemy
     public float speed;
+    //turn speed of enemy
     public float turnSpeed;
+    //maximum distance of patrol point
     public float maxMoveDistance;
+    //minimum distance of patrol point
     public float minMoveDistance;
+    //enemy spawn point
     protected Vector2 centerPos;
+    //enemy attack script
     protected EnemyAttack attack;
+    //next patrol point
     protected Vector2 nextPoint;
+    //quaternion rotating to
     protected Quaternion endRot;
     protected bool attacking;
     protected float zPos;
