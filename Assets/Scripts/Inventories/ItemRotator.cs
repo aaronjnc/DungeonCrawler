@@ -7,29 +7,45 @@ using UnityEngine.InputSystem;
 
 public class ItemRotator : MonoBehaviour
 {
+    //sprite reference for current expanded rotator
     Sprite fullRotator;
+    //slots for expanded rotator
     public ItemSlot[] itemSlots = new ItemSlot[7];
+    //images for expanded rotator
     public List<Image> images = new List<Image>();
+    //array of images for all expanded rotators
     public Sprite[] fullRotators = new Sprite[7];
+    //sprite for minimized rotator
     public Sprite smallRotator;
+    //image slot for chosen item
     public Image centralImage;
+    //player controls reference
     PlayerControls controls;
+    //true if rotator is expanded
     bool open = false;
+    //reference to player movement script
     public FreePlayerMove playerMovement;
+    //chosen item index
     public int current = 0;
+    //image attached to game object in scene for rotator
     Image rotatorImage;
+    //inventory reference
     public Inventory inv;
+    //game manager reference
     GameManager manager;
-    [HideInInspector]
-    public int rotator = 0;
+    //has rotator been instantiated
     bool started = false;
-    // Start is called before the first frame update
+    /// <summary>
+    /// call start method on start up
+    /// </summary>
     void Start()
     {
         if (!started)
             StartMethod();
     }
-
+    /// <summary>
+    /// sets up item rotator
+    /// </summary>
     void StartMethod()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -80,6 +96,9 @@ public class ItemRotator : MonoBehaviour
         centralImage.gameObject.SetActive(true);
         open = false;
     }
+    /// <summary>
+    /// update for when rotator is open to determine chosen item
+    /// </summary>
     void FixedUpdate()
     {
         if (open)
@@ -190,6 +209,10 @@ public class ItemRotator : MonoBehaviour
             manager.fighting = false;
         }
     }
+    /// <summary>
+    /// returns chosen ItemSlot
+    /// </summary>
+    /// <returns>ItemSlot reference for chosen item</returns>
     public ItemSlot getChosen()
     {
         return itemSlots[current];

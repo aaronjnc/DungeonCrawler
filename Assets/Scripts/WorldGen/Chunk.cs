@@ -617,7 +617,10 @@ public abstract class Chunk
         enemies.Remove(enemy.GetHashCode());
         GameObject.Destroy(enemy);
     }
-
+    /// <summary>
+    /// returns string array containing wall id, floor id, and biome id for each position in chunk
+    /// </summary>
+    /// <returns></returns>
     public string[] getChunkMap()
     {
         string[] chunkString = new string[3];
@@ -644,6 +647,10 @@ public abstract class Chunk
         }
         return chunkString;
     }
+    /// <summary>
+    /// returns array of all enemies' information
+    /// </summary>
+    /// <returns></returns>
     public string[] getEnemies()
     {
         string[] enemyString = new string[enemies.Count];
@@ -653,6 +660,10 @@ public abstract class Chunk
         }
         return enemyString;
     }
+    /// <summary>
+    /// loads chunk from file
+    /// </summary>
+    /// <param name="stringMap">string array holding chunk information</param>
     public void loadFromFile(string[] stringMap)
     {
         string[] blockMap = stringMap[0].Split('\n');

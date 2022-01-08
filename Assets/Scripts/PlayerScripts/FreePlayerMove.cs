@@ -175,7 +175,10 @@ public class FreePlayerMove : MonoBehaviour
     {
         controls.Disable();
     }
-
+    /// <summary>
+    /// loads player information from file
+    /// </summary>
+    /// <param name="info"></param>
     private void loadFromFile(GameInformation info)
     {
         transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);

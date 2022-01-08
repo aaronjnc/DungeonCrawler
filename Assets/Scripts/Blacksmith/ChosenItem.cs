@@ -5,14 +5,25 @@ using UnityEngine.UI;
 
 public class ChosenItem : MonoBehaviour
 {
+    //inventory reference to determine if items are craftable
     public Inventory inventory;
+    //reference to chosen item
     public ItemSlot chosenItem;
+    //image for chosen item
     public Image chosenImage;
+    //textbox for chosen item name
     public Text itemName;
+    //textbox above list of ingredients (de-activate if no ingredients)
     public Text ingredient;
+    //textboxes to hold ingredients
     public Text[] ingredients;
+    //button used to buy item
     public GameObject buyButton;
+    //button used to sell item
     public GameObject craftButton;
+    /// <summary>
+    /// 
+    /// </summary>
     public void Awake()
     {
         chosenImage.gameObject.SetActive(false);
@@ -25,6 +36,10 @@ public class ChosenItem : MonoBehaviour
         buyButton.gameObject.SetActive(false);
         craftButton.gameObject.SetActive(false);
     }
+    /// <summary>
+    /// Choose given item and add its information to top
+    /// </summary>
+    /// <param name="item"></param> item reference
     public void ChooseItem(ItemSlot item)
     {
         chosenItem = new ItemSlot();
@@ -43,7 +58,7 @@ public class ChosenItem : MonoBehaviour
             }
             else
             {
-                ingredients[i].text = "0/" + chosenItem.GetIngredientCount()[i] + " " + chosenItem.GetIngredients()[i].itemName;
+                ingredients[i].text = "0/" + chosenItem.GetIngredientCount()[i] + " " + chosenItem.GetIngredients()[i].itemName; //change initial number to be number in inventory (change text color based on)
                 ingredients[i].gameObject.SetActive(true);
             }
         }

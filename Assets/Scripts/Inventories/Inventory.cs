@@ -8,13 +8,21 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class Inventory : MonoBehaviour
 {
+    //manager reference
     private GameManager manager;
+    //2D array of images
     private GameObject[,] images = new GameObject[5, 7];
+    //array of images for chosen objects
     public GameObject[] chosenImages = new GameObject[7];
+    //2D array of item slots to represent inventory
     private ItemSlot[,] itemSlots = new ItemSlot[5, 7];
-    [HideInInspector]
-    public List<Vector2Int> chosenItems = new List<Vector2Int>();
+    //list of chosen items vector2 positions
+    [HideInInspector] public List<Vector2Int> chosenItems = new List<Vector2Int>();
+    //reference to item rotator
     public ItemRotator itemRotator;
+    /// <summary>
+    /// Sets up inventory
+    /// </summary>
     void Awake()
     {
         chosenItems.Capacity = 7;
@@ -120,6 +128,11 @@ public class Inventory : MonoBehaviour
         else
             images[newPos.x, newPos.y].GetComponent<Image>().color = new Color(255, 255, 255, 0);
     }
+    /// <summary>
+    /// Update chosen image
+    /// </summary>
+    /// <param name="pos">chosen image to update</param>
+    /// <param name="itemSprite">new sprite</param>
     private void UpdateChosen(int pos, Sprite itemSprite)
     {
         chosenImages[pos].GetComponent<Image>().sprite = itemSprite;
@@ -129,6 +142,10 @@ public class Inventory : MonoBehaviour
             chosenImages[pos].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         itemRotator.UpdateItems();
     }
+    /// <summary>
+    /// reduce the count of chosen item
+    /// </summary>
+    /// <param name="pos">position of chosen item</param>
     public void ReduceChosen(int pos)
     {
         Vector2Int chosenItemPos = chosenItems[pos];
@@ -152,6 +169,10 @@ public class Inventory : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// removes a chosen item from the inventory
+    /// </summary>
+    /// <param name="pos">position of chosen item</param>
     private void RemoveChosen(int pos)
     {
         Vector2Int chosenItemPos = chosenItems[pos];
@@ -214,7 +235,10 @@ public class Inventory : MonoBehaviour
         else
             return false;
     }
-
+    /// <summary>
+    /// loads inventory from file
+    /// </summary>
+    /// <param name="info">GameInformation file to get inventory from</param>
     private void LoadFromFile(GameInformation info)
     {
         for (int i = 0; i < 5; i++)
@@ -237,6 +261,12 @@ public class Inventory : MonoBehaviour
         }
         itemRotator.UpdateItems();
     }
+    /// <summary>
+    /// returns ItemSlot at given position
+    /// </summary>
+    /// <param name="row">array x pos</param>
+    /// <param name="col">array y pos</param>
+    /// <returns>ItemSlot at position</returns>
     public ItemSlot getItemSlot(int row, int col)
     {
         return itemSlots[row, col];

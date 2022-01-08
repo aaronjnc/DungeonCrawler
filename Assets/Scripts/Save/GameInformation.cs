@@ -24,23 +24,39 @@ public class GameInformation
     public int rotator;
     public int currentChoice;
     public int[,] chosenItems = new int[7, 2];
+    /// <summary>
+    /// Sets up game information with passed in manager
+    /// </summary>
+    /// <param name="manager"></param>
     public GameInformation(GameObject manager)
     {
         SaveWorld(manager.GetComponent<ChunkGen>());
         SaveManager(manager.GetComponent<GameManager>());
         SavePlayer(GameObject.Find("Player"));
     }
+    /// <summary>
+    /// Saves information contained within gamemanager
+    /// </summary>
+    /// <param name="manager"></param>
     void SaveManager(GameManager manager)
     {
         TimeSpan playTime = System.DateTime.Now.Subtract(manager.startTime);
         playHours = manager.hours + playTime.TotalHours;
     }
+    /// <summary>
+    /// Saves chunk information
+    /// </summary>
+    /// <param name="gen"></param>
     void SaveWorld(ChunkGen gen)
     {
         worldMap = gen.getWorldMap();
         seed = gen.seed;
         biomeSeed = gen.biomeseed;
     }
+    /// <summary>
+    /// Saves player information
+    /// </summary>
+    /// <param name="player"></param>
     void SavePlayer(GameObject player)
     {
         Transform p = player.transform;
@@ -54,7 +70,10 @@ public class GameInformation
         enabledSpells = player.GetComponent<Magic>().enabledSpells;
         SaveInventory(player.GetComponent<FreePlayerMove>().canvas.GetComponent<Inventory>());
     }
-
+    /// <summary>
+    /// Saves inventory information
+    /// </summary>
+    /// <param name="inv"></param>
     void SaveInventory(Inventory inv)
     {
         for (int i = 0; i < 5; i++)

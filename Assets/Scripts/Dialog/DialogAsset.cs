@@ -4,19 +4,32 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+/// <summary>
+/// Dissects the dialog script and outputs information, attached to dialog box
+/// </summary>
 public class DialogAsset : MonoBehaviour
 {
+    //reference to stall which is using this script
     public StallManager stall;
+    //game object which displays all dialog
     public GameObject dialogBox;
+    //manager reference
     GameManager manager;
+    //string containing all the text in the text asset
     string fullText;
+    //current text options
     string[] currentGroupings;
+    //integer value referencing line chosen in current groupings
     int currentLine = 0;
-    List<string> removeSections = new List<string>();
+    //current line options
     List<string> currentOptions;
+    //strings containing commands that must be performed
     List<string> commandStrings = new List<string>();
+    //name of npc you are talking to
     public string npcName;
+    /// <summary>
+    /// gets the text asset and sets up lines
+    /// </summary>
     void Start()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -25,6 +38,11 @@ public class DialogAsset : MonoBehaviour
         fullText = string.Join("\n", Regex.Split(fullText, "\n").Skip(1).ToArray());
         getLines(fullText);
     }
+    /// <summary>
+    /// takes the large string and separates current options
+    /// </summary>
+    /// <param name="text"> text asset for dialog
+    /// </param> 
     void getLines(string text)
     {
         currentOptions = new List<string>();
@@ -35,6 +53,11 @@ public class DialogAsset : MonoBehaviour
             checkForCommand(currentOptions[i-1]);
         }
     }
+    /// <summary>
+    /// choose line at given position
+    /// </summary>
+    /// <param name="choice"> line number
+    /// </param> 
     public void chooseLine(int choice)
     {
         choice++;
@@ -45,14 +68,6 @@ public class DialogAsset : MonoBehaviour
         if (!currentGroup.Contains(currentLine.ToString()))
         {
             currentLine = 0;
-            for (int i = 0; i < removeSections.Count; i++)
-            {
-                if (removeSections[i].Contains(currentGroupings[choice]))
-                {
-                    fullText = fullText.Replace(removeSections[i], "");
-                }
-            }
-            removeSections.Clear();
             getLines(fullText);
         } 
         else
@@ -60,6 +75,11 @@ public class DialogAsset : MonoBehaviour
             getLines(currentGroup);
         }
     }
+    /// <summary>
+    /// Checks the line to see if it contains a command string
+    /// </summary>
+    /// <param name="lineChoice"> line to check
+    /// </param> 
     void checkForCommand(string lineChoice)
     {
         if (lineChoice.Contains("[") && lineChoice.Contains("]"))
@@ -67,6 +87,11 @@ public class DialogAsset : MonoBehaviour
             commandStrings.Add(lineChoice);
         }
     }
+    /// <summary>
+    /// Performs command on chosen line
+    /// </summary>
+    /// <param name="chosenLine"> line chosen with command
+    /// </param> 
     void performCommand(string chosenLine)
     {
         if (commandStrings.Count == 0)
@@ -82,9 +107,6 @@ public class DialogAsset : MonoBehaviour
                 {
                     switch (c)
                     {
-                        case "Remove":
-                            removeSections.Add(currentLine.ToString() + command);
-                            break;
                         case "Leave":
                             string path = Application.persistentDataPath + "/saves/" + manager.worldName + ".txt";
                             SaveSystem.Load(path);
@@ -101,6 +123,11 @@ public class DialogAsset : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// returns the list of line options
+    /// </summary>
+    /// <returns> string list of options
+    /// </returns> 
     public List<string> getLineOptions()
     {
         List<string> lineOptions = new List<string>();
