@@ -18,7 +18,9 @@ public class LoadWorld : MonoBehaviour
     {
         LoadScreen();
     }
-
+    /// <summary>
+    /// Sets up load screen with world saves
+    /// </summary>
     private void LoadScreen()
     {
         var f = new DirectoryInfo(Application.persistentDataPath + "/saves");
@@ -43,7 +45,10 @@ public class LoadWorld : MonoBehaviour
             stream.Close();
         }
     }
-
+    /// <summary>
+    /// loads world with given name
+    /// </summary>
+    /// <param name="worldFile">textbox of world name</param>
     public void LoadWorldFile(Text worldFile)
     {
         string path = Application.persistentDataPath + "/saves/" + worldFile.text + ".txt";
@@ -54,7 +59,10 @@ public class LoadWorld : MonoBehaviour
             SaveSystem.Load(path);
         }
     }
-
+    /// <summary>
+    /// Deletes world with given name
+    /// </summary>
+    /// <param name="worldFile">textbox containing world name</param>
     public void DeleteWorld(Text worldFile)
     {
         string path = Application.persistentDataPath + "/saves/" + worldFile.text + ".txt";

@@ -4,9 +4,15 @@ using UnityEngine;
 
 public class ToadMovement : EnemyMovement
 {
+    //time needed to ready jump
     public float readyJump;
+    //readying jump
     bool readying = true;
+    //jumping
     bool jumping;
+    /// <summary>
+    /// sets up basic movement information
+    /// </summary>
     void Start()
     {
         attack = GetComponent<ToadAttack>();
@@ -14,7 +20,9 @@ public class ToadMovement : EnemyMovement
         zPos = transform.position.z;
         endRot = Quaternion.identity;
     }
-
+    /// <summary>
+    /// moves in patrol pattern, except when player is spotted, then pursue
+    /// </summary>
     void FixedUpdate()
     {
         attacking = attack.spotted;
@@ -75,7 +83,11 @@ public class ToadMovement : EnemyMovement
             }
         }
     }
-
+    /// <summary>
+    /// wait at end of every jump
+    /// </summary>
+    /// <param name="time"> time to wait</param>
+    /// <returns></returns>
     IEnumerator wait(float time)
     {
         yield return new WaitForSeconds(time);

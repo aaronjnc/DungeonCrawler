@@ -5,22 +5,38 @@ using UnityEngine.UI;
 
 public class EnemyInfo : MonoBehaviour
 {
+    //enemy health
     public float health;
+    //max enemy health
     public float maxHealth;
+    //slider displaying enemy health
     public Slider slider;
+    //fire damage modifier
     public float firedamage;
+    //is enemy on fire
     bool onfire = false;
+    //how long they are on fire for
     public float firelength;
+    //time they've been on fire
     float firetime = 0f;
+    //chance of catching on fire
     public float firechance;
+    //spawn weight
     public float weight;
+    //spawn scale
     public float scale;
+    //chunk they spawn in
     [HideInInspector] public Vector2Int chunk;
+    //types of enemies
     public enum EnemyType
     {
         Troll,
         Toad,
+        Spider,
     }
+    /// <summary>
+    /// Sets up slider
+    /// </summary>
     private void Start()
     {
         health = maxHealth;
@@ -49,6 +65,9 @@ public class EnemyInfo : MonoBehaviour
         if (Random.value < firechance)
             onfire = true;
     }
+    /// <summary>
+    /// reduces health due to lasting damage
+    /// </summary>
     private void FixedUpdate()
     {
         if (onfire)
@@ -62,6 +81,10 @@ public class EnemyInfo : MonoBehaviour
             }    
         }
     }
+    /// <summary>
+    /// Gives string representing enemy type and position
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
         string enemy = "*" + gameObject.name + "\n";
