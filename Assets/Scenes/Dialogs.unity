@@ -6309,6 +6309,7 @@ MonoBehaviour:
   - {fileID: 741727642}
   - {fileID: 357507684}
   chosenItem: {fileID: 943186837}
+  inventory: {fileID: 494347410}
 --- !u!1 &2083947216
 GameObject:
   m_ObjectHideFlags: 0
