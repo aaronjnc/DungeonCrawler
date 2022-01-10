@@ -271,4 +271,8 @@ public class Inventory : MonoBehaviour
     {
         return itemSlots[row, col];
     }
+    private void OnDestroy()
+    {
+        manager.SaveInventory(itemSlots);
+    }
 }
