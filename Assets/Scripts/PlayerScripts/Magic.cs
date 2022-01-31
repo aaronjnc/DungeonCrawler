@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Magic : MonoBehaviour
 {
-    int[] enabledSpells = new int[5];
+    [HideInInspector] public int[] enabledSpells = new int[5];
     delegate void Actions();
     bool[] charged = new bool[5];
     public float[] chargeTime = new float[15];
@@ -46,7 +46,6 @@ public class Magic : MonoBehaviour
                 currentCharge[disabledSpells[i]] += Time.deltaTime;
                 if (currentCharge[disabledSpells[i]] >= chargeTime[disabledSpells[i]])
                 {
-                    Debug.Log("reached");
                     currentCharge[disabledSpells[i]] = 0;
                     charged[disabledSpells[i]] = true;
                     Animator animator = cooldownTimers[disabledSpells[i]].GetComponent<Animator>();

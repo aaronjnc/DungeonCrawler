@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5793978972251069215}
   - component: {fileID: -230742442111861480}
+  - component: {fileID: 7971000928302777822}
   m_Layer: 0
   m_Name: Sword
   m_TagString: Untagged
@@ -43,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dc8431747f27a94eac035b671196ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: Sword
   itemSprite: {fileID: 21300000, guid: 71a6dff8539f16246b7bd398f3fdb849, type: 3}
   stackSize: 1
   baseDurability: 50
@@ -50,8 +52,31 @@ MonoBehaviour:
   currentStack: 1
   damage: 0
   fighting: 1
-  invType: 0
   empty: 0
   level: 0
   cost: 15
+  craftcost: 0
   itemID: 21
+  ingredients: []
+  ingredientCount: 
+  itemType: 0
+--- !u!114 &7971000928302777822
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3189317268211414319}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 968a05aea36033b4f96a22f378df86d7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  reach: 1
+  enemy:
+    serializedVersion: 2
+    m_Bits: 1024
+  hasHoldEffect: 0
+  swingAngle: 45
+  baseDamage: 15
+  advancedDamage: 12

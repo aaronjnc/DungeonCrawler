@@ -18,11 +18,15 @@ public class Blocks : MonoBehaviour
     public byte index;
     public int maxperchunk;
     public bool interactable;
+    public int durability;
+    public List<InventoryItem> drops = new List<InventoryItem>();
+    public List<float> chances = new List<float>();
     [HideInInspector] public string blockName;
     public enum Type
     {
         Wall,
         Empty,
+        Floor,
     }
     public Type blockType;
 }

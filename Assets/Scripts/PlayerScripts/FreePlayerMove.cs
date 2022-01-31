@@ -18,22 +18,21 @@ public class FreePlayerMove : MonoBehaviour
     DestroyandPlace blockplacing;
     public Vector3Int pos = Vector3Int.zero;
     Vector3Int prevpos = Vector3Int.zero;
-    GameObject canvas;
+    public GameObject canvas;
     Vector2 rotDir = Vector2.zero;
     public GameObject menu;
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
-    Vector2Int currentChunk = Vector2Int.zero;
-    Vector3Int prevPos = Vector3Int.zero;
-    // Start is called before the first frame update
+    public LayerMask interactable;
+    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
+    public bool canMove = true;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        canvas = manager.invObject;
         blockplacing = grid.GetComponent<DestroyandPlace>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
@@ -52,6 +51,10 @@ public class FreePlayerMove : MonoBehaviour
         controls.Fight.MagicMenu.Enable();
         pos.z = manager.mapz;
         prevpos.z = manager.mapz;
+        if (manager.loadFromFile)
+        {
+            loadFromFile(manager.GetGameInformation());
+        }
     }
     /// <summary>
     /// Activates the spell menu when 'X' is pressed
@@ -95,9 +98,10 @@ public class FreePlayerMove : MonoBehaviour
     { 
         if (!manager.paused)
         {
-            if (manager.GetByte(lookPos,currentChunk) != 127)
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 2, interactable);
+            if (hit.collider != null)
             {
-                ChunkGen.currentWorld.Interact(lookPos, currentChunk);
+                hit.collider.gameObject.GetComponent<InteractableTile>().Interact();
             }
         }
     }
@@ -121,7 +125,7 @@ public class FreePlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!manager.paused)
+        if (!manager.paused && canMove)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(controls.Movement.MousePosition.ReadValue<Vector2>());
             float angleRad = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x);
@@ -157,7 +161,7 @@ public class FreePlayerMove : MonoBehaviour
         lookPos = pos + lookDir;
         if (lookPos != prevlookPos)
         {
-            if (manager.blockplacing)
+            if (manager.blockBreaking)
             {
                 blockplacing.enabled = true;
                 blockplacing.Positioning(lookPos,currentChunk);
@@ -167,5 +171,17 @@ public class FreePlayerMove : MonoBehaviour
         if (rotDir != Vector2.zero)
             previousDir = rotDir;
     }
-
+    private void OnDestroy()
+    {
+        controls.Disable();
+    }
+    /// <summary>
+    /// loads player information from file
+    /// </summary>
+    /// <param name="info"></param>
+    private void loadFromFile(GameInformation info)
+    {
+        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
+        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
+    }
 }

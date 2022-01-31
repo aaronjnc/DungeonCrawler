@@ -48,13 +48,15 @@ MonoBehaviour:
   biomeBlocks:
   - {fileID: 2527990607171997414, guid: 922a9a91cecc150449fe610291b3ae18, type: 3}
   - {fileID: 5670546564182836311, guid: f22d0a921cbf8f1439e445f9ecdbe447, type: 3}
-  chance: 0.8
+  chance: 1
   emptyBlocks:
   - {fileID: 6070446513901827791, guid: 82842d439548ee24fa9bc1d9ff847179, type: 3}
   enemies:
-  - {fileID: 3481517882367892545, guid: 244ea214cea46ab4e880ea1840b25039, type: 3}
-  baseFloor: {fileID: 3480578936055392808, guid: 65fbded487dbffd4d9700e699af5d718, type: 3}
+  - {fileID: 8211333600917533984, guid: 5cd5e47624d507e44ba349aaf94939a2, type: 3}
+  floorBlocks:
+  - {fileID: 3480578936055392808, guid: 65fbded487dbffd4d9700e699af5d718, type: 3}
   scale: 2
   weight: 1
   specialBlocks:
-  - {fileID: 8475051305218921890, guid: 1908096c23f35e640a9c9363e5332eb2, type: 3}
+  - {fileID: 3165912897697432854, guid: 3550867d7ae45fe4e97832626d4279af, type: 3}
+  - {fileID: 6564585075817591865, guid: 88b3544f263611441b424724b9461bd5, type: 3}

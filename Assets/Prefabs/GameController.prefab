@@ -1,0 +1,135 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &4921779820281114924
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4921779820281114926}
+  - component: {fileID: 4921779820281114927}
+  - component: {fileID: 4921779820281114921}
+  - component: {fileID: 4921779820281114920}
+  - component: {fileID: 4921779820281114923}
+  m_Layer: 0
+  m_Name: GameController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4921779820281114926
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921779820281114924}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.17572713, y: -0.051581055, z: -4.4649105}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4921779820281114927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921779820281114924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e470fadba8807440a2df329f3e6d865, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  revisiting: 1
+  testingmode: 0
+  testingsize: 5
+  spawnEnemies: 0
+  blockplacing: 0
+  placing: 0
+  currentTileID: 0
+  pos: {x: 0, y: 0, z: 0}
+  destroyandPlace: {fileID: 0}
+  mapz: -1
+  floorz: 0
+  items: []
+  inv: {fileID: 0}
+  fighting: 0
+  invOpen: 0
+  character: {fileID: 0}
+  invObject: {fileID: 0}
+  markets: []
+  currentChunk: {x: 0, y: 0}
+  gold: 0
+  paused: 0
+  sections: []
+  fullText: 
+  textFiles:
+  - {fileID: 4900000, guid: 1d5559bc27c9ee948aa451f76de6f6ac, type: 3}
+  loadFromFile: 0
+--- !u!114 &4921779820281114921
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921779820281114924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 836b0d085ea92e04c98d6cdf1b0c5cd9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &4921779820281114920
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921779820281114924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 48e888798acbbc34190f9a8051e522db, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  manager: {fileID: 4921779820281114927}
+  map: {fileID: 4165390775133197889, guid: 1400dd10ed3196e4080b41959b0ad85a, type: 3}
+  grid: {fileID: 0}
+  mapz: 0
+  floorz: 0
+  currentChunk: {x: 0, y: 0}
+  biomes:
+  - {fileID: 6165474613466220417, guid: 710165ecf998c894ab09d3f177bb9ba3, type: 3}
+  - {fileID: 7743079818505399243, guid: 9a7479a76ccb59449915646c2facd4ec, type: 3}
+  playerMovement: {fileID: 0}
+  chunkWidth: 64
+  chunkHeight: 64
+  seed: 150
+  randomSeed: 1
+  biomeseed: 1000000
+  randomBiomeSeed: 1
+  randomFillPercent: 51
+  randomBiomePercent: 55
+  smooths: 5
+  biomesmooths: 1
+  enemyChance: 75
+  maxenemies: 3
+  enemyParent: {fileID: 0}
+  specialTileChance: 25
+--- !u!114 &4921779820281114923
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4921779820281114924}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af4f152da9ca5b64bba132dde06e5e42, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  size: 0

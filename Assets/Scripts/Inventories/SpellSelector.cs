@@ -34,7 +34,7 @@ public class SpellSelector : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         }
         transform.position = startpos;
     }
-    void FixedUpdate()
+    void Update()
     {
         if (mouseDown)
         {

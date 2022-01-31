@@ -7,7 +7,8 @@ public class SwapRotators : MonoBehaviour
 {
     PlayerControls controls;
     public GameObject[] rotators = new GameObject[4];
-    public Sprite[] fullRotators = new Sprite[5];
+    public Sprite[] twoFullRotators = new Sprite[2];
+    public Sprite[] threeFullRotators = new Sprite[3];
     public Sprite smallRotator;
     [HideInInspector]
     public int current = 0;
@@ -27,7 +28,7 @@ public class SwapRotators : MonoBehaviour
     void SwitchRotator(CallbackContext ctx)
     {
         previous = current;
-        current = Mathf.Clamp(current + (int)ctx.ReadValue<float>(), 0, 3);
+        current = Mathf.Clamp(current + (int)ctx.ReadValue<float>(), 0, 2);
         if (current != previous)
         {
             rotators[previous].SetActive(false);
@@ -42,5 +43,10 @@ public class SwapRotators : MonoBehaviour
     public void UpdateRotator(int i)
     {
         rotators[i].GetComponent<ItemRotator>().UpdateItems();
+    }
+
+    private void OnDestroy()
+    {
+        controls.Disable();
     }
 }

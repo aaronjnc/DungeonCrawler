@@ -104,6 +104,9 @@ MonoBehaviour:
   enemies:
     serializedVersion: 2
     m_Bits: 1024
+  ignoreLayers:
+    serializedVersion: 2
+    m_Bits: 12288
   baseDamage: 10
 --- !u!61 &-1016764726944622282
 BoxCollider2D:

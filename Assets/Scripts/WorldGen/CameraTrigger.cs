@@ -15,21 +15,19 @@ public class CameraTrigger : MonoBehaviour
         EnemyMovement enemy;
         if (collision.gameObject.TryGetComponent(out enemy))
         {
-            enemy.activated = true;
+            enemy.enabled = true;
         }
-        TilemapRenderer renderer;
-        if (collision.gameObject.TryGetComponent(out renderer))
-            ChunkGen.currentWorld.LoadChunk(collision.gameObject.transform.position);
+        if (collision.gameObject.tag.Equals("MapCollider"))
+            ChunkGen.currentWorld.LoadChunk(collision.gameObject.transform.parent.transform.position);
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
         EnemyMovement enemy;
         if (collision.gameObject.TryGetComponent(out enemy))
         {
-            enemy.activated = false;
+            enemy.enabled = false;
         }
-        TilemapRenderer renderer;
-        if (collision.gameObject.TryGetComponent(out renderer))
-            ChunkGen.currentWorld.UnloadChunk(collision.gameObject.transform.position);
+        if (collision.gameObject.tag.Equals("MapCollider"))
+            ChunkGen.currentWorld.UnloadChunk(collision.gameObject.transform.parent.transform.position);
     }
 }

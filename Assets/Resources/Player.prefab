@@ -145,12 +145,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29031ac06a00e2f4ca147f30f7c51d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dir: {x: 0, y: 0}
   speed: 3
   rotSpeed: 10
   pos: {x: 0, y: 0, z: 0}
-  inventoryOpen: 0
-  marketPlace: {fileID: 0}
-  playerMarket: {fileID: 0}
+  canvas: {fileID: 0}
+  menu: {fileID: 0}
+  magicTree: {fileID: 0}
+  interactable:
+    serializedVersion: 2
+    m_Bits: 16384
+  currentChunk: {x: 0, y: 0}
+  canMove: 1
 --- !u!114 &7711946254513186298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,7 +172,6 @@ MonoBehaviour:
   health: 0
   maxHealth: 100
   healthSlider: {fileID: 0}
-  shieldSlider: {fileID: 0}
   enemy:
     serializedVersion: 2
     m_Bits: 0
