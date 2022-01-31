@@ -7,14 +7,12 @@ using UnityEngine.InputSystem;
 
 public class ItemRotator : MonoBehaviour
 {
-    //sprite reference for current expanded rotator
-    Sprite fullRotator;
+    public Image itemRotator;
     //slots for expanded rotator
     public ItemSlot[] itemSlots = new ItemSlot[7];
+    public Sprite[] fullRotators = new Sprite[7];
     //images for expanded rotator
     public List<Image> images = new List<Image>();
-    //array of images for all expanded rotators
-    public Sprite[] fullRotators = new Sprite[7];
     //sprite for minimized rotator
     public Sprite smallRotator;
     //image slot for chosen item
@@ -63,8 +61,8 @@ public class ItemRotator : MonoBehaviour
         controls.Inventory.ItemRotator.canceled += MinimizeRotator;
         controls.Inventory.ItemRotator.Enable();
         controls.Movement.MousePosition.Enable();
-        fullRotator = fullRotators[current];
         centralImage.sprite = itemSlots[current].getSprite();
+        itemRotator.gameObject.SetActive(false);
         started = true;
         current = 0;
     }
@@ -74,8 +72,7 @@ public class ItemRotator : MonoBehaviour
     /// <param name="ctx"></param>
     void ExpandRotator(CallbackContext ctx)
     {
-        rotatorImage.sprite = fullRotator;
-        centralImage.gameObject.SetActive(false);
+        itemRotator.gameObject.SetActive(true);
         foreach(Image img in images)
         {
             img.gameObject.SetActive(true);
@@ -92,8 +89,7 @@ public class ItemRotator : MonoBehaviour
         {
             img.gameObject.SetActive(false);
         }
-        rotatorImage.sprite = smallRotator;
-        centralImage.gameObject.SetActive(true);
+        itemRotator.gameObject.SetActive(false);
         open = false;
     }
     /// <summary>
@@ -103,18 +99,18 @@ public class ItemRotator : MonoBehaviour
     {
         if (open)
         {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            float angleRad = Mathf.Atan2(mousePos.y-transform.position.y, mousePos.x-transform.position.x);
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            float angleRad = Mathf.Atan2(mousePos.y, mousePos.x);
             float angleDeg = (180 / Mathf.PI) * angleRad;
-            if (angleDeg <= 90 && angleDeg > 52)
+            if (angleDeg <= 90 && angleDeg > 39)
             {
                 current = 0;
             }
-            else if (angleDeg > -13 && angleDeg < 52)
+            else if (angleDeg > -12 && angleDeg < 39)
             {
                 current = 1;
             }
-            else if (angleDeg <= -13 && angleDeg > -64)
+            else if (angleDeg <= -12 && angleDeg > -63)
             {
                 current = 2;
             }
@@ -134,8 +130,7 @@ public class ItemRotator : MonoBehaviour
             {
                 current = 5;
             }
-            fullRotator = fullRotators[current];
-            rotatorImage.sprite = fullRotator;
+            itemRotator.sprite = fullRotators[current];
             centralImage.sprite = itemSlots[current].getSprite();
             if (itemSlots[current].getSprite() != null)
             {
@@ -169,7 +164,7 @@ public class ItemRotator : MonoBehaviour
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
         centralImage.sprite = itemSlots[current].getSprite();
-        fullRotator = fullRotators[current];
+        itemRotator.sprite = fullRotators[current];
         if (itemSlots[current].getSprite() != null)
         {
             centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 255);
