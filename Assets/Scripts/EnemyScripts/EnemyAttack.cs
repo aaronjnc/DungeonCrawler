@@ -2,28 +2,46 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+/// <summary>
+/// parent class for enemy movement
+/// </summary>
 public abstract class EnemyAttack : MonoBehaviour
 {
+    //reach of basic attack
     public float reach;
+    //enemy view angle
     public float viewangle;
+    //damage performed by basic attack
     public float damage;
+    //layer of player
     public LayerMask player;
+    //layer of tile
     public LayerMask tile;
-    [HideInInspector]
-    public Vector3 lastLocation;
-    [HideInInspector]
-    public bool spotted;
+    //last location player was seen
+    [HideInInspector] public Vector3 lastLocation;
+    //true if enemy can see player
+    [HideInInspector] public bool spotted;
+    //reference to the player's fight script
     PlayerFight fightScript;
+    //speed of basic attack
     public float attackSpeed;
+    //if attack is charged and ready to be performed
     protected bool attackCharged = true;
+    //if attack is charging
     protected bool charging;
+    //movement script reference
     EnemyMovement movement;
-    // Start is called before the first frame update
+    /// <summary>
+    /// sets up enemy components
+    /// </summary>
     void Start()
     {
         fightScript = GameObject.Find("Player").GetComponent<PlayerFight>();
         movement = GetComponent<EnemyMovement>();
     }
+    /// <summary>
+    /// perform attack if charged
+    /// </summary>
     public void attack()
     {
         if (!attackCharged && !charging)
@@ -34,7 +52,10 @@ public abstract class EnemyAttack : MonoBehaviour
             attackCharged = false;
         }
     }
-
+    /// <summary>
+    /// charge enemy attack
+    /// </summary>
+    /// <returns></returns>
     IEnumerator chargeAttack()
     {
         charging = true;
@@ -42,8 +63,14 @@ public abstract class EnemyAttack : MonoBehaviour
         attackCharged = true;
         charging = false;
     }
-
+    /// <summary>
+    /// abstract method called within each special enemy class to perform attack
+    /// </summary>
     protected abstract void performAttack();
+    /// <summary>
+    /// determines if player is visible once within range
+    /// </summary>
+    /// <param name="collision">player collider</param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (player == (player | (1 << collision.gameObject.layer)))
@@ -62,6 +89,10 @@ public abstract class EnemyAttack : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// determines if player is visible when staying within range
+    /// </summary>
+    /// <param name="collision">player collider</param>
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (player == (player | (1 << collision.gameObject.layer)))
@@ -80,11 +111,17 @@ public abstract class EnemyAttack : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// when player leaves view range
+    /// </summary>
+    /// <param name="collision">player collider</param>
     private void OnTriggerExit2D(Collider2D collision)
     {
         spotted = false;
     }
-
+    /// <summary>
+    /// Draws enemy reach
+    /// </summary>
     protected void OnDrawGizmos()
     {
         Gizmos.color = Color.red;

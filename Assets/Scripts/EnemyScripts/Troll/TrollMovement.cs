@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class TrollMovement : EnemyMovement
 {
-    // Start is called before the first frame update
+    /// <summary>
+    /// sets up basic movement information
+    /// </summary>
     void Start()
     {
         attack = GetComponent<TrollAttack>();
@@ -13,7 +15,9 @@ public class TrollMovement : EnemyMovement
         endRot = Quaternion.identity;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// patrols until player is spotted then pursue
+    /// </summary>
     void FixedUpdate()
     {
         attacking = attack.spotted;
@@ -55,7 +59,10 @@ public class TrollMovement : EnemyMovement
             }
         }
     }
-
+    /// <summary>
+    /// wait at end of every patrol point
+    /// </summary>
+    /// <returns></returns>
     IEnumerator wait()
     {
         yield return new WaitForSeconds(waitTime);

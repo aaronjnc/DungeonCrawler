@@ -5,18 +5,31 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using System;
-
+/// <summary>
+/// Script used to move items around in the inventory
+/// </summary>
 [RequireComponent(typeof(BoxCollider2D))]
 public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
+    //textbox prefab representing how many items are in current stack
     public Text itemCount;
+    //gameobject instantiated at runtime to hold item count
     private GameObject itemCounter;
+    //image is movable
     public bool movable = true;
+    //manager reference
     GameManager manager;
+    //if mouse is held down on image
     bool mouseDown = false;
+    //initial position of image
     Vector3 startpos = Vector3.zero;
+    //array position of item
     public Vector2Int itemPos;
+    //inventory reference
     Inventory inv;
+    /// <summary>
+    /// Sets up manager, inventory reference, and start pos
+    /// </summary>
     void Start()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
@@ -35,10 +48,18 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             itemCounter = Instantiate(itemCount.gameObject, transform);
         }
     }
+    /// <summary>
+    /// returns item array position
+    /// </summary>
+    /// <returns>Vector2Int array pos</returns>
     public Vector2Int getArrayPos()
     {
         return itemPos;
     }
+    /// <summary>
+    /// sets mouse down to true when clicked
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerDown(PointerEventData eventData)
     {
         if (movable && !inv.IsEmpty(itemPos))
@@ -46,6 +67,10 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             mouseDown = true;
         }
     }
+    /// <summary>
+    /// sets mouse down to false when pointer lifted, calls drop item method
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerUp(PointerEventData eventData)
     {
         if (mouseDown)
@@ -55,6 +80,9 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         transform.position = startpos;
     }
+    /// <summary>
+    /// moves image if mouseDown is true
+    /// </summary>
     void Update()
     {
         if (mouseDown)
@@ -63,6 +91,9 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             transform.position = new Vector3(pos.x, pos.y, startpos.z);
         }
     }
+    /// <summary>
+    /// drops image, resetting object to original position then seeing if the item moves to another slot
+    /// </summary>
     private void DropItem()
     {
         var old = Physics2D.queriesHitTriggers;
@@ -88,6 +119,10 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         transform.position = startpos;
     }
+    /// <summary>
+    /// updates item counter
+    /// </summary>
+    /// <param name="count">number of items</param>
     public void UpdateCount(int count)
     {
         if (count == 0)

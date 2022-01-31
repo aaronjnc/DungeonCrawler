@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class TrollAttack : EnemyAttack
 {
+    /// <summary>
+    /// club the player if they are within range
+    /// </summary>
     protected override void performAttack()
     {
         Collider2D playerColl = Physics2D.OverlapCircle(transform.position, reach, player);

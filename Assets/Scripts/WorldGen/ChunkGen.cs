@@ -158,6 +158,11 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).GenerateChunk();
         }
     }
+    /// <summary>
+    /// determine biome type
+    /// </summary>
+    /// <param name="chunkPos">chunk to determine biome of</param>
+    /// <returns></returns>
     private int DetermineBiome(Vector2Int chunkPos)
     {
         float lowest = 100;
@@ -173,6 +178,12 @@ public class ChunkGen : MonoBehaviour
         }
         return index;
     }
+    /// <summary>
+    /// Creates biome script and adds it to chunk hashtable
+    /// </summary>
+    /// <param name="chunkPos">biome position</param>
+    /// <param name="hash">hashcode for chunk</param>
+    /// <param name="biomeIdx">index of biome</param>
     private void GenerateBiome(Vector2Int chunkPos, int hash, int biomeIdx)
     {
         switch(biomeIdx)
@@ -364,6 +375,11 @@ public class ChunkGen : MonoBehaviour
             GetChunk(chunkPos).UpdateCollider(tilePos.x, tilePos.y,tileCollider);
         }
     }
+    /// <summary>
+    /// adds preset section
+    /// </summary>
+    /// <param name="startPos">start position of section</param>
+    /// <param name="section">script holding preset section information</param>
     void PresetTiles(Vector2Int startPos, PremadeSection section)
     {
         if (section.textmap != null)
@@ -371,6 +387,12 @@ public class ChunkGen : MonoBehaviour
         if (section.floormap != null)
             PresetMap(startPos, section.floormap, 1);
     }
+    /// <summary>
+    /// adds preset sections to map
+    /// </summary>
+    /// <param name="startPos">start pos of preset item</param>
+    /// <param name="textmap">text asset representing preset map</param>
+    /// <param name="z">z position to add map at</param>
     void PresetMap(Vector2Int startPos, TextAsset textmap, int z)
     {
         string[] rows = textmap.text.Split('\n');
@@ -392,6 +414,10 @@ public class ChunkGen : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// returns array holding world map information
+    /// </summary>
+    /// <returns></returns>
     public string[][] getWorldMap()
     {
         string[][] wallStrings = new string[chunks.Keys.Count][];
@@ -403,6 +429,10 @@ public class ChunkGen : MonoBehaviour
         }
         return wallStrings;
     }
+    /// <summary>
+    /// returns array holding enemy information
+    /// </summary>
+    /// <returns></returns>
     public string[][] getEnemies()
     {
         string[][] enemyStrings = new string[chunks.Keys.Count][];
@@ -414,6 +444,9 @@ public class ChunkGen : MonoBehaviour
         }
         return enemyStrings;
     }
+    /// <summary>
+    /// loads world from file
+    /// </summary>
     void loadPreviousWorld()
     {
         GameInformation gameInfo = manager.GetGameInformation();
