@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour
     private string previousWorld = "";
     public ChunkGen gen;
     private List<ItemSlot> stallItems = new List<ItemSlot>();
+    private ItemSlot[,] inventory = new ItemSlot[5, 7];
     // Start is called before the first frame update
     void Awake()
     {
@@ -242,5 +243,20 @@ public class GameManager : MonoBehaviour
     public List<ItemSlot> GetStallItems()
     {
         return stallItems;
+    }
+    public void SaveInventory(ItemSlot[,] itemSlots)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                inventory[i, j] = new ItemSlot();
+                inventory[i, j].addExisting(itemSlots[i, j]);
+            }
+        }
+    }
+    public ItemSlot[,] GetInventory()
+    {
+        return inventory;
     }
 }
