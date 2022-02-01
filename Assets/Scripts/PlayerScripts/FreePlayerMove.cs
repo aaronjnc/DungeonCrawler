@@ -4,7 +4,6 @@ using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class FreePlayerMove : MonoBehaviour
 {

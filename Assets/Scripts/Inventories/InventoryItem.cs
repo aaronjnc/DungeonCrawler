@@ -29,7 +29,7 @@ public class InventoryItem : MonoBehaviour
     //list of number relating to number of ingredients used to craft the item
     public List<int> ingredientCount = new List<int>();
     // script related to weapon if a weapon
-    public WeaponInterface<Transform,PlayerFight> weaponScript { get { return (WeaponInterface<Transform, PlayerFight>)gameObject.GetComponent(typeof(WeaponInterface<Transform, PlayerFight>)); } }
+    public WeaponInterface weaponScript { get { return (WeaponInterface)gameObject.GetComponent(typeof(WeaponInterface)); } }
     //different types of items
     public enum ItemType
     {

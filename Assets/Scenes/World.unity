@@ -3971,6 +3971,10 @@ PrefabInstance:
       propertyPath: canvas
       value: 
       objectReference: {fileID: 593902140}
+    - target: {fileID: 4946243522126971640, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4946243522126971641, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_Name
       value: Player
@@ -3985,11 +3989,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4946243522126971642, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_Offset.y
-      value: -0.05967179
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4946243522126971642, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_Size.y
-      value: 1.5846052
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4946243522126971644, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -4110,6 +4114,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29031ac06a00e2f4ca147f30f7c51d0f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!212 &668468347 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 4946243522126971645, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
+  m_PrefabInstance: {fileID: 668468343}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &672252564
 GameObject:
   m_ObjectHideFlags: 0
@@ -11855,6 +11864,7 @@ MonoBehaviour:
   playerMovement: {fileID: 668468346}
   current: 0
   inv: {fileID: 593902144}
+  playerRenderer: {fileID: 668468347}
 --- !u!1 &1715412944
 GameObject:
   m_ObjectHideFlags: 0
