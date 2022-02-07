@@ -84,6 +84,5 @@ public class ChosenItem : MonoBehaviour
             Debug.Log(invMinerals[i][1]);
             mineralCount.Add(Int32.Parse(invMinerals[i][1]));
         }
-        Debug.Log("Go minerals");
     }
 }
