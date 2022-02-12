@@ -26,6 +26,7 @@ public class FreePlayerMove : MonoBehaviour
     public LayerMask interactable;
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public bool canMove = true;
+    private float sprintMod = 1f;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
@@ -39,6 +40,9 @@ public class FreePlayerMove : MonoBehaviour
         controls.Movement.Vertical.performed += ctx => dir.y += ctx.ReadValue<float>();
         controls.Movement.Vertical.canceled += ctx => dir.y = 0;
         controls.Movement.Vertical.Enable();
+        controls.Movement.Sprint.performed += ctx => sprintMod = 2f;
+        controls.Movement.Sprint.canceled += ctx => sprintMod = 1f;
+        controls.Movement.Sprint.Enable();
         controls.Interact.Inventory.performed += Inventory;
         controls.Interact.Inventory.Enable();
         controls.Movement.MousePosition.Enable();
@@ -131,7 +135,7 @@ public class FreePlayerMove : MonoBehaviour
             float angleDeg = (180 / Mathf.PI) * angleRad;
             transform.rotation = Quaternion.Euler(0, 0, angleDeg);
             dir = dir.normalized;
-            Vector3 velDir = -dir.x * transform.up + dir.y * transform.right;
+            Vector3 velDir = (-dir.x * transform.up + dir.y * transform.right) * sprintMod;
             rotDir = new Vector2(Mathf.Round(transform.up.y), Mathf.Round(-transform.up.x));
             player.velocity = velDir * speed;
             Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
