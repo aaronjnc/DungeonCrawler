@@ -72,6 +72,10 @@ public class PlayerFight : MonoBehaviour
             }
         }
     }        
+    /// <summary>
+    /// deals given damage to player
+    /// </summary>
+    /// <param name="amount">amount of damage player takes</param>
     public void TakeDamage(float amount)
     {
         health = Mathf.Clamp(health - amount, 0, maxHealth);

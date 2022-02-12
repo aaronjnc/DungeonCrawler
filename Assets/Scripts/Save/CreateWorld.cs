@@ -9,6 +9,9 @@ public class CreateWorld : MonoBehaviour
     public InputField inputbox;
     public GameObject failureText;
     public Text[] loadedWorlds;
+    /// <summary>
+    /// Creates new world with input information
+    /// </summary>
     public void CreateNewWorld()
     {
         failureText.SetActive(false);
@@ -29,7 +32,7 @@ public class CreateWorld : MonoBehaviour
         }
         foreach (Text t in loadedWorlds)
         {
-            if (t.gameObject.active)
+            if (t.gameObject.activeInHierarchy)
             {
                 if (t.text.Trim().Equals(worldName))
                 {

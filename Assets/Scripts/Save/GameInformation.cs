@@ -18,29 +18,45 @@ public class GameInformation
     public int[] enabledSpells;
     public int seed;
     public int biomeSeed;
-    public byte[,,] inventory = new byte[5,5,7];
-    public byte[,,] stackSize = new byte[5, 5, 7];
-    public byte[,,] durability = new byte[5,5,7];
+    public byte[,] inventory = new byte[5,7];
+    public byte[,] stackSize = new byte[5, 7];
+    public byte[,] durability = new byte[5,7];
     public int rotator;
     public int currentChoice;
-    public int[,,] chosenPos = new int[5,5,2];
+    public int[,] chosenItems = new int[7, 2];
+    /// <summary>
+    /// Sets up game information with passed in manager
+    /// </summary>
+    /// <param name="manager"></param>
     public GameInformation(GameObject manager)
     {
         SaveWorld(manager.GetComponent<ChunkGen>());
         SaveManager(manager.GetComponent<GameManager>());
         SavePlayer(GameObject.Find("Player"));
     }
+    /// <summary>
+    /// Saves information contained within gamemanager
+    /// </summary>
+    /// <param name="manager"></param>
     void SaveManager(GameManager manager)
     {
         TimeSpan playTime = System.DateTime.Now.Subtract(manager.startTime);
         playHours = manager.hours + playTime.TotalHours;
     }
+    /// <summary>
+    /// Saves chunk information
+    /// </summary>
+    /// <param name="gen"></param>
     void SaveWorld(ChunkGen gen)
     {
         worldMap = gen.getWorldMap();
         seed = gen.seed;
         biomeSeed = gen.biomeseed;
     }
+    /// <summary>
+    /// Saves player information
+    /// </summary>
+    /// <param name="player"></param>
     void SavePlayer(GameObject player)
     {
         Transform p = player.transform;
@@ -54,35 +70,34 @@ public class GameInformation
         enabledSpells = player.GetComponent<Magic>().enabledSpells;
         SaveInventory(player.GetComponent<FreePlayerMove>().canvas.GetComponent<Inventory>());
     }
-
+    /// <summary>
+    /// Saves inventory information
+    /// </summary>
+    /// <param name="inv"></param>
     void SaveInventory(Inventory inv)
     {
         for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 7; j++)
             {
-                chosenPos[i, j, 0] = inv.chosenPos[i, j].x;
-                chosenPos[i, j, 1] = inv.chosenPos[i, j].y;
-                if (inv.chosenPos[i,j] != new Vector2Int(10,10))
+                ItemSlot iRef = inv.getItemSlot(i, j);
+                if (!iRef.isEmpty())
                 {
-                    chosenPos[i, j, 0] = int.MaxValue;
-                }
-                for (int k = 0; k < 7; k++)
+                    inventory[i, j] = iRef.getItemId();
+                    stackSize[i, j] = iRef.getCurrentCount();
+                    durability[i,j] = iRef.getDurability();
+                } 
+                else
                 {
-                    ItemSlot iRef = inv.getItemSlot(i,j,k);
-                    if (!iRef.isEmpty())
-                    {
-                        inventory[i, j, k] = iRef.getItemId();
-                        stackSize[i, j, k] = iRef.getCurrentCount();
-                        durability[i, j, k] = iRef.getDurability();
-                    } else
-                    {
-                        inventory[i, j, k] = 127;
-                    }
+                    inventory[i, j] = 127;
                 }
             }
         }
-        rotator = inv.swapRotators.current;
-        currentChoice = inv.swapRotators.chosen;
+        for (int i = 0; i < 7; i++)
+        {
+            chosenItems[i, 0] = inv.chosenItems[i].x;
+            chosenItems[i, 1] = inv.chosenItems[i].y;
+        }
+        currentChoice = inv.itemRotator.current;
     }
 }

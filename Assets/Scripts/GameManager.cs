@@ -19,9 +19,7 @@ public class GameManager : MonoBehaviour
 
     [Header("Abilities:")]
     [HideInInspector]
-    public bool blockplacing = false;
-    [HideInInspector]
-    public bool placing = false;
+    public bool blockBreaking = false;
     [HideInInspector]
     public byte currentTileID;
     [HideInInspector]
@@ -40,8 +38,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
     public GameObject character;
-    [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
-    [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
     Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
     Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
@@ -57,6 +53,8 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public double hours;
     private string previousWorld = "";
     public ChunkGen gen;
+    private List<ItemSlot> stallItems = new List<ItemSlot>();
+    private ItemSlot[,] inventory = new ItemSlot[5, 7];
     // Start is called before the first frame update
     void Awake()
     {
@@ -72,21 +70,12 @@ public class GameManager : MonoBehaviour
         currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
-            InventoryItem item;
-            if (block.TryGetComponent<InventoryItem>(out item))
-            {
-                item.durability = item.baseDurability;
-                item.currentStack = 1;
-                itemScripts.Add(item.itemID, item);
-            }
             Blocks blockComp = block.GetComponent<Blocks>();
             blocks.Add(blockComp.index, blockComp);
         }
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
             InventoryItem invItem = item.GetComponent<InventoryItem>();
-            invItem.durability = invItem.baseDurability;
-            invItem.currentStack = 1;
             items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
         }
@@ -138,7 +127,7 @@ public class GameManager : MonoBehaviour
     {
         foreach (InventoryItem item in items)
         {
-            if (item.name.Equals(name))
+            if (item.itemName.Equals(name))
                 return item;
         }
         return null;
@@ -208,22 +197,9 @@ public class GameManager : MonoBehaviour
         paused = false;
         Time.timeScale = 1;
     }
-    public void BuildNavMesh()
+    public void assignTextFile(TextAsset text)
     {
-        foreach(NavMeshSurface2d surface in NavMeshSurface2d.activeSurfaces)
-        {
-            surface.BuildNavMesh();
-        }
-    }
-    public void assignTextFile(string textName)
-    {
-        foreach(TextAsset text in textFiles)
-        {
-            if (text.name.Equals(textName))
-            {
-                fullText = text.text;
-            }
-        }
+        fullText = text.text;
     }
     public void loadWorld(GameInformation info)
     {
@@ -251,5 +227,36 @@ public class GameManager : MonoBehaviour
         character = GameObject.Find("Player");
         gen.enabled = true;
         startTime = DateTime.Now;
+    }
+
+    public List<InventoryItem> GetItemScripts()
+    {
+        return items;
+    }
+    public void AddStallItems(List<ItemSlot> items)
+    {
+        foreach (ItemSlot item in items)
+        {
+            stallItems.Add(item);
+        }
+    }
+    public List<ItemSlot> GetStallItems()
+    {
+        return stallItems;
+    }
+    public void SaveInventory(ItemSlot[,] itemSlots)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                inventory[i, j] = new ItemSlot();
+                inventory[i, j].addExisting(itemSlots[i, j]);
+            }
+        }
+    }
+    public ItemSlot[,] GetInventory()
+    {
+        return inventory;
     }
 }

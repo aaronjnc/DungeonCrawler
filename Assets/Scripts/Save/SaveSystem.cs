@@ -6,6 +6,9 @@ using UnityEngine;
 
 public static class SaveSystem 
 {
+    /// <summary>
+    /// Saves the game using world name kept in game manager
+    /// </summary>
     public static void Save()
     {
         GameObject manager = GameObject.Find("GameController");
@@ -16,6 +19,10 @@ public static class SaveSystem
         formatter.Serialize(stream, info);
         stream.Close();
     }
+    /// <summary>
+    /// loads world with given path
+    /// </summary>
+    /// <param name="path">path of world to load</param>
     public static void Load(string path)
     {
         if (File.Exists(path))

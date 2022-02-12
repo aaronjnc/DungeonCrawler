@@ -150,12 +150,51 @@ public class ChunkGen : MonoBehaviour
         if (!ChunkCreated(chunkPos))
         {
             int hash = chunkPos.ToString().GetHashCode();
-            chunks.Add(hash, new Chunk(chunkPos));
+            CreateChunk(chunkPos);
             ((Chunk)chunks[hash]).GenerateChunk();
         }
         else
         {
             GetChunk(chunkPos).GenerateChunk();
+        }
+    }
+    /// <summary>
+    /// determine biome type
+    /// </summary>
+    /// <param name="chunkPos">chunk to determine biome of</param>
+    /// <returns></returns>
+    private int DetermineBiome(Vector2Int chunkPos)
+    {
+        float lowest = 100;
+        int index = 0;
+        float randomNum = UnityEngine.Random.Range(0, 100f);
+        foreach (Biomes biomeScript in biomes)
+        {
+            if (biomeScript.chance >= randomNum / 100 && biomeScript.chance < lowest)
+            {
+                index = biomeScript.biomeID;
+                lowest = biomeScript.chance;
+            }
+        }
+        return index;
+    }
+    /// <summary>
+    /// Creates biome script and adds it to chunk hashtable
+    /// </summary>
+    /// <param name="chunkPos">biome position</param>
+    /// <param name="hash">hashcode for chunk</param>
+    /// <param name="biomeIdx">index of biome</param>
+    private void GenerateBiome(Vector2Int chunkPos, int hash, int biomeIdx)
+    {
+        switch(biomeIdx)
+        {
+            default:
+            case 0:
+                chunks.Add(hash, new CommonBiome(chunkPos));
+                break;
+            case 1:
+                chunks.Add(hash, new WaterBiome(chunkPos));
+                break;
         }
     }
     /// <summary>
@@ -175,7 +214,15 @@ public class ChunkGen : MonoBehaviour
     public void CreateChunk(Vector2Int chunkPos)
     {
         int hash = chunkPos.ToString().GetHashCode();
-        chunks.Add(hash, new Chunk(chunkPos));
+        if ((Mathf.Abs(chunkPos.x) % 2 == 0 && Mathf.Abs(chunkPos.y) % 2 == 0) || (Mathf.Abs(chunkPos.x) % 2 == 1 && Mathf.Abs(chunkPos.y % 2) == 1))
+        {
+            int id = DetermineBiome(chunkPos);
+            GenerateBiome(chunkPos, hash, id);
+        }
+        else
+        {
+            chunks.Add(hash, new MixedBiome(chunkPos));
+        }
     }
     /// <summary>
     /// Returns true if Chunk has already been generated
@@ -329,15 +376,10 @@ public class ChunkGen : MonoBehaviour
         }
     }
     /// <summary>
-    /// Interacts with tile at given location in given chunk
+    /// adds preset section
     /// </summary>
-    /// <param name="tilePos">Chunk tile position</param>
-    /// <param name="chunkPos">Chunk position</param>
-    public void Interact(Vector3Int tilePos,Vector2Int chunkPos)
-    {
-        if (ChunkGenerated(chunkPos))
-            GetChunk(chunkPos).Interact(new Vector2Int(tilePos.x, tilePos.y));
-    }
+    /// <param name="startPos">start position of section</param>
+    /// <param name="section">script holding preset section information</param>
     void PresetTiles(Vector2Int startPos, PremadeSection section)
     {
         if (section.textmap != null)
@@ -345,6 +387,12 @@ public class ChunkGen : MonoBehaviour
         if (section.floormap != null)
             PresetMap(startPos, section.floormap, 1);
     }
+    /// <summary>
+    /// adds preset sections to map
+    /// </summary>
+    /// <param name="startPos">start pos of preset item</param>
+    /// <param name="textmap">text asset representing preset map</param>
+    /// <param name="z">z position to add map at</param>
     void PresetMap(Vector2Int startPos, TextAsset textmap, int z)
     {
         string[] rows = textmap.text.Split('\n');
@@ -366,6 +414,10 @@ public class ChunkGen : MonoBehaviour
             }
         }
     }
+    /// <summary>
+    /// returns array holding world map information
+    /// </summary>
+    /// <returns></returns>
     public string[][] getWorldMap()
     {
         string[][] wallStrings = new string[chunks.Keys.Count][];
@@ -377,6 +429,10 @@ public class ChunkGen : MonoBehaviour
         }
         return wallStrings;
     }
+    /// <summary>
+    /// returns array holding enemy information
+    /// </summary>
+    /// <returns></returns>
     public string[][] getEnemies()
     {
         string[][] enemyStrings = new string[chunks.Keys.Count][];
@@ -388,6 +444,9 @@ public class ChunkGen : MonoBehaviour
         }
         return enemyStrings;
     }
+    /// <summary>
+    /// loads world from file
+    /// </summary>
     void loadPreviousWorld()
     {
         GameInformation gameInfo = manager.GetGameInformation();
