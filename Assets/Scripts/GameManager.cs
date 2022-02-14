@@ -55,6 +55,8 @@ public class GameManager : MonoBehaviour
     public ChunkGen gen;
     private List<ItemSlot> stallItems = new List<ItemSlot>();
     private ItemSlot[,] inventory = new ItemSlot[5, 7];
+    private int playerMoney;
+    public bool initialStartUp = true;
     // Start is called before the first frame update
     void Awake()
     {
@@ -258,5 +260,18 @@ public class GameManager : MonoBehaviour
     public ItemSlot[,] GetInventory()
     {
         return inventory;
+    }
+    public void SetMoney(int money)
+    {
+        playerMoney = money;
+    }
+    public int GetMoney()
+    {
+        return playerMoney;
+    }
+    public void UpdateGameInfo(ItemSlot[,] itemSlots, int money)
+    {
+        gameInfo.UpdateInventory(itemSlots);
+        gameInfo.playerMoney = money;
     }
 }

@@ -8,6 +8,7 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class Inventory : MonoBehaviour
 {
+    private int playerMoney = 0;
     //manager reference
     private GameManager manager;
     //2D array of images
@@ -20,6 +21,7 @@ public class Inventory : MonoBehaviour
     [HideInInspector] public List<Vector2Int> chosenItems = new List<Vector2Int>();
     //reference to item rotator
     public ItemRotator itemRotator;
+    public Text[] moneyObjects;
     /// <summary>
     /// Sets up inventory
     /// </summary>
@@ -63,7 +65,9 @@ public class Inventory : MonoBehaviour
             AddItem(item,1,item.baseDurability);
             item = manager.GetItem("Extendo Sword");
             AddItem(item,1, item.baseDurability);
+            AddMoney(150);
         }
+        UpdateMoney();
         gameObject.SetActive(false);
     }
     /// <summary>
@@ -260,6 +264,7 @@ public class Inventory : MonoBehaviour
                 UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
         }
         itemRotator.UpdateItems();
+        playerMoney = info.playerMoney;
     }
     /// <summary>
     /// returns ItemSlot at given position
@@ -271,8 +276,38 @@ public class Inventory : MonoBehaviour
     {
         return itemSlots[row, col];
     }
+    public void AddMoney(int num)
+    {
+        playerMoney += num;
+    }
+    public int GetMoney()
+    {
+        return playerMoney;
+    }
+    public void UpdateMoney()
+    {
+        int emerald = playerMoney / 1000;
+        int leftOver = playerMoney % 1000;
+        int gold = leftOver / 100;
+        leftOver %= 100;
+        int silver = leftOver / 10;
+        leftOver %= 10;
+        int bronze = leftOver;
+        moneyObjects[0].text = emerald + "";
+        moneyObjects[1].text = gold + "";
+        moneyObjects[2].text = silver + "";
+        moneyObjects[3].text = bronze + "";
+    }
+    public ItemSlot[,] GetInventory()
+    {
+        return itemSlots;
+    }
+    /// <summary>
+    /// Method called when inventory is destroyed (scene change)
+    /// </summary>
     private void OnDestroy()
     {
         manager.SaveInventory(itemSlots);
+        manager.SetMoney(playerMoney);
     }
 }
