@@ -76,6 +76,11 @@ public class ChunkGen : MonoBehaviour
             }
             currentChunk = new Vector2Int(0, 0);
             currentHash = currentChunk.ToString().GetHashCode();
+            if (manager.testingmode)
+            {
+                GetComponent<WorldCreationTesting>().enabled = true;
+                GetComponent<WorldCreationTesting>().size = manager.testingsize;
+            }
         }
     }
     void FixedUpdate()
@@ -153,7 +158,7 @@ public class ChunkGen : MonoBehaviour
             CreateChunk(chunkPos);
             ((Chunk)chunks[hash]).GenerateChunk();
         }
-        else
+        else if (!ChunkGenerated(chunkPos)) 
         {
             GetChunk(chunkPos).GenerateChunk();
         }
@@ -323,9 +328,12 @@ public class ChunkGen : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     public void UnloadChunk(Vector3 chunkPos)
     {
-        Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
-        if (newChunkPos != currentChunk)
-            GetChunk(newChunkPos).UnloadChunk();
+        if (!manager.testingmode)
+        {
+            Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
+            if (newChunkPos != currentChunk)
+                GetChunk(newChunkPos).UnloadChunk();
+        }
     }
     /// <summary>
     /// Loads chunk at given position

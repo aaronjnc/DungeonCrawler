@@ -95,11 +95,6 @@ public class GameManager : MonoBehaviour
         {
             spriteNames.Add(post.name);
         }
-        if (testingmode)
-        {
-            GetComponent<WorldCreationTesting>().enabled = true;
-            GetComponent<WorldCreationTesting>().size = testingsize;
-        }
         //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
     /// <summary>
