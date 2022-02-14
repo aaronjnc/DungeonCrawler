@@ -50,6 +50,7 @@ public class ChosenItem : MonoBehaviour
         itemName.text = "Item: " + chosenItem.GetItemName();
         itemName.gameObject.SetActive(true);
         ingredient.gameObject.SetActive(chosenItem.GetIngredients().Count > 0);
+        bool craftable = true;
         for (int i = 0; i < chosenItem.GetIngredients().Count; i++)
         {
             if (chosenItem.GetItemType() == InventoryItem.ItemType.Mineral || i >= chosenItem.GetIngredients().Count)
@@ -61,7 +62,12 @@ public class ChosenItem : MonoBehaviour
                 string ingredientName = chosenItem.GetIngredients()[i].itemName;
                 if (minerals.Contains(ingredientName))
                 {
-                    ingredients[i].text = mineralCount[minerals.IndexOf(ingredientName)] + "/" + chosenItem.GetIngredientCount()[i] + " " + chosenItem.GetIngredients()[i].itemName;
+                    int invCount = mineralCount[minerals.IndexOf(ingredientName)];
+                    ingredients[i].text = invCount + "/" + chosenItem.GetIngredientCount()[i] + " " + chosenItem.GetIngredients()[i].itemName;
+                    if (invCount < chosenItem.GetIngredientCount()[i])
+                    {
+                        craftable = false;
+                    }
                 }
                 else
                 {
@@ -72,6 +78,22 @@ public class ChosenItem : MonoBehaviour
         }
         buyButton.GetComponentInChildren<Text>().text = chosenItem.getCost() + " gold";
         craftButton.GetComponentInChildren<Text>().text = chosenItem.GetCraftCost() + " gold";
+        if (inv.GetMoney() > chosenItem.getCost())
+        {
+            buyButton.GetComponent<Button>().interactable= true;
+        }
+        else
+        {
+            buyButton.GetComponent<Button>().interactable = false;
+        }
+        if (inv.GetMoney() > chosenItem.GetCraftCost() && craftable)
+        {
+            craftButton.GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            craftButton.GetComponent<Button>().interactable = false;
+        }
         buyButton.SetActive(true);
         craftButton.SetActive(true);
     }
@@ -81,8 +103,20 @@ public class ChosenItem : MonoBehaviour
         for (int i = 0; i < invMinerals.Count; i++)
         {
             minerals.Add(invMinerals[i][0]);
-            Debug.Log(invMinerals[i][1]);
             mineralCount.Add(Int32.Parse(invMinerals[i][1]));
         }
+    }
+
+    public void BuyItem()
+    {
+        inv.SpendMoney(chosenItem.getCost());
+        inv.AddItem(chosenItem);
+        Debug.Log("Bought");
+    }
+
+    public void CraftItem()
+    {
+        inv.SpendMoney(chosenItem.GetCraftCost());
+        inv.AddItem(chosenItem);
     }
 }
