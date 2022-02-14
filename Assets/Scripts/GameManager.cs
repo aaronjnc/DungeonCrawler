@@ -273,8 +273,4 @@ public class GameManager : MonoBehaviour
     {
         gameInfo = info;
     }
-    private void OnDestroy()
-    {
-        SaveSystem.Save();
-    }
 }
