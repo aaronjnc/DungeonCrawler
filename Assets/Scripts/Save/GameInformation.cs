@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class GameInformation
@@ -31,9 +32,16 @@ public class GameInformation
     /// <param name="manager"></param>
     public GameInformation(GameObject manager)
     {
-        SaveWorld(manager.GetComponent<ChunkGen>());
-        SaveManager(manager.GetComponent<GameManager>());
-        SavePlayer(GameObject.Find("Player"));
+        UpdateInformation(manager);
+    }
+    public void UpdateInformation(GameObject manager)
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            SaveWorld(manager.GetComponent<ChunkGen>());
+            SaveManager(manager.GetComponent<GameManager>());
+            SavePlayer(GameObject.Find("Player"));
+        }
     }
     /// <summary>
     /// Saves information contained within gamemanager
