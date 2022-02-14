@@ -88,7 +88,7 @@ public class DialogManager : MonoBehaviour
     /// <param name="ctx"></param>
     private void changeLineChoice(CallbackContext ctx)
     {
-        selectedLine += (int)ctx.ReadValue<float>();
+        selectedLine -= (int)ctx.ReadValue<float>();
         if (selectedLine < 0)
         {
             selectedLine = lines.Count - 1;

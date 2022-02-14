@@ -269,4 +269,8 @@ public class GameManager : MonoBehaviour
         gameInfo.UpdateInventory(itemSlots);
         gameInfo.playerMoney = money;
     }
+    public void SetGameInfo(GameInformation info)
+    {
+        gameInfo = info;
+    }
 }
