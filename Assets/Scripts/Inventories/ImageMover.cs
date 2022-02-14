@@ -46,6 +46,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (itemPos.x < 10)
         {
             itemCounter = Instantiate(itemCount.gameObject, transform);
+            UpdateCount(0);
         }
     }
     /// <summary>

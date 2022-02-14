@@ -46,14 +46,11 @@ public class Inventory : MonoBehaviour
             imageMover.SetArrayPos(new Vector2Int(row, col));
             imgnum++;
         }
-        for (int i = 0; i < 5; i++)
+        for (int row = 0; row < 5; row++)
         {
-            for (int row = 0; row < 5; row++)
+            for (int col = 0; col < 7; col++)
             {
-                for (int col = 0; col < 7; col++)
-                {
-                    itemSlots[row, col] = new ItemSlot();
-                }
+                itemSlots[row, col] = new ItemSlot();
             }
         }
         if (manager.loadFromFile)
@@ -209,7 +206,9 @@ public class Inventory : MonoBehaviour
                 default:
                     if (chosenItems.Contains(arrayPos))
                     {
-                        chosenItems[chosenItems.IndexOf(arrayPos)] = new Vector2Int(int.MaxValue, int.MaxValue);
+                        int previousChosen = chosenItems.IndexOf(arrayPos);
+                        chosenItems[previousChosen] = new Vector2Int(int.MaxValue, int.MaxValue);
+                        UpdateChosen(previousChosen, null);
                     }
                     chosenItems[chosenSpot] = arrayPos;
                     UpdateChosen(chosenSpot, slot.getSprite());
@@ -221,6 +220,10 @@ public class Inventory : MonoBehaviour
         {
             itemSlots[dropPos.x, dropPos.y].addExisting(itemSlots[arrayPos.x, arrayPos.y]);
             itemSlots[arrayPos.x, arrayPos.y].emptySlot();
+            images[dropPos.x, dropPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[dropPos.x, dropPos.y].getCurrentCount());
+            images[arrayPos.x, arrayPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[arrayPos.x, arrayPos.y].getCurrentCount());
+            UpdateImage(dropPos, itemSlots[dropPos.x, dropPos.y].getSprite());
+            UpdateImage(arrayPos, null);
             if (chosenItems.Contains(arrayPos))
             {
                 chosenItems[chosenItems.IndexOf(arrayPos)] = dropPos;
@@ -247,7 +250,7 @@ public class Inventory : MonoBehaviour
     {
         for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 7; j++)
             {
                 byte infoItem = info.inventory[i, j];
                 if (infoItem != 127)
