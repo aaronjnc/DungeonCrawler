@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2773417132913332519}
   - component: {fileID: 2773417132913332512}
-  - component: {fileID: -1220340356492543505}
   m_Layer: 0
   m_Name: MossyWall
   m_TagString: Untagged
@@ -56,29 +55,11 @@ MonoBehaviour:
   prefab: 0
   index: 2
   maxperchunk: 0
+  interactable: 0
+  durability: 20
+  drops:
+  - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
+  chances:
+  - 1
   blockName: 
   blockType: 0
---- !u!114 &-1220340356492543505
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2773417132913332513}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1dc8431747f27a94eac035b671196ff4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemSprite: {fileID: 21300000, guid: 14de4ad4d74bd104083c29431fa7331b, type: 3}
-  stackSize: 50
-  baseDurability: 0
-  durability: 0
-  currentStack: 1
-  damage: 0
-  fighting: 0
-  invType: 1
-  empty: 0
-  level: 0
-  cost: 0
-  itemID: 2

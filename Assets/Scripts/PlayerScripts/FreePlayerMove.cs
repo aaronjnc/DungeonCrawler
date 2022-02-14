@@ -4,7 +4,6 @@ using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
 public class FreePlayerMove : MonoBehaviour
 {
@@ -24,7 +23,10 @@ public class FreePlayerMove : MonoBehaviour
     public GameObject magicTree;
     Vector3Int lookPos = Vector3Int.zero;
     Vector3Int prevlookPos = Vector3Int.zero;
+    public LayerMask interactable;
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
+    public bool canMove = true;
+    private float sprintMod = 1f;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
@@ -38,6 +40,9 @@ public class FreePlayerMove : MonoBehaviour
         controls.Movement.Vertical.performed += ctx => dir.y += ctx.ReadValue<float>();
         controls.Movement.Vertical.canceled += ctx => dir.y = 0;
         controls.Movement.Vertical.Enable();
+        controls.Movement.Sprint.performed += ctx => sprintMod = 2f;
+        controls.Movement.Sprint.canceled += ctx => sprintMod = 1f;
+        controls.Movement.Sprint.Enable();
         controls.Interact.Inventory.performed += Inventory;
         controls.Interact.Inventory.Enable();
         controls.Movement.MousePosition.Enable();
@@ -96,9 +101,10 @@ public class FreePlayerMove : MonoBehaviour
     { 
         if (!manager.paused)
         {
-            if (manager.GetByte(lookPos,currentChunk) != 127)
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 2, interactable);
+            if (hit.collider != null)
             {
-                ChunkGen.currentWorld.Interact(lookPos, currentChunk);
+                hit.collider.gameObject.GetComponent<InteractableTile>().Interact();
             }
         }
     }
@@ -122,14 +128,14 @@ public class FreePlayerMove : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (!manager.paused)
+        if (!manager.paused && canMove)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(controls.Movement.MousePosition.ReadValue<Vector2>());
             float angleRad = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x);
             float angleDeg = (180 / Mathf.PI) * angleRad;
             transform.rotation = Quaternion.Euler(0, 0, angleDeg);
             dir = dir.normalized;
-            Vector3 velDir = -dir.x * transform.up + dir.y * transform.right;
+            Vector3 velDir = (-dir.x * transform.up + dir.y * transform.right) * sprintMod;
             rotDir = new Vector2(Mathf.Round(transform.up.y), Mathf.Round(-transform.up.x));
             player.velocity = velDir * speed;
             Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
@@ -158,7 +164,7 @@ public class FreePlayerMove : MonoBehaviour
         lookPos = pos + lookDir;
         if (lookPos != prevlookPos)
         {
-            if (manager.blockplacing)
+            if (manager.blockBreaking)
             {
                 blockplacing.enabled = true;
                 blockplacing.Positioning(lookPos,currentChunk);
@@ -172,7 +178,10 @@ public class FreePlayerMove : MonoBehaviour
     {
         controls.Disable();
     }
-
+    /// <summary>
+    /// loads player information from file
+    /// </summary>
+    /// <param name="info"></param>
     private void loadFromFile(GameInformation info)
     {
         transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);

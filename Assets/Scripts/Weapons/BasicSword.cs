@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BasicSword : MonoBehaviour, WeaponInterface<Transform, PlayerFight>
+public class BasicSword : WeaponInterface
 {
     public float reach;
     public LayerMask enemy;
@@ -10,11 +10,11 @@ public class BasicSword : MonoBehaviour, WeaponInterface<Transform, PlayerFight>
     public float swingAngle;
     public float baseDamage;
     public float advancedDamage;
-    public bool HasHoldEffect()
+    public override bool HasHoldEffect()
     {
         return hasHoldEffect;
     }
-    public void BaseAttack(Transform playerTransform)
+    public override void BaseAttack(Transform playerTransform)
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(playerTransform.position, reach, enemy);
         for (int i = 0; i < enemies.Length; i++)
@@ -27,7 +27,7 @@ public class BasicSword : MonoBehaviour, WeaponInterface<Transform, PlayerFight>
             }
         }
     }
-    public void AdvancedAttack(Transform playerTransform)
+    public override void AdvancedAttack(Transform playerTransform)
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(playerTransform.position, reach, enemy);
         for (int i = 0; i < enemies.Length;i++)
@@ -35,6 +35,6 @@ public class BasicSword : MonoBehaviour, WeaponInterface<Transform, PlayerFight>
             enemies[i].GetComponent<EnemyInfo>().ReduceHealth(advancedDamage);
         }
     }
-    public void HoldEffect(PlayerFight playerFight)
+    public override void HoldEffect(PlayerFight playerFight)
     {}
 }

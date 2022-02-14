@@ -52,9 +52,10 @@ MonoBehaviour:
   emptyBlocks:
   - {fileID: 6070446513901827791, guid: 82842d439548ee24fa9bc1d9ff847179, type: 3}
   enemies:
-  - {fileID: 3481517882367892545, guid: 244ea214cea46ab4e880ea1840b25039, type: 3}
+  - {fileID: 1644744142854790570, guid: 99dda1bfbc65ab24f82042355119c4cb, type: 3}
   floorBlocks:
   - {fileID: 7305457819448165391, guid: 12921bcf12c74a44db4e0b5a92a08e29, type: 3}
+  - {fileID: 3007942367248793798, guid: e6fbc9ffc1613f74b8e6928192331d23, type: 3}
   scale: 1.1
   weight: 0.68
   specialBlocks:

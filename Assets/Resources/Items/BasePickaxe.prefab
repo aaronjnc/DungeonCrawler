@@ -43,15 +43,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1dc8431747f27a94eac035b671196ff4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemName: Base Pickaxe
   itemSprite: {fileID: 21300000, guid: f5eba3867edb7e842b076772b5326222, type: 3}
   stackSize: 1
   baseDurability: 50
-  durability: 50
-  currentStack: 1
   damage: 15
   fighting: 0
-  invType: 2
-  empty: 1
   level: 0
-  cost: 0
+  cost: 10
+  craftcost: 1
   itemID: 15
+  ingredients:
+  - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
+  ingredientCount: 01000000
+  itemType: 2

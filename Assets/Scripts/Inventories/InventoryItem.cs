@@ -4,25 +4,40 @@ using UnityEngine;
 
 public class InventoryItem : MonoBehaviour
 {
+    //name of item
+    public string itemName;
+    //item sprite
     public Sprite itemSprite;
+    //maximum number of items in a stack
     public byte stackSize;
+    //maximum durability of item
     public byte baseDurability;
-    public byte durability;
-    public byte currentStack = 1;
+    //damage done by item if tool or weapon
     public byte damage;
+    //if item is used for fighting
     public bool fighting;
-    public Inventory.InventoryType invType;
-    public bool empty = true;
+    //item level
     public int level;
+    //cost to buy item
     public int cost;
+    //cost to craft item
+    public int craftcost;
+    //identifying number of item
     public byte itemID;
-    public WeaponInterface<Transform,PlayerFight> weaponScript { get { return (WeaponInterface<Transform, PlayerFight>)gameObject.GetComponent(typeof(WeaponInterface<Transform, PlayerFight>)); } }
-    public enum Type
+    //list of items that are used to craft the item
+    public List<InventoryItem> ingredients = new List<InventoryItem>();
+    //list of number relating to number of ingredients used to craft the item
+    public List<int> ingredientCount = new List<int>();
+    // script related to weapon if a weapon
+    public WeaponInterface weaponScript { get { return (WeaponInterface)gameObject.GetComponent(typeof(WeaponInterface)); } }
+    //different types of items
+    public enum ItemType
     {
-        Pickaxe,
-        Block,
-        Post,
-        Sword,
-        Bow
+        Weapon,
+        Consumable,
+        Tool,
+        Mineral,
     }
+    //type of item
+    public ItemType itemType;
 }
