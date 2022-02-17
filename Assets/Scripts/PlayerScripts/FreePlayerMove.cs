@@ -58,6 +58,7 @@ public class FreePlayerMove : MonoBehaviour
         {
             loadFromFile(manager.GetGameInformation());
         }
+        SaveSystem.Save();
     }
     /// <summary>
     /// Activates the spell menu when 'X' is pressed
