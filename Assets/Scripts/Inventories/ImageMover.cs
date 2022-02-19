@@ -131,13 +131,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             itemCounter.SetActive(false);
             return;
         }
-        try
-        {
-            itemCounter.GetComponent<Text>().text = count.ToString();
-        } catch (NullReferenceException e)
-        {
-            Debug.Log(gameObject.name);
-        }
+        itemCounter.GetComponent<Text>().text = count.ToString();
         itemCounter.SetActive(true);
     }
 }

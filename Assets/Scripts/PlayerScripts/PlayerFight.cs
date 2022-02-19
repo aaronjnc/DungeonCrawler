@@ -88,6 +88,7 @@ public class PlayerFight : MonoBehaviour
 
     private void OnDestroy()
     {
-        controls.Disable();
+        if (controls != null)
+            controls.Disable();
     }
 }

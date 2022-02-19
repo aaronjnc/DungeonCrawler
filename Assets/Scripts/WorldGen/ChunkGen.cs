@@ -19,7 +19,7 @@ public class ChunkGen : MonoBehaviour
     Vector3Int previousPos = Vector3Int.zero;
     public Vector2Int currentChunk = Vector2Int.zero;
     int currentHash;
-    Hashtable chunks = new Hashtable();
+    Hashtable chunks;
     public Biomes[] biomes;
     public FreePlayerMove playerMovement;
     public int chunkWidth;
@@ -38,7 +38,7 @@ public class ChunkGen : MonoBehaviour
     public int maxenemies;
     public Transform enemyParent;
     public int specialTileChance;
-    private void OnEnable()
+    public void StartUp()
     {
         currentWorld = this;
         grid = GameObject.Find("Grid").transform;
@@ -46,6 +46,7 @@ public class ChunkGen : MonoBehaviour
         enemyParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
+        chunks = new Hashtable();
         if (manager.loadFromFile)
         {
             loadPreviousWorld();
