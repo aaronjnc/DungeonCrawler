@@ -51,7 +51,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string worldName;
     [HideInInspector] public DateTime startTime;
     [HideInInspector] public double hours;
-    private string previousWorld = "";
     public ChunkGen gen;
     private List<ItemSlot> stallItems = new List<ItemSlot>();
     private ItemSlot[,] inventory = new ItemSlot[5, 7];
@@ -223,6 +222,7 @@ public class GameManager : MonoBehaviour
         destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
         character = GameObject.Find("Player");
         gen.enabled = true;
+        gen.StartUp();
         startTime = DateTime.Now;
     }
 

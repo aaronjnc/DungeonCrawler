@@ -268,6 +268,7 @@ public class Inventory : MonoBehaviour
         }
         itemRotator.UpdateItems();
         playerMoney = info.playerMoney;
+        UpdateMoney();
     }
     /// <summary>
     /// returns ItemSlot at given position
