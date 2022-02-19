@@ -230,7 +230,7 @@ public class ItemSlot
     /// returns cost to craft item
     /// </summary>
     /// <returns></returns>
-    public float GetCraftCost()
+    public int GetCraftCost()
     {
         return itemRef.craftcost;
     }

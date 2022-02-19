@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 
 [System.Serializable]
 public class GameInformation
@@ -24,15 +25,23 @@ public class GameInformation
     public int rotator;
     public int currentChoice;
     public int[,] chosenItems = new int[7, 2];
+    public int playerMoney;
     /// <summary>
     /// Sets up game information with passed in manager
     /// </summary>
     /// <param name="manager"></param>
     public GameInformation(GameObject manager)
     {
-        SaveWorld(manager.GetComponent<ChunkGen>());
-        SaveManager(manager.GetComponent<GameManager>());
-        SavePlayer(GameObject.Find("Player"));
+        UpdateInformation(manager);
+    }
+    public void UpdateInformation(GameObject manager)
+    {
+        if (SceneManager.GetActiveScene().buildIndex == 1)
+        {
+            SaveWorld(manager.GetComponent<ChunkGen>());
+            SaveManager(manager.GetComponent<GameManager>());
+            SavePlayer(GameObject.Find("Player"));
+        }
     }
     /// <summary>
     /// Saves information contained within gamemanager
@@ -76,28 +85,32 @@ public class GameInformation
     /// <param name="inv"></param>
     void SaveInventory(Inventory inv)
     {
-        for (int i = 0; i < 5; i++)
-        {
-            for (int j = 0; j < 7; j++)
-            {
-                ItemSlot iRef = inv.getItemSlot(i, j);
-                if (!iRef.isEmpty())
-                {
-                    inventory[i, j] = iRef.getItemId();
-                    stackSize[i, j] = iRef.getCurrentCount();
-                    durability[i,j] = iRef.getDurability();
-                } 
-                else
-                {
-                    inventory[i, j] = 127;
-                }
-            }
-        }
+        UpdateInventory(inv.GetInventory());
         for (int i = 0; i < 7; i++)
         {
             chosenItems[i, 0] = inv.chosenItems[i].x;
             chosenItems[i, 1] = inv.chosenItems[i].y;
         }
         currentChoice = inv.itemRotator.current;
+        playerMoney = inv.GetMoney();
+    }
+    public void UpdateInventory(ItemSlot[,] items)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                if (!items[i,j].isEmpty())
+                {
+                    inventory[i, j] = items[i, j].getItemId();
+                    stackSize[i, j] = items[i, j].getCurrentCount();
+                    durability[i, j] = items[i, j].getDurability();
+                }
+                else
+                {
+                    inventory[i, j] = 127;
+                }
+            }
+        }
     }
 }
