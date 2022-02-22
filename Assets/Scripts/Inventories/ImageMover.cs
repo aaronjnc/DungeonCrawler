@@ -46,6 +46,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         if (itemPos.x < 10)
         {
             itemCounter = Instantiate(itemCount.gameObject, transform);
+            UpdateCount(0);
         }
     }
     /// <summary>
@@ -130,13 +131,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             itemCounter.SetActive(false);
             return;
         }
-        try
-        {
-            itemCounter.GetComponent<Text>().text = count.ToString();
-        } catch (NullReferenceException e)
-        {
-            Debug.Log(gameObject.name);
-        }
+        itemCounter.GetComponent<Text>().text = count.ToString();
         itemCounter.SetActive(true);
     }
 }

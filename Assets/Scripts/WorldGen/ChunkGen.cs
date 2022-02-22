@@ -19,7 +19,7 @@ public class ChunkGen : MonoBehaviour
     Vector3Int previousPos = Vector3Int.zero;
     public Vector2Int currentChunk = Vector2Int.zero;
     int currentHash;
-    Hashtable chunks = new Hashtable();
+    Hashtable chunks;
     public Biomes[] biomes;
     public FreePlayerMove playerMovement;
     public int chunkWidth;
@@ -38,7 +38,7 @@ public class ChunkGen : MonoBehaviour
     public int maxenemies;
     public Transform enemyParent;
     public int specialTileChance;
-    private void OnEnable()
+    public void StartUp()
     {
         currentWorld = this;
         grid = GameObject.Find("Grid").transform;
@@ -46,6 +46,7 @@ public class ChunkGen : MonoBehaviour
         enemyParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
+        chunks = new Hashtable();
         if (manager.loadFromFile)
         {
             loadPreviousWorld();
@@ -76,6 +77,11 @@ public class ChunkGen : MonoBehaviour
             }
             currentChunk = new Vector2Int(0, 0);
             currentHash = currentChunk.ToString().GetHashCode();
+            if (manager.testingmode)
+            {
+                GetComponent<WorldCreationTesting>().enabled = true;
+                GetComponent<WorldCreationTesting>().size = manager.testingsize;
+            }
         }
     }
     void FixedUpdate()
@@ -153,7 +159,7 @@ public class ChunkGen : MonoBehaviour
             CreateChunk(chunkPos);
             ((Chunk)chunks[hash]).GenerateChunk();
         }
-        else
+        else if (!ChunkGenerated(chunkPos)) 
         {
             GetChunk(chunkPos).GenerateChunk();
         }
@@ -323,9 +329,12 @@ public class ChunkGen : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     public void UnloadChunk(Vector3 chunkPos)
     {
-        Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
-        if (newChunkPos != currentChunk)
-            GetChunk(newChunkPos).UnloadChunk();
+        if (!manager.testingmode)
+        {
+            Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
+            if (newChunkPos != currentChunk)
+                GetChunk(newChunkPos).UnloadChunk();
+        }
     }
     /// <summary>
     /// Loads chunk at given position

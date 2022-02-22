@@ -18,6 +18,7 @@ public class StallManager : MonoBehaviour
     //reference to chosen item script for when item is chosen
     public ChosenItem chosenItem;
     public GameObject inventory;
+    public GameObject dialog;
     /// <summary>
     /// Adds new item slots to inventory and deactivates image slots
     /// </summary>
@@ -67,5 +68,15 @@ public class StallManager : MonoBehaviour
     public void ChooseItem(int idx)
     {
         chosenItem.ChooseItem(inventoryItems[idx]);
+    }
+
+    public void ReopenDialog()
+    {
+        dialog.SetActive(true);
+    }
+    private void OnDestroy()
+    {
+        if (controls != null)
+            controls.Disable();
     }
 }

@@ -61,13 +61,4 @@ public class SpiderAttack : EnemyAttack
             playerMove.canMove = true;
         }
     }
-    /// <summary>
-    /// Draws spheres to show spider range
-    /// </summary>
-    private void OnDrawGizmos()
-    {
-        base.OnDrawGizmos();
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, webReach);
-    }
 }
