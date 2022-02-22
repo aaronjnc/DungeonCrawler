@@ -60,7 +60,7 @@ public class ChunkGen : MonoBehaviour
             PresetTiles(new Vector2Int(0, 0), manager.sections[0]);
             foreach (PremadeSection sections in manager.sections)
             {
-                if (sections.CreatAtStart)
+                if (sections.CreateAtStart)
                 {
                     int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
                     int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
@@ -391,10 +391,10 @@ public class ChunkGen : MonoBehaviour
     /// <param name="section">script holding preset section information</param>
     void PresetTiles(Vector2Int startPos, PremadeSection section)
     {
-        if (section.textmap != null)
+        /**if (section.textmap != null)
             PresetMap(startPos, section.textmap, 0);
         if (section.floormap != null)
-            PresetMap(startPos, section.floormap, 1);
+            PresetMap(startPos, section.floormap, 1);*/
     }
     /// <summary>
     /// adds preset sections to map

@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class PremadeSection : MonoBehaviour
 {
-    public TextAsset floormap;
-    public TextAsset textmap;
-    public bool CreatAtStart;
+    public byte[,] floormap = new byte[64,64];
+    public byte[,] textmap = new byte[64, 64];
+    public Dictionary<Vector2Int, int> enemies = new Dictionary<Vector2Int, int>();
+    public bool CreateAtStart;
     public int worldCount;
     public Vector2Int minStart;
     public Vector2Int maxStart;
