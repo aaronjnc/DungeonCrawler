@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEditor;
 using UnityEngine.Tilemaps;
 using UnityEditor.SceneManagement;
+using UnityEditor.Experimental.SceneManagement;
 
 [CustomEditor(typeof(PremadeSection))]
 public class PremadeSectionEditor : Editor
@@ -11,26 +12,20 @@ public class PremadeSectionEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
-        PremadeSection section = (PremadeSection)target;
         if (GUILayout.Button("Generate Map"))
         {
-            GameObject parent = section.gameObject;
-            string assetPath = AssetDatabase.GetAssetPath(parent);
-            if (assetPath.Contains("PremadeSections") || parent.name.Contains("Prefab"))
+            GameObject assetRoot = Selection.activeGameObject as GameObject;
+            string assetPath = AssetDatabase.GetAssetPath(assetRoot);
+            if (assetPath.Contains("PremadeSections") || assetRoot.name.Contains("Prefab"))
                 return;
-            GameObject contents = PrefabUtility.LoadPrefabContents(assetPath);
-            PremadeSection sec = contents.GetComponent<PremadeSection>();
-            string newPath = "Assets/Resources/PremadeSections/" + parent.name + ".prefab";
-            Object prefab = EditorUtility.CreateEmptyPrefab(newPath);
-            GenerateMaps(sec, contents);
-            GenerateEnemies(sec, contents);
-            EditorUtility.SetDirty(contents);
-            EditorSceneManager.MarkSceneDirty(contents.scene);
-            EditorUtility.ReplacePrefab(contents, prefab);
-            PrefabUtility.SaveAsPrefabAsset(contents, newPath);
-            PrefabUtility.UnloadPrefabContents(contents);
-            AssetDatabase.Refresh();
-            GameObject check = PrefabUtility.LoadPrefabContents(newPath);
+            using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
+            {
+                var prefabRoot = editingScope.prefabContentsRoot;
+                GenerateMaps(prefabRoot.GetComponent<PremadeSection>(), prefabRoot);
+                GenerateEnemies(prefabRoot.GetComponent<PremadeSection>(), prefabRoot);
+                Debug.Log(prefabRoot.GetComponent<PremadeSection>().floorMap);
+            }
+            GameObject check = PrefabUtility.LoadPrefabContents(assetPath);
             Debug.Log(check.GetComponent<PremadeSection>().floorMap);
             PrefabUtility.UnloadPrefabContents(check);
         }
@@ -61,9 +56,9 @@ public class PremadeSectionEditor : Editor
                 section.wallMap[x - xMin, y - yMin] = wallId;
             }
         }
-        DestroyImmediate(maps[0].gameObject, true);
-        DestroyImmediate(maps[1].gameObject, true);
-        DestroyImmediate(contents.transform.Find("Grid").gameObject);
+        //DestroyImmediate(maps[0].gameObject, true);
+        //DestroyImmediate(maps[1].gameObject, true);
+        //DestroyImmediate(contents.transform.Find("Grid").gameObject);
     }
     private void GenerateEnemies(PremadeSection section, GameObject contents)
     {
@@ -72,6 +67,6 @@ public class PremadeSectionEditor : Editor
             Vector2Int pos = new Vector2Int((int)enemy.gameObject.transform.position.x, (int)enemy.gameObject.transform.position.y);
             section.enemies.Add(pos, enemy.id);
         }
-        DestroyImmediate(contents.transform.Find("Enemies").gameObject);
+        //DestroyImmediate(contents.transform.Find("Enemies").gameObject);
     }
 }
