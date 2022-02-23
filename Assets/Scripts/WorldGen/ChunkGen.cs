@@ -391,10 +391,8 @@ public class ChunkGen : MonoBehaviour
     /// <param name="section">script holding preset section information</param>
     void PresetTiles(Vector2Int startPos, PremadeSection section)
     {
-        /**if (section.textmap != null)
-            PresetMap(startPos, section.textmap, 0);
-        if (section.floormap != null)
-            PresetMap(startPos, section.floormap, 1);*/
+        PresetMap(startPos, section.wallMap, 0);
+        PresetMap(startPos, section.floorMap, 1);
     }
     /// <summary>
     /// adds preset sections to map
@@ -402,24 +400,18 @@ public class ChunkGen : MonoBehaviour
     /// <param name="startPos">start pos of preset item</param>
     /// <param name="textmap">text asset representing preset map</param>
     /// <param name="z">z position to add map at</param>
-    void PresetMap(Vector2Int startPos, TextAsset textmap, int z)
+    void PresetMap(Vector2Int startPos, byte[,] map, int z)
     {
-        string[] rows = textmap.text.Split('\n');
-        for (int r = 0; r < rows.Length; r++)
+        for (int x = 0; x < Mathf.Sqrt(map.Length); x++)
         {
-            string[] columns = rows[r].Split('|');
-            for (int c = 0; c < columns.Length; c++)
+            for (int y = 0; y < Mathf.Sqrt(map.Length); y++)
             {
-                if (Char.IsLetter(columns[c][0]))
-                    continue;
-                int relX = c - columns.Length / 2;
-                int relY = rows.Length / 2-r;
-                Vector2Int newPos = startPos + new Vector2Int(relX, relY);
+                Vector2Int newPos = startPos + new Vector2Int(x, y);
                 Vector2Int chunkPos = GetChunkPos(newPos);
                 Vector2Int chunkTilePos = GetChunkTilePos(newPos);
                 if (!ChunkCreated(chunkPos))
                     CreateChunk(chunkPos);
-                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), (byte)Convert.ToInt32(columns[c]));
+                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), map[x,y]);
             }
         }
     }

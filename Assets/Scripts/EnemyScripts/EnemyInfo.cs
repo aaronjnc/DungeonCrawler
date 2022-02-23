@@ -25,6 +25,8 @@ public class EnemyInfo : MonoBehaviour
     public float weight;
     //spawn scale
     public float scale;
+    //identifying number of enemy
+    public byte id;
     //chunk they spawn in
     [HideInInspector] public Vector2Int chunk;
     //types of enemies
