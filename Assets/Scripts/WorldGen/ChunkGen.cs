@@ -57,7 +57,6 @@ public class ChunkGen : MonoBehaviour
                 seed = UnityEngine.Random.Range(0, int.MaxValue);
             if (randomBiomeSeed)
                 biomeseed = UnityEngine.Random.Range(0, 1000000);
-            PresetTiles(new Vector2Int(0, 0), manager.sections[0]);
             foreach (PremadeSection sections in manager.sections)
             {
                 if (sections.CreateAtStart)
@@ -412,6 +411,25 @@ public class ChunkGen : MonoBehaviour
                 if (!ChunkCreated(chunkPos))
                     CreateChunk(chunkPos);
                 GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), map[x,y]);
+            }
+        }
+    }
+    void PresetMap(Vector2Int startPos, TextAsset map, int z)
+    {
+        string textmap = map.text;
+        string[] lines = textmap.Split('\n');
+        for (int row = 0; row < lines.Length; row++)
+        {
+            string[] bytes = lines[row].Split('|');
+            for (int col = 0; col < bytes.Length; col++)
+            {
+                byte blockID = Convert.ToByte(bytes[col]);
+                Vector2Int newPos = startPos + new Vector2Int(col, row);
+                Vector2Int chunkPos = GetChunkPos(newPos);
+                Vector2Int chunkTilePos = GetChunkTilePos(newPos);
+                if (!ChunkCreated(chunkPos))
+                    CreateChunk(chunkPos);
+                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), blockID);
             }
         }
     }
