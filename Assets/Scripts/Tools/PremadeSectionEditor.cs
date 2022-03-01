@@ -13,15 +13,18 @@ public class PremadeSectionEditor : Editor
     public override void OnInspectorGUI()
     {
         DrawDefaultInspector();
+        PremadeSection section = (PremadeSection)target;
+        if (section.entireChunk)
+        {
+            section.biome = EditorGUILayout.IntField("Biome", section.biome);
+        }
         if (GUILayout.Button("Generate Maps"))
         {
-            PremadeSection section = (PremadeSection)target;
             GameObject assetRoot = section.gameObject;
-            if (assetRoot.name.Contains("Prefab") || section.generated)
+            if (assetRoot.name.Contains("Prefab"))
                 return;
             GenerateMaps(section, assetRoot);
             GenerateEnemies(section, assetRoot);
-            section.generated = true;
             string assetPath = "Assets/Resources/PremadeSections/" + assetRoot.name + ".prefab";
             PrefabUtility.SaveAsPrefabAsset(assetRoot, assetPath);
         }
@@ -31,8 +34,6 @@ public class PremadeSectionEditor : Editor
         string floorPath = "Assets/Resources/PremadeMaps/" + contents.name + "floor.txt";
         string wallPath = "Assets/Resources/PremadeMaps/" + contents.name + "wall.txt";
         Tilemap[] maps = contents.GetComponentsInChildren<Tilemap>();
-        //section.floorMap = new byte[maps[0].cellBounds.size.x, maps[0].cellBounds.size.y];
-        //section.wallMap = new byte[maps[0].cellBounds.size.x, maps[0].cellBounds.size.y];
         File.WriteAllText(floorPath, "");
         File.WriteAllText(wallPath, "");
         StreamWriter floorWriter = new StreamWriter(floorPath, true);

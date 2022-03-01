@@ -10,5 +10,7 @@ public class PremadeSection : MonoBehaviour
     public int worldCount;
     public Vector2Int minStart;
     public Vector2Int maxStart;
-    public bool generated;
+    public bool entireChunk;
+    [HideInInspector]
+    public int biome;
 }

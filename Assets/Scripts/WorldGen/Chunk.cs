@@ -260,7 +260,8 @@ public abstract class Chunk
                         strongFloorIndex = biomeScripts[biomes[x, y]].floorBlocks[i].index;
                     }
                 }
-                floor[x, y] = strongFloorIndex;
+                if (!presetTiles.Contains(new Vector3Int(x,y,floorz))) 
+                    floor[x, y] = strongFloorIndex;
                 if (!presetTiles.Contains(new Vector3Int(x,y,mapz)))
                 {
                     if (blocks[x, y] == 1)
