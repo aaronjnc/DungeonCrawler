@@ -52,6 +52,7 @@ public class EnemyInfo : MonoBehaviour
     /// <param name="amount">Amount to reduce health by</param>
     public void ReduceHealth(float amount)
     {
+        Debug.Log("Hit");
         health = Mathf.Clamp(health-amount,0,maxHealth);
         slider.value = health;
         if (health <= 0)

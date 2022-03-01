@@ -223,7 +223,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Constraints: 7
 --- !u!114 &1644744142854790561
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -262,6 +262,7 @@ MonoBehaviour:
   firechance: 0.1
   weight: 1
   scale: 1.1
+  id: 0
   chunk: {x: 0, y: 0}
 --- !u!114 &6016874807493475873
 MonoBehaviour:

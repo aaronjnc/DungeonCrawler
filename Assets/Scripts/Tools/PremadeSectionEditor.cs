@@ -24,32 +24,6 @@ public class PremadeSectionEditor : Editor
             section.generated = true;
             string assetPath = "Assets/Resources/PremadeSections/" + assetRoot.name + ".prefab";
             PrefabUtility.SaveAsPrefabAsset(assetRoot, assetPath);
-            //string assetPath = AssetDatabase.GetAssetPath(assetRoot);
-            /*if (assetPath.Contains("PremadeSections") || assetRoot.name.Contains("Prefab"))
-                return;*/
-            /**using (var editingScope = new PrefabUtility.EditPrefabContentsScope(assetPath))
-            {
-                var prefabRoot = editingScope.prefabContentsRoot;
-                GenerateMaps(prefabRoot.GetComponent<PremadeSection>(), prefabRoot);
-                GenerateEnemies(prefabRoot.GetComponent<PremadeSection>(), prefabRoot);
-                Debug.Log(prefabRoot.GetComponent<PremadeSection>().floorMap);
-            }*/
-
-            /*GameObject check = PrefabUtility.LoadPrefabContents(assetPath);
-            Debug.Log(check.GetComponent<PremadeSection>().floorMap);
-            PrefabUtility.UnloadPrefabContents(check);*/
-        }
-        if (GUILayout.Button("Create Prefab"))
-        {
-            PremadeSection sec = (PremadeSection)target;
-            Debug.Log(sec.floorMap);
-            GameObject assetRoot = sec.gameObject;
-            string assetPath = "Assets/Resources/PremadeSections/" + assetRoot.name + ".prefab";
-            PrefabUtility.SaveAsPrefabAsset(assetRoot, assetPath);
-
-            GameObject check = PrefabUtility.LoadPrefabContents(assetPath);
-            Debug.Log(check.GetComponent<PremadeSection>().floorMap);
-            PrefabUtility.UnloadPrefabContents(check);
         }
     }
     private void GenerateMaps(PremadeSection section, GameObject contents)
