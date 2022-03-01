@@ -108,8 +108,7 @@ public class DialogAsset : MonoBehaviour
                     switch (c)
                     {
                         case "Leave":
-                            string path = Application.persistentDataPath + "/saves/" + manager.worldName + ".txt";
-                            SaveSystem.Load(path);
+                            manager.loadWorld(manager.GetGameInformation());
                             break;
                         case "Buy":
                             stall.AddItems(manager.GetStallItems());

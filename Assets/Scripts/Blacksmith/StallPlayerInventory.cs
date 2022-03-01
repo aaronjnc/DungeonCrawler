@@ -28,7 +28,6 @@ public class StallPlayerInventory : MonoBehaviour
         }
         SetUpInv();
         setUp = true;
-        Debug.Log(money);
         inventoryObj.SetActive(false);
     }
     private void SetUpInv()
@@ -126,6 +125,7 @@ public class StallPlayerInventory : MonoBehaviour
                         ItemSlot newItem = new ItemSlot();
                         newItem.addExisting(item);
                         newItem.reduceStack((byte)(item.getCurrentCount() - leftOver));
+                        manager.UpdateGameInfo(inv, money);
                         AddItem(newItem);
                     }
                     break;
@@ -141,9 +141,9 @@ public class StallPlayerInventory : MonoBehaviour
         }
         if (emptySpot && !found)
         {
-            Debug.Log("Add " + empty);
             inv[empty.x, empty.y].addExisting(item);
             UpdateImage(new Vector2Int(empty.x, empty.y), item.getSprite());
+            manager.UpdateGameInfo(inv, money);
         }
     }
     /// <summary>
@@ -153,7 +153,6 @@ public class StallPlayerInventory : MonoBehaviour
     /// <param name="itemSprite">New sprite</param>
     void UpdateImage(Vector2Int newPos, Sprite itemSprite)
     {
-        Debug.Log(itemSprite.name);
         images[newPos.x, newPos.y].GetComponent<Image>().sprite = itemSprite;
         if (itemSprite != null)
         {
@@ -165,9 +164,5 @@ public class StallPlayerInventory : MonoBehaviour
             images[newPos.x, newPos.y].GetComponent<Image>().color = new Color(255, 255, 255, 0);
             images[newPos.x, newPos.y].SetActive(false);
         }
-    }
-    private void OnDestroy()
-    {
-        manager.UpdateGameInfo(inv, money);
     }
 }

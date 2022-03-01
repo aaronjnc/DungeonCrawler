@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 13312, guid: 0000000000000000e000000000000000, type: 0}
   m_Name: MossyWall
   m_EditorClassIdentifier: 
-  m_Sprite: {fileID: 21300000, guid: 14de4ad4d74bd104083c29431fa7331b, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 701d3d7a6eed3994f8c982bdec8b36ab, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_Transform:
     e00: 1

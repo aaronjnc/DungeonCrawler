@@ -111,7 +111,6 @@ public class ChosenItem : MonoBehaviour
     {
         inv.SpendMoney(chosenItem.getCost());
         inv.AddItem(chosenItem);
-        Debug.Log("Bought");
     }
 
     public void CraftItem()

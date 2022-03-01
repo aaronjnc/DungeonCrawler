@@ -58,6 +58,7 @@ public class FreePlayerMove : MonoBehaviour
         {
             loadFromFile(manager.GetGameInformation());
         }
+        SaveSystem.Save();
     }
     /// <summary>
     /// Activates the spell menu when 'X' is pressed
@@ -104,6 +105,7 @@ public class FreePlayerMove : MonoBehaviour
             RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 2, interactable);
             if (hit.collider != null)
             {
+                SaveSystem.Save();
                 hit.collider.gameObject.GetComponent<InteractableTile>().Interact();
             }
         }
@@ -176,7 +178,8 @@ public class FreePlayerMove : MonoBehaviour
     }
     private void OnDestroy()
     {
-        controls.Disable();
+        if (controls != null)
+            controls.Disable();
     }
     /// <summary>
     /// loads player information from file
