@@ -108,7 +108,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
             if (collisions[i].gameObject == gameObject)
                 continue;
             float dist = Vector2.Distance(collisions[i].gameObject.transform.position, transform.position);
-            if (dist < closestDistance && dist < 20)
+            if (dist < closestDistance && dist < collisions[i].bounds.extents.x)
             {
                 closestObj = collisions[i].gameObject;
                 closestDistance = dist;
