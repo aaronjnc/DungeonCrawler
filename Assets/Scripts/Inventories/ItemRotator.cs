@@ -100,9 +100,8 @@ public class ItemRotator : MonoBehaviour
     {
         if (open)
         {
-            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            float angleRad = Mathf.Atan2(mousePos.y, mousePos.x);
-            float angleDeg = (180 / Mathf.PI) * angleRad;
+            Vector2 mousePos = Mouse.current.position.ReadValue() - new Vector2(Screen.width / 2, Screen.height / 2);
+            float angleDeg = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
             if (angleDeg <= 90 && angleDeg > 39)
             {
                 current = 0;
