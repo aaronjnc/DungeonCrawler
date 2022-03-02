@@ -99,10 +99,10 @@ public class FreePlayerMove : MonoBehaviour
     /// </summary>
     /// <param name="ctx"></param>
     void Interact(CallbackContext ctx)
-    { 
+    {
         if (!manager.paused)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 2, interactable);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 5, interactable);
             if (hit.collider != null)
             {
                 SaveSystem.Save();
