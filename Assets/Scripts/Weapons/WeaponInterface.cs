@@ -2,26 +2,31 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface WeaponInterface<T, I>
+public abstract class WeaponInterface: MonoBehaviour
 {
+    public Sprite idlePlayer;
+    public void Pickup(SpriteRenderer player)
+    {
+        player.sprite = idlePlayer;
+    }
     /// <summary>
     /// Returns true if there is a continuous effect with holding the item
     /// </summary>
     /// <returns></returns>
-    bool HasHoldEffect();
+    public abstract bool HasHoldEffect();
     /// <summary>
     /// This weapons basic attack
     /// </summary>
     /// <param name="position">Player transform</param>
-    void BaseAttack(T playerTransform);
+    public abstract void BaseAttack(Transform playerTransform);
     /// <summary>
     /// This weapons special attack
     /// </summary>
     /// <param name="playerTransform">Player transform</param>
-    void AdvancedAttack(T playerTransform);
+    public abstract void AdvancedAttack(Transform playerTransform);
     /// <summary>
     /// Effects of item if it has hold effects
     /// </summary>
     /// <param name="player">Player fight script</param>
-    void HoldEffect(I player);
+    public abstract void HoldEffect(PlayerFight player);
 }

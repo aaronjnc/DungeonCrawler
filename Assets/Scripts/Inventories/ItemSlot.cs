@@ -196,7 +196,7 @@ public class ItemSlot
     /// returns the weapon script associated with this item
     /// </summary>
     /// <returns></returns>
-    public WeaponInterface<Transform, PlayerFight> getWeaponScript()
+    public WeaponInterface getWeaponScript()
     {
         if (itemRef == null)
             return null;
@@ -230,7 +230,7 @@ public class ItemSlot
     /// returns cost to craft item
     /// </summary>
     /// <returns></returns>
-    public float GetCraftCost()
+    public int GetCraftCost()
     {
         return itemRef.craftcost;
     }

@@ -33,6 +33,7 @@ public class ItemRotator : MonoBehaviour
     GameManager manager;
     //has rotator been instantiated
     bool started = false;
+    public SpriteRenderer playerRenderer;
     /// <summary>
     /// call start method on start up
     /// </summary>
@@ -189,6 +190,7 @@ public class ItemRotator : MonoBehaviour
             {
                 case InventoryItem.ItemType.Weapon:
                     manager.fighting = true;
+                    itemSlots[current].getWeaponScript().Pickup(playerRenderer);
                     break;
                 case InventoryItem.ItemType.Consumable:
                     //consumable

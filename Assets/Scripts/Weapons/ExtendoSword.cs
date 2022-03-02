@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ExtendoSword : MonoBehaviour, WeaponInterface<Transform, PlayerFight>
+public class ExtendoSword : WeaponInterface
 {
     public float reach;
     public float extendedreach;
@@ -11,24 +11,26 @@ public class ExtendoSword : MonoBehaviour, WeaponInterface<Transform, PlayerFigh
     public float swingAngle;
     public float baseDamage;
     public float advancedDamage;
-    public bool HasHoldEffect()
+    public override bool HasHoldEffect()
     {
         return hasHoldEffect;
     }
-    public void BaseAttack(Transform playerTransform)
+    public override void BaseAttack(Transform playerTransform)
     {
         Collider2D[] enemies = Physics2D.OverlapCircleAll(playerTransform.position, reach, enemy);
         for (int i = 0; i < enemies.Length; i++)
         {
             Vector3 dir = enemies[i].transform.position - playerTransform.position;
-            float dot = Vector3.Dot(dir, transform.right);
-            if (dot >= Mathf.Cos(swingAngle))
+            dir.Normalize();
+            Vector3 max = playerTransform.right + new Vector3(Mathf.Cos(swingAngle), Mathf.Sin(swingAngle), 0);
+            Vector3 min = playerTransform.right - new Vector3(Mathf.Cos(swingAngle), Mathf.Sin(swingAngle), 0);
+            if (dir.x < max.x && dir.x > min.x && dir.y < max.y && dir.y > min.y)
             {
                 enemies[i].GetComponent<EnemyInfo>().ReduceHealth(baseDamage);
             }
         }
     }
-    public void AdvancedAttack(Transform playerTransform)
+    public override void AdvancedAttack(Transform playerTransform)
     {
         RaycastHit2D hit = Physics2D.Raycast(playerTransform.position + playerTransform.right, playerTransform.right, extendedreach, enemy);
         if (hit.collider.gameObject.CompareTag("Enemy"))
@@ -36,7 +38,7 @@ public class ExtendoSword : MonoBehaviour, WeaponInterface<Transform, PlayerFigh
             hit.collider.gameObject.GetComponent<EnemyInfo>().ReduceHealth(advancedDamage);
         }
     }
-    public void HoldEffect(PlayerFight playerFight)
+    public override void HoldEffect(PlayerFight playerFight)
     {
 
     }
