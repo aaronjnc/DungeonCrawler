@@ -11,14 +11,14 @@ public static class SaveSystem
     /// </summary>
     public static void Save()
     {
-        GameObject manager = GameObject.Find("GameController");
-        GameInformation info = manager.GetComponent<GameManager>().GetGameInformation();
-        info.UpdateInformation(manager);
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/saves/" + manager.GetComponent<GameManager>().worldName + ".txt";
-        FileStream stream = new FileStream(path, FileMode.Create);
-        formatter.Serialize(stream, info);
-        stream.Close();
+        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        GameInformation.Instance.SetLocation(path);
+        GameInformation.Instance.SaveAll(manager);
     }
     /// <summary>
     /// loads world with given path

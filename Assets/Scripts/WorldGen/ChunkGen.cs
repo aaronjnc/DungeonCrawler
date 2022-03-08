@@ -172,6 +172,7 @@ public class ChunkGen : MonoBehaviour
     {
         float lowest = 100;
         int index = 0;
+        UnityEngine.Random.InitState(seed);
         float randomNum = UnityEngine.Random.Range(0, 100f);
         foreach (Biomes biomeScript in biomes)
         {
@@ -447,6 +448,10 @@ public class ChunkGen : MonoBehaviour
             i++;
         }
         return wallStrings;
+    }
+    public Hashtable GetChunks()
+    {
+        return chunks;
     }
     /// <summary>
     /// returns array holding enemy information

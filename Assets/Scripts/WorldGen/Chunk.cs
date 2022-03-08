@@ -35,8 +35,10 @@ public abstract class Chunk
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     protected List<GameObject> interactables = new List<GameObject>();
+    protected Dictionary<Vector2Int, byte> changes = new Dictionary<Vector2Int, byte>();
     protected System.Random random;
     protected abstract void FillBiomeMap();
+    public bool changed = false;
     /// <summary>
     /// Initializes chunk script at given chunk position
     /// </summary>
@@ -50,6 +52,7 @@ public abstract class Chunk
         blocks = new byte[width, height];
         biomes = new byte[width, height];
         floor = new byte[width, height];
+        UnityEngine.Random.InitState(seed);
         numEnemies = UnityEngine.Random.Range(1, maxenemies+1);
     }
     /// <summary>
@@ -497,6 +500,14 @@ public abstract class Chunk
                 UpdateCollider(x, y,Tile.ColliderType.Grid);
             map.SetTile(new Vector3Int(x, y, floorz), null);
         }
+        if (changes.ContainsKey(new Vector2Int(x, y)))
+        {
+            changes[new Vector2Int(x, y)] = block;
+        }
+        else
+        {
+            changes.Add(new Vector2Int(x, y), block);
+        }
         map.RefreshTile(new Vector3Int(x, y, mapz));
     }
     /// <summary>
@@ -660,6 +671,18 @@ public abstract class Chunk
             enemyString[i] = enemies[i].GetComponent<EnemyInfo>().ToString();
         }
         return enemyString;
+    }
+
+    public string[] GetChanges()
+    {
+        string[] blocksChanged = new string[changes.Count];
+        int i = 0;
+        foreach (Vector2Int change in changes.Keys)
+        {
+            blocksChanged[i] = change.x + " " + change.y + "|" + changes[change];
+            i++;
+        }
+        return blocksChanged;
     }
     /// <summary>
     /// loads chunk from file

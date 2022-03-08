@@ -1,0 +1,17 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+[System.Serializable]
+public class ChunkSave
+{
+    public int chunkX;
+    public int chunkY;
+    public string[] changed;
+    public ChunkSave(Chunk chunk)
+    {
+        chunkX = chunk.chunkPos.x;
+        chunkY = chunk.chunkPos.y;
+        changed = chunk.GetChanges();
+    }
+}
