@@ -473,21 +473,26 @@ public class ChunkGen : MonoBehaviour
     /// </summary>
     void loadPreviousWorld()
     {
-        GameInformation gameInfo = manager.GetGameInformation();
-        string[][] worldMap = gameInfo.worldMap;
-        seed = gameInfo.seed;
-        biomeseed = gameInfo.biomeSeed;
-        for (int i = 0; i < worldMap.Length; i++)
+        WorldInfo w = GameInformation.Instance.LoadGameInfo();
+        List<ChunkSave> cs = GameInformation.Instance.LoadWorld();
+        seed = w.GetWorldSeed();
+        biomeseed = w.GetBiomeSeed();
+        foreach (ChunkSave c in cs)
         {
-            string chunkPosString = worldMap[i][0].Split('\n')[0];
-            string[] chunkPosSep = chunkPosString.Split(',');
-            Vector2Int chunkPos = new Vector2Int(Int32.Parse(chunkPosSep[0]), Int32.Parse(chunkPosSep[1]));
+            Vector2Int chunkPos = c.GetChunkPos();
+            string[] changes = c.GetChanges();
             CreateChunk(chunkPos);
-            GetChunk(chunkPos).loadFromFile(worldMap[i]);
+            for (int i = 0; i < changes.Length; i++)
+            {
+                string[] split = changes[i].Split('|');
+                byte id = (byte)Int32.Parse(split[1]);
+                string[] posSplit = split[0].Split(' ');
+                int posX = Int32.Parse(posSplit[0]);
+                int posY = Int32.Parse(posSplit[1]);
+                Vector2Int tilePos = new Vector2Int(posX, posY);
+                GetChunk(chunkPos).AddChange(tilePos, id);
+            }
         }
-        currentChunk = new Vector2Int(gameInfo.currentChunk[0], gameInfo.currentChunk[1]);
-        manager.currentChunk = currentChunk;
-        currentHash = currentChunk.ToString().GetHashCode();
     }
 
     private void OnDisable()

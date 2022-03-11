@@ -44,7 +44,6 @@ public class CreateWorld : MonoBehaviour
         GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
         manager.worldName = worldName;
         manager.loadFromFile = false;
-        SaveSystem.Save();
         SceneManager.LoadScene(1);
     }
 }

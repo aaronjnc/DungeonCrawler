@@ -35,7 +35,6 @@ public class GameInformation : ScriptableObject
         {
             _instance = this;
         }
-        _instance = this;
     }
     public void SetLocation(string location)
     {
@@ -74,7 +73,7 @@ public class GameInformation : ScriptableObject
     public void SaveWorld(ChunkGen gen)
     {
         Hashtable chunks = gen.GetChunks();
-        foreach (Chunk chunk in chunks)
+        foreach (Chunk chunk in chunks.Values)
         {
             if (chunk.changed)
             {
@@ -103,20 +102,41 @@ public class GameInformation : ScriptableObject
         formatter.Serialize(fs, i);
         fs.Close();
     }
-    public void LoadInventory()
+    public InventorySave LoadInventory()
     {
-
+        string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
+        FileStream fs = new FileStream(inventoryInfo, FileMode.Open);
+        InventorySave i = (InventorySave)formatter.Deserialize(fs);
+        fs.Close();
+        return i;
     }
-    public void LoadPlayer()
+    public PlayerSave LoadPlayer()
     {
-
+        string playerInfo = Path.Combine(saveLocation, "player.txt");
+        FileStream fs = new FileStream(playerInfo, FileMode.Open);
+        PlayerSave p = (PlayerSave)formatter.Deserialize(fs);
+        fs.Close();
+        return p;
     }
-    public void LoadWorld()
+    public List<ChunkSave> LoadWorld()
     {
-
+        List<ChunkSave> chunks = new List<ChunkSave>();
+        foreach(string file in Directory.GetFiles(chunkLocation))
+        {
+            Debug.Log(file);
+            FileStream fs = new FileStream(file, FileMode.Open);
+            ChunkSave s = (ChunkSave)formatter.Deserialize(fs);
+            fs.Close();
+            chunks.Add(s);
+        }
+        return chunks;
     }
-    public void LoadGameInfo()
+    public WorldInfo LoadGameInfo()
     {
-
+        string worldInfo = Path.Combine(saveLocation, "worldInfo.txt");
+        FileStream fs = new FileStream(worldInfo, FileMode.Open);
+        WorldInfo w = (WorldInfo)formatter.Deserialize(fs);
+        fs.Close();
+        return w;
     }
 }

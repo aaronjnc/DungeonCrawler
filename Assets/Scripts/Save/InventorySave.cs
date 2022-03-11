@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class InventorySave
 {
     public byte[,] inventory = new byte[5, 7];
@@ -22,7 +23,7 @@ public class InventorySave
         playerMoney = inv.GetMoney();
     }
 
-    public void UpdateInventory(ItemSlot[,] items)
+    private void UpdateInventory(ItemSlot[,] items)
     {
         for (int i = 0; i < 5; i++)
         {
@@ -40,5 +41,29 @@ public class InventorySave
                 }
             }
         }
+    }
+    public byte[,] GetItems()
+    {
+        return inventory;
+    }
+    public byte[,] GetStackSizes()
+    {
+        return stackSize;
+    }
+    public byte[,] GetDurabilities()
+    {
+        return durability;
+    }
+    public int[,] GetChosenItems()
+    {
+        return chosenItems;
+    }
+    public int GetMoney()
+    {
+        return playerMoney;
+    }
+    public int GetCurrentChoice()
+    {
+        return currentChoice;
     }
 }

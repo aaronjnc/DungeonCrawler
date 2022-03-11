@@ -55,8 +55,9 @@ public class Inventory : MonoBehaviour
         }
         if (manager.loadFromFile)
         {
-            LoadFromFile(manager.GetGameInformation());
-        } else
+            LoadFromFile();
+        } 
+        else
         {
             InventoryItem item = manager.GetItem("Base Pickaxe");
             AddItem(item,1,item.baseDurability);
@@ -246,28 +247,33 @@ public class Inventory : MonoBehaviour
     /// loads inventory from file
     /// </summary>
     /// <param name="info">GameInformation file to get inventory from</param>
-    private void LoadFromFile(GameInformation info)
+    private void LoadFromFile()
     {
+        InventorySave inv = GameInformation.Instance.LoadInventory();
+        byte[,] items = inv.GetItems();
+        byte[,] sizes = inv.GetStackSizes();
+        byte[,] durabilities = inv.GetDurabilities();
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 7; j++)
             {
-                byte infoItem = info.inventory[i, j];
+                byte infoItem = items[i, j];
                 if (infoItem != 127)
                 {
                     InventoryItem item = manager.GetItem(infoItem);
-                    AddItem(item, info.stackSize[i, j], info.durability[i, j]);
+                    AddItem(item, sizes[i, j], durabilities[i, j]);
                 }
             }
         }
+        int[,] chosen = inv.GetChosenItems();
         for (int i = 0; i < 7; i++)
         {
-            chosenItems[i] = new Vector2Int(info.chosenItems[i, 0], info.chosenItems[i, 1]);
+            chosenItems[i] = new Vector2Int(chosen[i, 0], chosen[i, 1]);
             if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
                 UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
         }
         itemRotator.UpdateItems();
-        playerMoney = info.playerMoney;
+        playerMoney = inv.GetMoney();
         UpdateMoney();
     }
     /// <summary>

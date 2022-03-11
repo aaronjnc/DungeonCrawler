@@ -125,7 +125,7 @@ public class StallPlayerInventory : MonoBehaviour
                         ItemSlot newItem = new ItemSlot();
                         newItem.addExisting(item);
                         newItem.reduceStack((byte)(item.getCurrentCount() - leftOver));
-                        manager.UpdateGameInfo(inv, money);
+                        manager.SaveInventory(inv);
                         AddItem(newItem);
                     }
                     break;
@@ -143,7 +143,7 @@ public class StallPlayerInventory : MonoBehaviour
         {
             inv[empty.x, empty.y].addExisting(item);
             UpdateImage(new Vector2Int(empty.x, empty.y), item.getSprite());
-            manager.UpdateGameInfo(inv, money);
+            manager.SaveInventory(inv);
         }
     }
     /// <summary>

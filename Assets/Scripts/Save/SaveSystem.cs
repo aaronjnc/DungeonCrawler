@@ -24,17 +24,10 @@ public static class SaveSystem
     /// loads world with given path
     /// </summary>
     /// <param name="path">path of world to load</param>
-    public static void Load(string path)
+    public static void Load()
     {
-        if (File.Exists(path))
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-            GameInformation info = formatter.Deserialize(stream) as GameInformation;
-            GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-            manager.loadFromFile = true;
-            manager.loadWorld(info);
-            stream.Close();
-        }
+        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        manager.loadFromFile = true;
+        manager.loadWorld();
     }
 }

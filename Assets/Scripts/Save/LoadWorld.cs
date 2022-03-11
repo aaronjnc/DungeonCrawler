@@ -24,25 +24,33 @@ public class LoadWorld : MonoBehaviour
     private void LoadScreen()
     {
         var f = new DirectoryInfo(Application.persistentDataPath + "/saves");
-        FileInfo[] fileInfo = f.GetFiles();
+        DirectoryInfo[] dirInfo = f.GetDirectories();
         for (int i = 0; i < 3; i++)
         {
-            if (i >= fileInfo.Length)
+            if (i >= dirInfo.Length)
             {
                 createPanels[i].SetActive(true);
                 loadPanels[i].SetActive(false);
                 continue;
             }
             createPanels[i].SetActive(false);
-            string fileName = fileInfo[i].Name;
-            fileName = fileName.Replace(".txt", "");
-            textBoxes[i].text = fileName;
+            string directoryInfo = dirInfo[i].Name;
+            textBoxes[i].text = directoryInfo;
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(Application.persistentDataPath + "/saves/" + fileName + ".txt", FileMode.Open);
-            GameInformation info = formatter.Deserialize(stream) as GameInformation;
-            hours[i].text = Math.Round(info.playHours, 2) + " hrs";
+            string infoPath = Path.Combine(Application.persistentDataPath, "saves", directoryInfo, "worldInfo.txt");
+            if (!File.Exists(infoPath))
+            {
+                Debug.Log("Deleted " + dirInfo[i].FullName);
+                Directory.Delete(dirInfo[i].FullName);
+                createPanels[i].SetActive(true);
+                loadPanels[i].SetActive(false);
+                continue;
+            }
+            FileStream fs = new FileStream(infoPath, FileMode.Open);
+            WorldInfo info = (WorldInfo)formatter.Deserialize(fs);
+            hours[i].text = Math.Round(info.GetPlayTime(), 2) + " hrs";
             loadPanels[i].SetActive(true);
-            stream.Close();
+            fs.Close();
         }
     }
     /// <summary>
@@ -51,13 +59,9 @@ public class LoadWorld : MonoBehaviour
     /// <param name="worldFile">textbox of world name</param>
     public void LoadWorldFile(Text worldFile)
     {
-        string path = Application.persistentDataPath + "/saves/" + worldFile.text + ".txt";
-        if (File.Exists(path))
-        {
-            GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-            manager.worldName = worldFile.text;
-            SaveSystem.Load(path);
-        }
+        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        manager.worldName = worldFile.text;
+        SaveSystem.Load();
     }
     /// <summary>
     /// Deletes world with given name
@@ -65,10 +69,10 @@ public class LoadWorld : MonoBehaviour
     /// <param name="worldFile">textbox containing world name</param>
     public void DeleteWorld(Text worldFile)
     {
-        string path = Application.persistentDataPath + "/saves/" + worldFile.text + ".txt";
-        if (File.Exists(path))
+        string path = Application.persistentDataPath + "/saves/" + worldFile.text;
+        if (Directory.Exists(path))
         {
-            File.Delete(path);
+            Directory.Delete(path);
             AssetDatabase.Refresh();
             Debug.Log("Deleted");
             LoadScreen();

@@ -108,7 +108,7 @@ public class DialogAsset : MonoBehaviour
                     switch (c)
                     {
                         case "Leave":
-                            manager.loadWorld(manager.GetGameInformation());
+                            manager.loadWorld();
                             break;
                         case "Buy":
                             stall.AddItems(manager.GetStallItems());

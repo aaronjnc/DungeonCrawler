@@ -688,7 +688,7 @@ public abstract class Chunk
     /// loads chunk from file
     /// </summary>
     /// <param name="stringMap">string array holding chunk information</param>
-    public void loadFromFile(string[] stringMap)
+    /**public void loadFromFile(string[] stringMap)
     {
         string[] blockMap = stringMap[0].Split('\n');
         string[] floorMap = stringMap[1].Split('\n');
@@ -722,5 +722,16 @@ public abstract class Chunk
         DrawMap();
         map.GetComponent<TilemapRenderer>().enabled = false;
         generated = true;
+    }*/
+    public void AddChange(Vector2Int pos, byte id)
+    {
+        changes.Add(pos, id);
+    }
+    public void AddChangedBlocks()
+    {
+        foreach (Vector2Int pos in changes.Keys)
+        {
+            blocks[pos.x, pos.y] = changes[pos];
+        }
     }
 }

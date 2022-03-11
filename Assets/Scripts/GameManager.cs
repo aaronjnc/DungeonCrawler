@@ -47,7 +47,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string fullText;
     public TextAsset[] textFiles;
     [HideInInspector] public bool loadFromFile = false;
-    GameInformation gameInfo;
     [HideInInspector] public string worldName;
     [HideInInspector] public DateTime startTime;
     [HideInInspector] public double hours;
@@ -59,6 +58,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        GameInformation.CreateInstance<GameInformation>();
         if (!Directory.Exists(Application.persistentDataPath + "/saves"))
         {
             Directory.CreateDirectory(Application.persistentDataPath + "/saves");
@@ -197,17 +197,11 @@ public class GameManager : MonoBehaviour
     {
         fullText = text.text;
     }
-    public void loadWorld(GameInformation info)
+    public void loadWorld()
     {
         loadFromFile = true;
-        gameInfo = info;
         SceneLoader.LoadScene(1);
     }
-    public GameInformation GetGameInformation()
-    {
-        return gameInfo;
-    }
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
         ResumeGame();
@@ -263,14 +257,5 @@ public class GameManager : MonoBehaviour
     public int GetMoney()
     {
         return playerMoney;
-    }
-    public void UpdateGameInfo(ItemSlot[,] itemSlots, int money)
-    {
-        gameInfo.UpdateInventory(itemSlots);
-        gameInfo.playerMoney = money;
-    }
-    public void SetGameInfo(GameInformation info)
-    {
-        gameInfo = info;
     }
 }

@@ -45,6 +45,7 @@ public class WaterBiome : Chunk
         }
         DetermineWall();
         SpecialBlockGeneration();
+        AddChangedBlocks();
         DrawMap();
         generated = true;
     }

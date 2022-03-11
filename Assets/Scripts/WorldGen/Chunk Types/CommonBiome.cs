@@ -26,6 +26,7 @@ public class CommonBiome : Chunk
         }
         DetermineBlock();
         SpecialBlockGeneration();
+        AddChangedBlocks();
         DrawMap();
         generated = true;
     }
