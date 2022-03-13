@@ -108,8 +108,9 @@ public class DialogAsset : MonoBehaviour
                     switch (c)
                     {
                         case "Leave":
+                            manager.reopen = true;
                             manager.loadWorld();
-                            break;
+                            return;
                         case "Buy":
                             stall.AddItems(manager.GetStallItems());
                             dialogBox.SetActive(false);

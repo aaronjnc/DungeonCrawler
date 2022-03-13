@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
     private ItemSlot[,] inventory = new ItemSlot[5, 7];
     private int playerMoney;
     public bool initialStartUp = true;
+    public bool reopen = false;
     // Start is called before the first frame update
     void Awake()
     {
@@ -94,7 +95,6 @@ public class GameManager : MonoBehaviour
         {
             spriteNames.Add(post.name);
         }
-        //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
     /// <summary>
     /// Returns the tile related to the given ID

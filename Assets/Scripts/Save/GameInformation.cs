@@ -21,11 +21,7 @@ public class GameInformation : ScriptableObject
             return _instance;
         }
     }
-    /// <summary>
-    /// Sets up game information with passed in manager
-    /// </summary>
-    /// <param name="manager"></param>
-    public GameInformation()
+    private void OnEnable()
     {
         if (_instance != null && _instance != this)
         {
@@ -52,7 +48,7 @@ public class GameInformation : ScriptableObject
         SaveWorld(manager.gen);
         GameObject player = GameObject.Find("Player");
         SavePlayer(player);
-        SaveInventory(player.GetComponent<Inventory>());
+        SaveInventory(manager.inv);
     }
     /// <summary>
     /// Saves information contained within gamemanager
@@ -123,7 +119,6 @@ public class GameInformation : ScriptableObject
         List<ChunkSave> chunks = new List<ChunkSave>();
         foreach(string file in Directory.GetFiles(chunkLocation))
         {
-            Debug.Log(file);
             FileStream fs = new FileStream(file, FileMode.Open);
             ChunkSave s = (ChunkSave)formatter.Deserialize(fs);
             fs.Close();

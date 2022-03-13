@@ -50,6 +50,15 @@ public class ChunkGen : MonoBehaviour
         if (manager.loadFromFile)
         {
             loadPreviousWorld();
+            foreach (PremadeSection sections in manager.sections)
+            {
+                if (sections.CreateAtStart)
+                {
+                    int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
+                    int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
+                    PresetTiles(new Vector2Int(startX, startY), sections);
+                }
+            }
         }
         else
         {
@@ -116,8 +125,9 @@ public class ChunkGen : MonoBehaviour
     /// <summary>
     /// Generates new chunks in different directions
     /// </summary>
-    void GenerateNewChunks()
+    public void GenerateNewChunks()
     {
+        pos = manager.pos;
         Vector2Int relGen;
         int relx = 0;
         int rely = 0;
@@ -129,6 +139,8 @@ public class ChunkGen : MonoBehaviour
             rely = 1;
         else if (pos.y <= 10)
             rely = -1;
+        relGen = new Vector2Int(0, 0);
+        GenDirections(relGen);
         relGen = new Vector2Int(0, rely);
         GenDirections(relGen);
         relGen = new Vector2Int(relx, 0);

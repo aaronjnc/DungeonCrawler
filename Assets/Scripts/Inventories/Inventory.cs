@@ -53,7 +53,11 @@ public class Inventory : MonoBehaviour
                 itemSlots[row, col] = new ItemSlot();
             }
         }
-        if (manager.loadFromFile)
+        if (manager.reopen)
+        {
+            Reopen();
+        }
+        else if (manager.loadFromFile)
         {
             LoadFromFile();
         } 
@@ -312,11 +316,37 @@ public class Inventory : MonoBehaviour
     {
         return itemSlots;
     }
+    public void Reopen()
+    {
+        InventorySave inv = GameInformation.Instance.LoadInventory();
+        ItemSlot[,] slot = manager.GetInventory();
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                itemSlots[i, j].addExisting(slot[i, j]);
+                images[i, j].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[i, j].getCurrentCount());
+                UpdateImage(new Vector2Int(i, j), itemSlots[i, j].getSprite());
+            }
+        }
+        int[,] chosen = inv.GetChosenItems();
+        for (int i = 0; i < 7; i++)
+        {
+            chosenItems[i] = new Vector2Int(chosen[i, 0], chosen[i, 1]);
+            if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
+        }
+        itemRotator.UpdateItems();
+        playerMoney = manager.GetMoney();
+        UpdateMoney();
+        manager.reopen = false;
+    }
     /// <summary>
     /// Method called when inventory is destroyed (scene change)
     /// </summary>
     private void OnDestroy()
     {
+        manager.inv = null;
         manager.SaveInventory(itemSlots);
         manager.SetMoney(playerMoney);
     }

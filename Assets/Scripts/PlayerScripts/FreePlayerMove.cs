@@ -190,5 +190,14 @@ public class FreePlayerMove : MonoBehaviour
         PlayerSave p = GameInformation.Instance.LoadPlayer();
         transform.position = p.GetPlayerPos();
         transform.eulerAngles = p.GetPlayerRot();
+        Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
+        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        pos.x = newPos.x;
+        pos.y = newPos.y;
+        manager.pos = pos;
+        manager.currentChunk = currentChunk;
+        ChunkGen.currentWorld.currentChunk = currentChunk;
+        ChunkGen.currentWorld.GenerateNewChunks();
     }
 }

@@ -72,10 +72,25 @@ public class LoadWorld : MonoBehaviour
         string path = Application.persistentDataPath + "/saves/" + worldFile.text;
         if (Directory.Exists(path))
         {
+            DeleteContents(path);
             Directory.Delete(path);
             AssetDatabase.Refresh();
             Debug.Log("Deleted");
             LoadScreen();
+        }
+    }
+    private void DeleteContents(string directory)
+    {
+        string[] dirs = Directory.GetDirectories(directory);
+        for (int i = 0; i < dirs.Length; i++)
+        {
+            DeleteContents(dirs[i]);
+            Directory.Delete(dirs[i]);
+        }
+        string[] files = Directory.GetFiles(directory);
+        for (int i = 0; i < files.Length; i++)
+        {
+            File.Delete(files[i]);
         }
     }
 }

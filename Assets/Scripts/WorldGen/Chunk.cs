@@ -508,6 +508,7 @@ public abstract class Chunk
         {
             changes.Add(new Vector2Int(x, y), block);
         }
+        changed = true;
         map.RefreshTile(new Vector3Int(x, y, mapz));
     }
     /// <summary>
@@ -684,45 +685,6 @@ public abstract class Chunk
         }
         return blocksChanged;
     }
-    /// <summary>
-    /// loads chunk from file
-    /// </summary>
-    /// <param name="stringMap">string array holding chunk information</param>
-    /**public void loadFromFile(string[] stringMap)
-    {
-        string[] blockMap = stringMap[0].Split('\n');
-        string[] floorMap = stringMap[1].Split('\n');
-        string[] biomeMap = stringMap[2].Split('\n');
-        biomeId = (byte)Int32.Parse(blockMap[0].Split(',')[2]);
-        blocks = new byte[width, height];
-        floor = new byte[width, height];
-        biomes = new byte[width, height];
-        for (int i = 0; i < height; i++)
-        {
-            string[] blockIds = blockMap[i + 1].Split(',');
-            string[] floorIds = floorMap[i + 1].Split(',');
-            string[] biomeIds = biomeMap[i + 1].Split(',');
-            for (int j = 0; j < blockIds.Length; j++)
-            {
-                int blockId = Int32.Parse(blockIds[j]);
-                int floorId = Int32.Parse(floorIds[j]);
-                int biomeId = Int32.Parse(biomeIds[j]);
-                blocks[i, j] = (byte)blockId;
-                floor[i, j] = (byte)floorId;
-                biomes[i, j] = (byte)biomeId;
-                foreach(Blocks specialBlock in biomeScripts[biomeId].specialBlocks)
-                {
-                    if (specialBlock.index == blocks[i,j])
-                    {
-                        AddInteractable(i, j);
-                    }
-                }
-            }
-        }
-        DrawMap();
-        map.GetComponent<TilemapRenderer>().enabled = false;
-        generated = true;
-    }*/
     public void AddChange(Vector2Int pos, byte id)
     {
         changes.Add(pos, id);

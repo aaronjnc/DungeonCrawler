@@ -28,6 +28,8 @@ public static class SaveSystem
     {
         GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
         manager.loadFromFile = true;
+        string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
+        GameInformation.Instance.SetLocation(path);
         manager.loadWorld();
     }
 }
