@@ -25,6 +25,8 @@ public class EnemyInfo : MonoBehaviour
     public float weight;
     //spawn scale
     public float scale;
+    //identifying number of enemy
+    public byte id;
     //chunk they spawn in
     [HideInInspector] public Vector2Int chunk;
     //types of enemies
@@ -50,6 +52,7 @@ public class EnemyInfo : MonoBehaviour
     /// <param name="amount">Amount to reduce health by</param>
     public void ReduceHealth(float amount)
     {
+        Debug.Log("Hit");
         health = Mathf.Clamp(health-amount,0,maxHealth);
         slider.value = health;
         if (health <= 0)

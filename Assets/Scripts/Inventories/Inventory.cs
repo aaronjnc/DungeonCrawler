@@ -8,6 +8,7 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class Inventory : MonoBehaviour
 {
+    private int playerMoney = 0;
     //manager reference
     private GameManager manager;
     //2D array of images
@@ -20,6 +21,7 @@ public class Inventory : MonoBehaviour
     [HideInInspector] public List<Vector2Int> chosenItems = new List<Vector2Int>();
     //reference to item rotator
     public ItemRotator itemRotator;
+    public Text[] moneyObjects;
     /// <summary>
     /// Sets up inventory
     /// </summary>
@@ -44,26 +46,30 @@ public class Inventory : MonoBehaviour
             imageMover.SetArrayPos(new Vector2Int(row, col));
             imgnum++;
         }
-        for (int i = 0; i < 5; i++)
+        for (int row = 0; row < 5; row++)
         {
-            for (int row = 0; row < 5; row++)
+            for (int col = 0; col < 7; col++)
             {
-                for (int col = 0; col < 7; col++)
-                {
-                    itemSlots[row, col] = new ItemSlot();
-                }
+                itemSlots[row, col] = new ItemSlot();
             }
         }
-        if (manager.loadFromFile)
+        if (manager.reopen)
         {
-            LoadFromFile(manager.GetGameInformation());
-        } else
+            Reopen();
+        }
+        else if (manager.loadFromFile)
+        {
+            LoadFromFile();
+        } 
+        else
         {
             InventoryItem item = manager.GetItem("Base Pickaxe");
             AddItem(item,1,item.baseDurability);
             item = manager.GetItem("Extendo Sword");
             AddItem(item,1, item.baseDurability);
+            AddMoney(150);
         }
+        UpdateMoney();
         gameObject.SetActive(false);
     }
     /// <summary>
@@ -205,7 +211,9 @@ public class Inventory : MonoBehaviour
                 default:
                     if (chosenItems.Contains(arrayPos))
                     {
-                        chosenItems[chosenItems.IndexOf(arrayPos)] = new Vector2Int(int.MaxValue, int.MaxValue);
+                        int previousChosen = chosenItems.IndexOf(arrayPos);
+                        chosenItems[previousChosen] = new Vector2Int(int.MaxValue, int.MaxValue);
+                        UpdateChosen(previousChosen, null);
                     }
                     chosenItems[chosenSpot] = arrayPos;
                     UpdateChosen(chosenSpot, slot.getSprite());
@@ -217,6 +225,10 @@ public class Inventory : MonoBehaviour
         {
             itemSlots[dropPos.x, dropPos.y].addExisting(itemSlots[arrayPos.x, arrayPos.y]);
             itemSlots[arrayPos.x, arrayPos.y].emptySlot();
+            images[dropPos.x, dropPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[dropPos.x, dropPos.y].getCurrentCount());
+            images[arrayPos.x, arrayPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[arrayPos.x, arrayPos.y].getCurrentCount());
+            UpdateImage(dropPos, itemSlots[dropPos.x, dropPos.y].getSprite());
+            UpdateImage(arrayPos, null);
             if (chosenItems.Contains(arrayPos))
             {
                 chosenItems[chosenItems.IndexOf(arrayPos)] = dropPos;
@@ -239,27 +251,34 @@ public class Inventory : MonoBehaviour
     /// loads inventory from file
     /// </summary>
     /// <param name="info">GameInformation file to get inventory from</param>
-    private void LoadFromFile(GameInformation info)
+    private void LoadFromFile()
     {
+        InventorySave inv = GameInformation.Instance.LoadInventory();
+        byte[,] items = inv.GetItems();
+        byte[,] sizes = inv.GetStackSizes();
+        byte[,] durabilities = inv.GetDurabilities();
         for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 7; j++)
             {
-                byte infoItem = info.inventory[i, j];
+                byte infoItem = items[i, j];
                 if (infoItem != 127)
                 {
                     InventoryItem item = manager.GetItem(infoItem);
-                    AddItem(item, info.stackSize[i, j], info.durability[i, j]);
+                    AddItem(item, sizes[i, j], durabilities[i, j]);
                 }
             }
         }
+        int[,] chosen = inv.GetChosenItems();
         for (int i = 0; i < 7; i++)
         {
-            chosenItems[i] = new Vector2Int(info.chosenItems[i, 0], info.chosenItems[i, 1]);
+            chosenItems[i] = new Vector2Int(chosen[i, 0], chosen[i, 1]);
             if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
                 UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
         }
         itemRotator.UpdateItems();
+        playerMoney = inv.GetMoney();
+        UpdateMoney();
     }
     /// <summary>
     /// returns ItemSlot at given position
@@ -271,8 +290,64 @@ public class Inventory : MonoBehaviour
     {
         return itemSlots[row, col];
     }
+    public void AddMoney(int num)
+    {
+        playerMoney += num;
+    }
+    public int GetMoney()
+    {
+        return playerMoney;
+    }
+    public void UpdateMoney()
+    {
+        int emerald = playerMoney / 1000;
+        int leftOver = playerMoney % 1000;
+        int gold = leftOver / 100;
+        leftOver %= 100;
+        int silver = leftOver / 10;
+        leftOver %= 10;
+        int bronze = leftOver;
+        moneyObjects[0].text = emerald + "";
+        moneyObjects[1].text = gold + "";
+        moneyObjects[2].text = silver + "";
+        moneyObjects[3].text = bronze + "";
+    }
+    public ItemSlot[,] GetInventory()
+    {
+        return itemSlots;
+    }
+    public void Reopen()
+    {
+        InventorySave inv = GameInformation.Instance.LoadInventory();
+        ItemSlot[,] slot = manager.GetInventory();
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                itemSlots[i, j].addExisting(slot[i, j]);
+                images[i, j].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[i, j].getCurrentCount());
+                UpdateImage(new Vector2Int(i, j), itemSlots[i, j].getSprite());
+            }
+        }
+        int[,] chosen = inv.GetChosenItems();
+        for (int i = 0; i < 7; i++)
+        {
+            chosenItems[i] = new Vector2Int(chosen[i, 0], chosen[i, 1]);
+            if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
+        }
+        itemRotator.UpdateItems();
+        playerMoney = manager.GetMoney();
+        UpdateMoney();
+        manager.reopen = false;
+    }
+    /// <summary>
+    /// Method called when inventory is destroyed (scene change)
+    /// </summary>
     private void OnDestroy()
     {
+        manager.inv = null;
         manager.SaveInventory(itemSlots);
+        manager.SetMoney(playerMoney);
     }
 }

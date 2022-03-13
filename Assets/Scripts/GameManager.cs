@@ -47,17 +47,19 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string fullText;
     public TextAsset[] textFiles;
     [HideInInspector] public bool loadFromFile = false;
-    GameInformation gameInfo;
     [HideInInspector] public string worldName;
     [HideInInspector] public DateTime startTime;
     [HideInInspector] public double hours;
-    private string previousWorld = "";
     public ChunkGen gen;
     private List<ItemSlot> stallItems = new List<ItemSlot>();
     private ItemSlot[,] inventory = new ItemSlot[5, 7];
+    private int playerMoney;
+    public bool initialStartUp = true;
+    public bool reopen = false;
     // Start is called before the first frame update
     void Awake()
     {
+        GameInformation.CreateInstance<GameInformation>();
         if (!Directory.Exists(Application.persistentDataPath + "/saves"))
         {
             Directory.CreateDirectory(Application.persistentDataPath + "/saves");
@@ -93,12 +95,6 @@ public class GameManager : MonoBehaviour
         {
             spriteNames.Add(post.name);
         }
-        if (testingmode)
-        {
-            GetComponent<WorldCreationTesting>().enabled = true;
-            GetComponent<WorldCreationTesting>().size = testingsize;
-        }
-        //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
     /// <summary>
     /// Returns the tile related to the given ID
@@ -201,17 +197,11 @@ public class GameManager : MonoBehaviour
     {
         fullText = text.text;
     }
-    public void loadWorld(GameInformation info)
+    public void loadWorld()
     {
         loadFromFile = true;
-        gameInfo = info;
         SceneLoader.LoadScene(1);
     }
-    public GameInformation GetGameInformation()
-    {
-        return gameInfo;
-    }
-
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
         ResumeGame();
@@ -226,6 +216,7 @@ public class GameManager : MonoBehaviour
         destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
         character = GameObject.Find("Player");
         gen.enabled = true;
+        gen.StartUp();
         startTime = DateTime.Now;
     }
 
@@ -258,5 +249,13 @@ public class GameManager : MonoBehaviour
     public ItemSlot[,] GetInventory()
     {
         return inventory;
+    }
+    public void SetMoney(int money)
+    {
+        playerMoney = money;
+    }
+    public int GetMoney()
+    {
+        return playerMoney;
     }
 }

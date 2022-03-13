@@ -11,29 +11,25 @@ public static class SaveSystem
     /// </summary>
     public static void Save()
     {
-        GameObject manager = GameObject.Find("GameController");
-        GameInformation info = new GameInformation(manager);
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/saves/" + manager.GetComponent<GameManager>().worldName + ".txt";
-        FileStream stream = new FileStream(path, FileMode.Create);
-        formatter.Serialize(stream, info);
-        stream.Close();
+        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
+        if (!Directory.Exists(path))
+        {
+            Directory.CreateDirectory(path);
+        }
+        GameInformation.Instance.SetLocation(path);
+        GameInformation.Instance.SaveAll(manager);
     }
     /// <summary>
     /// loads world with given path
     /// </summary>
     /// <param name="path">path of world to load</param>
-    public static void Load(string path)
+    public static void Load()
     {
-        if (File.Exists(path))
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-            GameInformation info = formatter.Deserialize(stream) as GameInformation;
-            GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-            manager.loadFromFile = true;
-            manager.loadWorld(info);
-            stream.Close();
-        }
+        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        manager.loadFromFile = true;
+        string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
+        GameInformation.Instance.SetLocation(path);
+        manager.loadWorld();
     }
 }

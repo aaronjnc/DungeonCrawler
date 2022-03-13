@@ -28,7 +28,7 @@ public class DialogManager : MonoBehaviour
         controls = new PlayerControls();
         controls.Dialog.ChangeOption.performed += changeLineChoice;
         controls.Dialog.ChangeOption.Enable();
-        controls.Dialog.ChooseLine.performed += updateLines;
+        controls.Dialog.ChooseLine.canceled += updateLines;
         controls.Dialog.ChooseLine.Enable();
         textbox = GetComponent<Text>();
         asset = GetComponent<DialogAsset>();
@@ -88,7 +88,7 @@ public class DialogManager : MonoBehaviour
     /// <param name="ctx"></param>
     private void changeLineChoice(CallbackContext ctx)
     {
-        selectedLine += (int)ctx.ReadValue<float>();
+        selectedLine -= (int)ctx.ReadValue<float>();
         if (selectedLine < 0)
         {
             selectedLine = lines.Count - 1;

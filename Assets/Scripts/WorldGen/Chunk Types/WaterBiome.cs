@@ -45,6 +45,7 @@ public class WaterBiome : Chunk
         }
         DetermineWall();
         SpecialBlockGeneration();
+        AddChangedBlocks();
         DrawMap();
         generated = true;
     }
@@ -55,6 +56,8 @@ public class WaterBiome : Chunk
         {
             for (int y = 0; y < height; y++)
             {
+                if (presetTiles.Contains(new Vector3Int(x, y, floorz)))
+                    continue;
                 if (blocks[x, y] != 1)
                 {
                     int id = ((random.Next(0, 100) < 33) ? 1 : 0);

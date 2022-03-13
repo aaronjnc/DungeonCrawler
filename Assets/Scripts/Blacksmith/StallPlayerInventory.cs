@@ -10,12 +10,14 @@ public class StallPlayerInventory : MonoBehaviour
     private ItemSlot[,] inv = new ItemSlot[5, 7];
     private GameManager manager;
     public Image chosenImage;
+    private int money;
     private Vector2Int chosenItem;
     private bool setUp = false;
     // Start is called before the first frame update
     private void SetUpInventory()
     {
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
+        money = manager.GetMoney();
         int imgnum = 0;
         foreach (Image image in GetComponentsInChildren<Image>())
         {
@@ -91,5 +93,76 @@ public class StallPlayerInventory : MonoBehaviour
             mineral[i][1] = mineralCount[i].ToString();
         }
         return mineral;
+    }
+
+    public void SpendMoney(int num)
+    {
+        money = Mathf.Clamp(money - num, 0, int.MaxValue);
+    }
+
+    public int GetMoney()
+    {
+        return money;
+    }
+
+    public void AddItem(ItemSlot item)
+    {
+        bool found = false;
+        Vector2Int spot = Vector2Int.zero;
+        Vector2Int empty = Vector2Int.zero;
+        bool emptySpot = false;
+        for (int row = 0; row < 5; row++)
+        {
+            for (int col = 0; col < 7; col++)
+            {
+                if (item.getItemId() == inv[row, col].getItemId() && !inv[row, col].isFull())
+                {
+                    spot = new Vector2Int(row, col);
+                    found = true;
+                    int leftOver = inv[spot.x, spot.y].addToStack((byte)item.getCurrentCount());
+                    if (leftOver > 0)
+                    {
+                        ItemSlot newItem = new ItemSlot();
+                        newItem.addExisting(item);
+                        newItem.reduceStack((byte)(item.getCurrentCount() - leftOver));
+                        manager.SaveInventory(inv);
+                        AddItem(newItem);
+                    }
+                    break;
+                }
+                if (inv[row, col].isEmpty() && !emptySpot)
+                {
+                    empty = new Vector2Int(row, col);
+                    emptySpot = true;
+                }
+            }
+            if (found)
+                break;
+        }
+        if (emptySpot && !found)
+        {
+            inv[empty.x, empty.y].addExisting(item);
+            UpdateImage(new Vector2Int(empty.x, empty.y), item.getSprite());
+            manager.SaveInventory(inv);
+        }
+    }
+    /// <summary>
+    /// Updates image at given position
+    /// </summary>
+    /// <param name="newPos">Image position</param>
+    /// <param name="itemSprite">New sprite</param>
+    void UpdateImage(Vector2Int newPos, Sprite itemSprite)
+    {
+        images[newPos.x, newPos.y].GetComponent<Image>().sprite = itemSprite;
+        if (itemSprite != null)
+        {
+            images[newPos.x, newPos.y].GetComponent<Image>().color = new Color(255, 255, 255, 255);
+            images[newPos.x, newPos.y].SetActive(true);
+        }
+        else
+        {
+            images[newPos.x, newPos.y].GetComponent<Image>().color = new Color(255, 255, 255, 0);
+            images[newPos.x, newPos.y].SetActive(false);
+        }
     }
 }

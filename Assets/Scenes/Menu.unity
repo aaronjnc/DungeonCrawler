@@ -2368,6 +2368,14 @@ PrefabInstance:
       propertyPath: biomesmooths
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: randomSeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: randomBiomeSeed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4921779820281114924, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: m_Name
       value: GameController
@@ -2427,6 +2435,10 @@ PrefabInstance:
     - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: spawnEnemies
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: testingsize
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}

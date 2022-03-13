@@ -35,8 +35,10 @@ public abstract class Chunk
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     protected List<GameObject> interactables = new List<GameObject>();
+    protected Dictionary<Vector2Int, byte> changes = new Dictionary<Vector2Int, byte>();
     protected System.Random random;
     protected abstract void FillBiomeMap();
+    public bool changed = false;
     /// <summary>
     /// Initializes chunk script at given chunk position
     /// </summary>
@@ -50,6 +52,7 @@ public abstract class Chunk
         blocks = new byte[width, height];
         biomes = new byte[width, height];
         floor = new byte[width, height];
+        UnityEngine.Random.InitState(seed);
         numEnemies = UnityEngine.Random.Range(1, maxenemies+1);
     }
     /// <summary>
@@ -260,7 +263,8 @@ public abstract class Chunk
                         strongFloorIndex = biomeScripts[biomes[x, y]].floorBlocks[i].index;
                     }
                 }
-                floor[x, y] = strongFloorIndex;
+                if (!presetTiles.Contains(new Vector3Int(x,y,floorz))) 
+                    floor[x, y] = strongFloorIndex;
                 if (!presetTiles.Contains(new Vector3Int(x,y,mapz)))
                 {
                     if (blocks[x, y] == 1)
@@ -496,6 +500,15 @@ public abstract class Chunk
                 UpdateCollider(x, y,Tile.ColliderType.Grid);
             map.SetTile(new Vector3Int(x, y, floorz), null);
         }
+        if (changes.ContainsKey(new Vector2Int(x, y)))
+        {
+            changes[new Vector2Int(x, y)] = block;
+        }
+        else
+        {
+            changes.Add(new Vector2Int(x, y), block);
+        }
+        changed = true;
         map.RefreshTile(new Vector3Int(x, y, mapz));
     }
     /// <summary>
@@ -660,43 +673,27 @@ public abstract class Chunk
         }
         return enemyString;
     }
-    /// <summary>
-    /// loads chunk from file
-    /// </summary>
-    /// <param name="stringMap">string array holding chunk information</param>
-    public void loadFromFile(string[] stringMap)
+
+    public string[] GetChanges()
     {
-        string[] blockMap = stringMap[0].Split('\n');
-        string[] floorMap = stringMap[1].Split('\n');
-        string[] biomeMap = stringMap[2].Split('\n');
-        biomeId = (byte)Int32.Parse(blockMap[0].Split(',')[2]);
-        blocks = new byte[width, height];
-        floor = new byte[width, height];
-        biomes = new byte[width, height];
-        for (int i = 0; i < height; i++)
+        string[] blocksChanged = new string[changes.Count];
+        int i = 0;
+        foreach (Vector2Int change in changes.Keys)
         {
-            string[] blockIds = blockMap[i + 1].Split(',');
-            string[] floorIds = floorMap[i + 1].Split(',');
-            string[] biomeIds = biomeMap[i + 1].Split(',');
-            for (int j = 0; j < blockIds.Length; j++)
-            {
-                int blockId = Int32.Parse(blockIds[j]);
-                int floorId = Int32.Parse(floorIds[j]);
-                int biomeId = Int32.Parse(biomeIds[j]);
-                blocks[i, j] = (byte)blockId;
-                floor[i, j] = (byte)floorId;
-                biomes[i, j] = (byte)biomeId;
-                foreach(Blocks specialBlock in biomeScripts[biomeId].specialBlocks)
-                {
-                    if (specialBlock.index == blocks[i,j])
-                    {
-                        AddInteractable(i, j);
-                    }
-                }
-            }
+            blocksChanged[i] = change.x + " " + change.y + "|" + changes[change];
+            i++;
         }
-        DrawMap();
-        map.GetComponent<TilemapRenderer>().enabled = false;
-        generated = true;
+        return blocksChanged;
+    }
+    public void AddChange(Vector2Int pos, byte id)
+    {
+        changes.Add(pos, id);
+    }
+    public void AddChangedBlocks()
+    {
+        foreach (Vector2Int pos in changes.Keys)
+        {
+            blocks[pos.x, pos.y] = changes[pos];
+        }
     }
 }

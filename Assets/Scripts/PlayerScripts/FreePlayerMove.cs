@@ -26,6 +26,7 @@ public class FreePlayerMove : MonoBehaviour
     public LayerMask interactable;
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     public bool canMove = true;
+    private float sprintMod = 1f;
     void Start()
     {
         GameObject grid = GameObject.Find("Grid");
@@ -39,6 +40,9 @@ public class FreePlayerMove : MonoBehaviour
         controls.Movement.Vertical.performed += ctx => dir.y += ctx.ReadValue<float>();
         controls.Movement.Vertical.canceled += ctx => dir.y = 0;
         controls.Movement.Vertical.Enable();
+        controls.Movement.Sprint.performed += ctx => sprintMod = 2f;
+        controls.Movement.Sprint.canceled += ctx => sprintMod = 1f;
+        controls.Movement.Sprint.Enable();
         controls.Interact.Inventory.performed += Inventory;
         controls.Interact.Inventory.Enable();
         controls.Movement.MousePosition.Enable();
@@ -52,8 +56,9 @@ public class FreePlayerMove : MonoBehaviour
         prevpos.z = manager.mapz;
         if (manager.loadFromFile)
         {
-            loadFromFile(manager.GetGameInformation());
+            loadFromFile();
         }
+        SaveSystem.Save();
     }
     /// <summary>
     /// Activates the spell menu when 'X' is pressed
@@ -94,12 +99,13 @@ public class FreePlayerMove : MonoBehaviour
     /// </summary>
     /// <param name="ctx"></param>
     void Interact(CallbackContext ctx)
-    { 
+    {
         if (!manager.paused)
         {
-            RaycastHit2D hit = Physics2D.Raycast(transform.position, Vector2.up, 2, interactable);
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 5, interactable);
             if (hit.collider != null)
             {
+                SaveSystem.Save();
                 hit.collider.gameObject.GetComponent<InteractableTile>().Interact();
             }
         }
@@ -131,7 +137,7 @@ public class FreePlayerMove : MonoBehaviour
             float angleDeg = (180 / Mathf.PI) * angleRad;
             transform.rotation = Quaternion.Euler(0, 0, angleDeg);
             dir = dir.normalized;
-            Vector3 velDir = -dir.x * transform.up + dir.y * transform.right;
+            Vector3 velDir = (-dir.x * transform.up + dir.y * transform.right) * sprintMod;
             rotDir = new Vector2(Mathf.Round(transform.up.y), Mathf.Round(-transform.up.x));
             player.velocity = velDir * speed;
             Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
@@ -172,15 +178,26 @@ public class FreePlayerMove : MonoBehaviour
     }
     private void OnDestroy()
     {
-        controls.Disable();
+        if (controls != null)
+            controls.Disable();
     }
     /// <summary>
     /// loads player information from file
     /// </summary>
     /// <param name="info"></param>
-    private void loadFromFile(GameInformation info)
+    private void loadFromFile()
     {
-        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
-        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
+        PlayerSave p = GameInformation.Instance.LoadPlayer();
+        transform.position = p.GetPlayerPos();
+        transform.eulerAngles = p.GetPlayerRot();
+        Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
+        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        pos.x = newPos.x;
+        pos.y = newPos.y;
+        manager.pos = pos;
+        manager.currentChunk = currentChunk;
+        ChunkGen.currentWorld.currentChunk = currentChunk;
+        ChunkGen.currentWorld.GenerateNewChunks();
     }
 }

@@ -21,8 +21,10 @@ public class ExtendoSword : WeaponInterface
         for (int i = 0; i < enemies.Length; i++)
         {
             Vector3 dir = enemies[i].transform.position - playerTransform.position;
-            float dot = Vector3.Dot(dir, transform.right);
-            if (dot >= Mathf.Cos(swingAngle))
+            dir.Normalize();
+            Vector3 max = playerTransform.right + new Vector3(Mathf.Cos(swingAngle), Mathf.Sin(swingAngle), 0);
+            Vector3 min = playerTransform.right - new Vector3(Mathf.Cos(swingAngle), Mathf.Sin(swingAngle), 0);
+            if (dir.x < max.x && dir.x > min.x && dir.y < max.y && dir.y > min.y)
             {
                 enemies[i].GetComponent<EnemyInfo>().ReduceHealth(baseDamage);
             }
