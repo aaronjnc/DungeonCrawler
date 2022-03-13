@@ -27,6 +27,7 @@ public class MixedBiome : Chunk
         }
         DetermineBlock();
         SpecialBlockGeneration();
+        AddChangedBlocks();
         DrawMap();
         generated = true;
     }

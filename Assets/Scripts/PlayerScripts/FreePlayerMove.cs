@@ -56,7 +56,7 @@ public class FreePlayerMove : MonoBehaviour
         prevpos.z = manager.mapz;
         if (manager.loadFromFile)
         {
-            loadFromFile(manager.GetGameInformation());
+            loadFromFile();
         }
         SaveSystem.Save();
     }
@@ -185,9 +185,19 @@ public class FreePlayerMove : MonoBehaviour
     /// loads player information from file
     /// </summary>
     /// <param name="info"></param>
-    private void loadFromFile(GameInformation info)
+    private void loadFromFile()
     {
-        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
-        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
+        PlayerSave p = GameInformation.Instance.LoadPlayer();
+        transform.position = p.GetPlayerPos();
+        transform.eulerAngles = p.GetPlayerRot();
+        Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
+        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        pos.x = newPos.x;
+        pos.y = newPos.y;
+        manager.pos = pos;
+        manager.currentChunk = currentChunk;
+        ChunkGen.currentWorld.currentChunk = currentChunk;
+        ChunkGen.currentWorld.GenerateNewChunks();
     }
 }
