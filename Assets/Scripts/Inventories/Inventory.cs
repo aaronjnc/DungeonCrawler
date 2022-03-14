@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static UnityEngine.InputSystem.InputAction;
 
-public class Inventory : MonoBehaviour
+public class Inventory : Singleton<Inventory>
 {
     [Tooltip("Amount of money player has")]
     private int playerMoney = 0;
@@ -27,13 +27,13 @@ public class Inventory : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        base.Awake();
         chosenItems.Capacity = 7;
         for (int i = 0; i < 7; i++)
         {
             chosenItems.Add(new Vector2Int(int.MaxValue, int.MaxValue));
         }
         GameManager.Instance.SetValues();
-        GameManager.Instance.inv = this;
         int imgnum = 0;
         foreach (ImageMover imageMover in GetComponentsInChildren<ImageMover>())
         {
@@ -363,7 +363,6 @@ public class Inventory : MonoBehaviour
     /// </summary>
     private void OnDestroy()
     {
-        GameManager.Instance.inv = null;
         GameManager.Instance.StoreInventory(itemSlots);
         GameManager.Instance.SetMoney(playerMoney);
     }

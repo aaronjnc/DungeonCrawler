@@ -61,7 +61,7 @@ public class GameInformation : ScriptableObject
         SaveWorld();
         GameObject player = GameObject.Find("Player");
         SavePlayer(player);
-        SaveInventory(GameManager.Instance.inv);
+        SaveInventory();
     }
     /// <summary>
     /// Saves information contained within gamemanager
@@ -111,11 +111,11 @@ public class GameInformation : ScriptableObject
     /// saves inventory
     /// </summary>
     /// <param name="inv"></param>
-    public void SaveInventory(Inventory inv)
+    public void SaveInventory()
     {
         string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
         FileStream fs = new FileStream(inventoryInfo, FileMode.Create);
-        InventorySave i = new InventorySave(inv);
+        InventorySave i = new InventorySave();
         formatter.Serialize(fs, i);
         fs.Close();
     }

@@ -19,7 +19,7 @@ public class ChunkGen : Singleton<ChunkGen>
     [Tooltip("Previous player position")]
     private Vector3Int previousPos = Vector3Int.zero;
     [Tooltip("Player chunk")]
-    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
+    [HideInInspector] private Vector2Int currentChunk = Vector2Int.zero;
     [Tooltip("Hashtable containg all created chunks")]
     private Hashtable chunks;
     [Tooltip("Array of biome scripts")]
@@ -117,10 +117,10 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         if (playerMovement.dir != Vector2.zero)
         {
-            pos = GameManager.Instance.pos;
+            pos = FreePlayerMove.Instance.pos;
             if (pos != previousPos)
             {
-                currentChunk = GameManager.Instance.currentChunk;
+                currentChunk = FreePlayerMove.Instance.currentChunk;
                 if (!WithinBounds())
                 {
                     GenerateSurroundingChunks();
@@ -144,7 +144,8 @@ public class ChunkGen : Singleton<ChunkGen>
     /// </summary>
     public void GenerateSurroundingChunks()
     {
-        pos = GameManager.Instance.pos;
+        pos = FreePlayerMove.Instance.pos;
+        currentChunk = FreePlayerMove.Instance.currentChunk;
         Vector2Int relGen;
         int relx = 0;
         int rely = 0;

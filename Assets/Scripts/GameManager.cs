@@ -19,16 +19,12 @@ public class GameManager : Singleton<GameManager>
     public bool spawnEnemies;
     [Tooltip("Breaking blocks")]
     [HideInInspector] public bool blockBreaking = false;
-    [Tooltip("Current player position")]
-    [HideInInspector] public Vector3Int pos = Vector3Int.zero;
     [Tooltip("Reference to block breaking script")]
     [HideInInspector] public BlockBreaking blockBreakingScript;
     [Tooltip("Map z position")]
     [HideInInspector] public int mapz;
     [Tooltip("Foor z position")]
     [HideInInspector] public int floorz;
-    [Tooltip("Player inventory")]
-    [HideInInspector] public Inventory inv;
     [Tooltip("Player is holding a weapon")]
     [HideInInspector] public bool fighting = false;
     [Tooltip("Item player is currently holding")]
@@ -39,8 +35,6 @@ public class GameManager : Singleton<GameManager>
     private Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
     [Tooltip("Dictionary of all items")]
     private Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
-    [Tooltip("Current chunk of player")]
-    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     [Tooltip("Game is paused")]
     [HideInInspector] public bool paused = false;
     [Tooltip("All premade sections")]

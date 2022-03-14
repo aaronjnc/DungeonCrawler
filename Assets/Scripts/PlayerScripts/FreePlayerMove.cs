@@ -5,7 +5,7 @@ using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.Tilemaps;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class FreePlayerMove : MonoBehaviour
+public class FreePlayerMove : Singleton<FreePlayerMove>
 {
     [Tooltip("player body")]
     private Rigidbody2D player;
@@ -25,8 +25,6 @@ public class FreePlayerMove : MonoBehaviour
     public Vector3Int pos = Vector3Int.zero;
     [Tooltip("Previous integer position of player")]
     private Vector3Int prevpos = Vector3Int.zero;
-    [Tooltip("Inventory game object")]
-    [SerializeField] private GameObject inv;
     [Tooltip("Look direction")]
     private Vector2 rotDir = Vector2.zero;
     [Tooltip("Menu game object")]
@@ -47,6 +45,7 @@ public class FreePlayerMove : MonoBehaviour
     private float sprintMod = 1f;
     void Start()
     {
+        base.Awake();
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
@@ -60,7 +59,7 @@ public class FreePlayerMove : MonoBehaviour
         controls.Movement.Sprint.performed += ctx => sprintMod = 2f;
         controls.Movement.Sprint.canceled += ctx => sprintMod = 1f;
         controls.Movement.Sprint.Enable();
-        controls.Interact.Inventory.performed += Inventory;
+        controls.Interact.Inventory.performed += OpenInventory;
         controls.Interact.Inventory.Enable();
         controls.Movement.MousePosition.Enable();
         controls.Interact.Enter.canceled += Interact;
@@ -131,16 +130,16 @@ public class FreePlayerMove : MonoBehaviour
     /// Opens inventory when 'I' is pressed
     /// </summary>
     /// <param name="ctx"></param>
-    void Inventory(CallbackContext ctx)
+    void OpenInventory(CallbackContext ctx)
     {
-        if (inv.activeInHierarchy)
+        if (Inventory.Instance.gameObject.activeInHierarchy)
         {
-            inv.SetActive(false);
+            Inventory.Instance.gameObject.SetActive(false);
             GameManager.Instance.ResumeGame();
         }
         else if (!GameManager.Instance.paused)
         {
-            inv.SetActive(true);
+            Inventory.Instance.gameObject.SetActive(true);
             GameManager.Instance.PauseGame();
         }
     }
@@ -173,8 +172,6 @@ public class FreePlayerMove : MonoBehaviour
         Vector2Int newPos = ChunkGen.Instance.GetChunkTilePos(relPos);
         pos.x = newPos.x;
         pos.y = newPos.y;
-        GameManager.Instance.pos = pos;
-        GameManager.Instance.currentChunk = currentChunk;
         Vector3Int lookDir= Vector3Int.zero;
         if (rotDir != Vector2.zero)
             lookDir = new Vector3Int((int)rotDir.x, (int)rotDir.y, 0);
@@ -211,9 +208,6 @@ public class FreePlayerMove : MonoBehaviour
         Vector2Int newPos = ChunkGen.Instance.GetChunkTilePos(relPos);
         pos.x = newPos.x;
         pos.y = newPos.y;
-        GameManager.Instance.pos = pos;
-        GameManager.Instance.currentChunk = currentChunk;
-        ChunkGen.Instance.currentChunk = currentChunk;
         ChunkGen.Instance.GenerateSurroundingChunks();
     }
 }

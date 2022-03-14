@@ -124,7 +124,7 @@ public class BlockBreaking : MonoBehaviour
             return;
         if (GameManager.Instance.GetByte(mapPos, currentChunk) == 127)
             return;
-        if (GameManager.Instance.blockBreaking && !GameManager.Instance.inv.gameObject.activeInHierarchy)
+        if (GameManager.Instance.blockBreaking && !Inventory.Instance.gameObject.activeInHierarchy)
         {
             if (GetTile(mapPos,currentChunk).color.b != 255)
             {
@@ -155,7 +155,7 @@ public class BlockBreaking : MonoBehaviour
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
         breaking = false;
-        GameManager.Instance.inv.ReduceChosen(rotator.current);
+        Inventory.Instance.ReduceChosen(rotator.current);
         AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
     }
@@ -171,7 +171,7 @@ public class BlockBreaking : MonoBehaviour
         {
             if (randomVal < block.chances[i])
             {
-                GameManager.Instance.inv.AddItem(block.drops[i].itemID);
+                Inventory.Instance.AddItem(block.drops[i].itemID);
                 return;
             }
         }
