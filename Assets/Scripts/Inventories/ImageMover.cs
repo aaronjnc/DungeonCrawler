@@ -17,8 +17,6 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private GameObject itemCounter;
     [Tooltip("Image is movable")]
     [SerializeField] private bool movable = true;
-    [Tooltip("Game manager")]
-    GameManager manager;
     [Tooltip("Mouse is being held down")]
     private bool mouseDown = false;
     [Tooltip("Initial start position of image")]
@@ -32,8 +30,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// </summary>
     void Start()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        inv = manager.inv;
+        inv = GameManager.Instance.inv;
         startpos = transform.position;
     }
     /// <summary>

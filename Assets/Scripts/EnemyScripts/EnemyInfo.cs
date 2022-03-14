@@ -57,7 +57,7 @@ public class EnemyInfo : MonoBehaviour
         slider.value = health;
         if (health <= 0)
         {
-            ChunkGen.currentWorld.GetChunk(chunk).DestroyEnemy(this.gameObject);
+            ChunkGen.Instance.GetChunk(chunk).DestroyEnemy(this.gameObject);
         }
     }
     /// <summary>

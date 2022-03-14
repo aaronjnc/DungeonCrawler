@@ -11,8 +11,6 @@ public class StallPlayerInventory : MonoBehaviour
     private GameObject[,] images = new GameObject[5, 7];
     [Tooltip("Array of inventory slots")]
     private ItemSlot[,] inv = new ItemSlot[5, 7];
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("Chosen image")]
     [SerializeField] private Image chosenImage;
     [Tooltip("Player money")]
@@ -26,8 +24,7 @@ public class StallPlayerInventory : MonoBehaviour
     /// </summary>
     private void SetUpInventory()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        money = manager.GetMoney();
+        money = GameManager.Instance.GetMoney();
         int imgnum = 0;
         foreach (Image image in GetComponentsInChildren<Image>())
         {
@@ -45,7 +42,7 @@ public class StallPlayerInventory : MonoBehaviour
     /// </summary>
     private void SetUpItemSlots()
     {
-        ItemSlot[,] slots = manager.GetInventory();
+        ItemSlot[,] slots = GameManager.Instance.GetInventory();
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 7; j++)
@@ -146,7 +143,7 @@ public class StallPlayerInventory : MonoBehaviour
                         ItemSlot newItem = new ItemSlot();
                         newItem.AddExisting(item);
                         newItem.ReduceStack((byte)(item.GetCount() - leftOver));
-                        manager.StoreInventory(inv);
+                        GameManager.Instance.StoreInventory(inv);
                         AddItem(newItem);
                     }
                     break;
@@ -164,7 +161,7 @@ public class StallPlayerInventory : MonoBehaviour
         {
             inv[empty.x, empty.y].AddExisting(item);
             UpdateImage(new Vector2Int(empty.x, empty.y), item.GetSprite());
-            manager.StoreInventory(inv);
+            GameManager.Instance.StoreInventory(inv);
         }
     }
     /// <summary>

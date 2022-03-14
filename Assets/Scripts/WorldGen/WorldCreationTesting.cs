@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class WorldCreationTesting : MonoBehaviour
 {
-    ChunkGen chunkGen { get { return ChunkGen.currentWorld; } }
     [Tooltip("Width/Height of generation test")]
     [HideInInspector] public int size;
     // Start is called before the first frame update
@@ -14,10 +13,10 @@ public class WorldCreationTesting : MonoBehaviour
         {
             for (int y = 0; y < size/2;y++)
             {
-                chunkGen.GenerateChunk(new Vector2Int(x, y));
-                chunkGen.GenerateChunk(new Vector2Int(-x-1, -y-1));
-                chunkGen.GenerateChunk(new Vector2Int(x, -y-1));
-                chunkGen.GenerateChunk(new Vector2Int(-x-1, y));
+                ChunkGen.Instance.GenerateChunk(new Vector2Int(x, y));
+                ChunkGen.Instance.GenerateChunk(new Vector2Int(-x-1, -y-1));
+                ChunkGen.Instance.GenerateChunk(new Vector2Int(x, -y-1));
+                ChunkGen.Instance.GenerateChunk(new Vector2Int(-x-1, y));
             }
         }
     }

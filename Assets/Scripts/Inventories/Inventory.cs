@@ -10,8 +10,6 @@ public class Inventory : MonoBehaviour
 {
     [Tooltip("Amount of money player has")]
     private int playerMoney = 0;
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("Array of inventory item game objects")]
     private GameObject[,] images = new GameObject[5, 7];
     [Tooltip("Array of chosen item game objects")]
@@ -34,9 +32,8 @@ public class Inventory : MonoBehaviour
         {
             chosenItems.Add(new Vector2Int(int.MaxValue, int.MaxValue));
         }
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        manager.SetValues();
-        manager.inv = this;
+        GameManager.Instance.SetValues();
+        GameManager.Instance.inv = this;
         int imgnum = 0;
         foreach (ImageMover imageMover in GetComponentsInChildren<ImageMover>())
         {
@@ -55,19 +52,19 @@ public class Inventory : MonoBehaviour
                 itemSlots[row, col] = new ItemSlot();
             }
         }
-        if (manager.reopen)
+        if (GameManager.Instance.reopen)
         {
             Reopen();
         }
-        else if (manager.loadFromFile)
+        else if (GameManager.Instance.loadFromFile)
         {
             LoadFromFile();
         } 
         else
         {
-            InventoryItem item = manager.GetItem("Base Pickaxe");
+            InventoryItem item = GameManager.Instance.GetItem("Base Pickaxe");
             AddItem(item,1,item.baseDurability);
-            item = manager.GetItem("Extendo Sword");
+            item = GameManager.Instance.GetItem("Extendo Sword");
             AddItem(item,1, item.baseDurability);
             AddMoney(150);
         }
@@ -79,7 +76,7 @@ public class Inventory : MonoBehaviour
     /// <param name="ID">Item ID to add to inventory</param>
     public void AddItem(byte ID)
     {
-        InventoryItem newItem = manager.GetItem(ID);
+        InventoryItem newItem = GameManager.Instance.GetItem(ID);
         AddItem(newItem, 1, newItem.baseDurability);
     }
     /// <summary>
@@ -265,7 +262,7 @@ public class Inventory : MonoBehaviour
                 byte infoItem = items[i, j];
                 if (infoItem != 127)
                 {
-                    InventoryItem item = manager.GetItem(infoItem);
+                    InventoryItem item = GameManager.Instance.GetItem(infoItem);
                     AddItem(item, sizes[i, j], durabilities[i, j]);
                 }
             }
@@ -339,7 +336,7 @@ public class Inventory : MonoBehaviour
     public void Reopen()
     {
         InventorySave inv = GameInformation.Instance.LoadInventory();
-        ItemSlot[,] slot = manager.GetInventory();
+        ItemSlot[,] slot = GameManager.Instance.GetInventory();
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 7; j++)
@@ -357,17 +354,17 @@ public class Inventory : MonoBehaviour
                 UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].GetSprite());
         }
         itemRotator.UpdateItems();
-        AddMoney(manager.GetMoney());
+        AddMoney(GameManager.Instance.GetMoney());
         UpdateMoney();
-        manager.reopen = false;
+        GameManager.Instance.reopen = false;
     }
     /// <summary>
     /// Method called when inventory is destroyed (scene change)
     /// </summary>
     private void OnDestroy()
     {
-        manager.inv = null;
-        manager.StoreInventory(itemSlots);
-        manager.SetMoney(playerMoney);
+        GameManager.Instance.inv = null;
+        GameManager.Instance.StoreInventory(itemSlots);
+        GameManager.Instance.SetMoney(playerMoney);
     }
 }

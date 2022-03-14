@@ -12,7 +12,7 @@ public class BlacksmithInteract : InteractableTile
     public override void Interact()
     {
         GameObject.Find("GameController").GetComponent<GameManager>().AddStallItems(GetComponent<Stall>().stallItems);
-        manager.assignTextFile(text);
+        GameManager.Instance.assignTextFile(text);
         SceneLoader.LoadScene(2);
     }
 }

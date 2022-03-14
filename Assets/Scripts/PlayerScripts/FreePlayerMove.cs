@@ -11,8 +11,6 @@ public class FreePlayerMove : MonoBehaviour
     private Rigidbody2D player;
     [Tooltip("player controls")]
     private PlayerControls controls;
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("Movement direction")]
     [HideInInspector] public Vector2 dir = Vector2.zero;
     [Tooltip("Previous look direction")]
@@ -52,7 +50,6 @@ public class FreePlayerMove : MonoBehaviour
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         blockBreaking = grid.GetComponent<BlockBreaking>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
@@ -72,9 +69,9 @@ public class FreePlayerMove : MonoBehaviour
         controls.Interact.Menu.Enable();
         controls.Fight.MagicMenu.performed += SpellMenu;
         controls.Fight.MagicMenu.Enable();
-        pos.z = manager.mapz;
-        prevpos.z = manager.mapz;
-        if (manager.loadFromFile)
+        pos.z = GameManager.Instance.mapz;
+        prevpos.z = GameManager.Instance.mapz;
+        if (GameManager.Instance.loadFromFile)
         {
             LoadFromFile();
         }
@@ -89,12 +86,12 @@ public class FreePlayerMove : MonoBehaviour
         if (magicTree.activeInHierarchy)
         {
             magicTree.SetActive(false);
-            manager.ResumeGame();
+            GameManager.Instance.ResumeGame();
         }
-        else if (!manager.paused)
+        else if (!GameManager.Instance.paused)
         {
             magicTree.SetActive(true);
-            manager.PauseGame();
+            GameManager.Instance.PauseGame();
         }
     }
     /// <summary>
@@ -106,12 +103,12 @@ public class FreePlayerMove : MonoBehaviour
         if (menu.activeInHierarchy)
         {
             menu.SetActive(false);
-            manager.ResumeGame();
+            GameManager.Instance.ResumeGame();
         }
-        else if (!manager.paused)
+        else if (!GameManager.Instance.paused)
         {
             menu.SetActive(true);
-            manager.PauseGame();
+            GameManager.Instance.PauseGame();
         }
     }
     /// <summary>
@@ -120,7 +117,7 @@ public class FreePlayerMove : MonoBehaviour
     /// <param name="ctx"></param>
     void Interact(CallbackContext ctx)
     {
-        if (!manager.paused)
+        if (!GameManager.Instance.paused)
         {
             RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 5, interactable);
             if (hit.collider != null)
@@ -139,18 +136,18 @@ public class FreePlayerMove : MonoBehaviour
         if (inv.activeInHierarchy)
         {
             inv.SetActive(false);
-            manager.ResumeGame();
+            GameManager.Instance.ResumeGame();
         }
-        else if (!manager.paused)
+        else if (!GameManager.Instance.paused)
         {
             inv.SetActive(true);
-            manager.PauseGame();
+            GameManager.Instance.PauseGame();
         }
     }
 
     void FixedUpdate()
     {
-        if (!manager.paused && canMove)
+        if (!GameManager.Instance.paused && canMove)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(controls.Movement.MousePosition.ReadValue<Vector2>());
             float angleRad = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x);
@@ -172,12 +169,12 @@ public class FreePlayerMove : MonoBehaviour
     void Actions()
     {
         Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
-        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
-        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        currentChunk = ChunkGen.Instance.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.Instance.GetChunkTilePos(relPos);
         pos.x = newPos.x;
         pos.y = newPos.y;
-        manager.pos = pos;
-        manager.currentChunk = currentChunk;
+        GameManager.Instance.pos = pos;
+        GameManager.Instance.currentChunk = currentChunk;
         Vector3Int lookDir= Vector3Int.zero;
         if (rotDir != Vector2.zero)
             lookDir = new Vector3Int((int)rotDir.x, (int)rotDir.y, 0);
@@ -186,7 +183,7 @@ public class FreePlayerMove : MonoBehaviour
         lookPos = pos + lookDir;
         if (lookPos != prevlookPos)
         {
-            if (manager.blockBreaking)
+            if (GameManager.Instance.blockBreaking)
             {
                 blockBreaking.enabled = true;
                 blockBreaking.Positioning(lookPos,currentChunk);
@@ -210,13 +207,13 @@ public class FreePlayerMove : MonoBehaviour
         transform.position = p.GetPlayerPos();
         transform.eulerAngles = p.GetPlayerRot();
         Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
-        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
-        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        currentChunk = ChunkGen.Instance.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.Instance.GetChunkTilePos(relPos);
         pos.x = newPos.x;
         pos.y = newPos.y;
-        manager.pos = pos;
-        manager.currentChunk = currentChunk;
-        ChunkGen.currentWorld.currentChunk = currentChunk;
-        ChunkGen.currentWorld.GenerateSurroundingChunks();
+        GameManager.Instance.pos = pos;
+        GameManager.Instance.currentChunk = currentChunk;
+        ChunkGen.Instance.currentChunk = currentChunk;
+        ChunkGen.Instance.GenerateSurroundingChunks();
     }
 }

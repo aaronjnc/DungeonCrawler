@@ -13,8 +13,6 @@ public class DialogAsset : MonoBehaviour
     [SerializeField] private StallManager stall;
     [Tooltip("Dialog box object")]
     [SerializeField] private GameObject dialogBox;
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("String containing all the text in the text asset")]
     private string fullText;
     [Tooltip("Current text options")]
@@ -32,8 +30,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     void Start()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        fullText = manager.fullText;
+        fullText = GameManager.Instance.fullText;
         npcName = fullText.Split('\n')[0];
         fullText = string.Join("\n", Regex.Split(fullText, "\n").Skip(1).ToArray());
         GetLines(fullText);
@@ -108,11 +105,11 @@ public class DialogAsset : MonoBehaviour
                     switch (c)
                     {
                         case "Leave":
-                            manager.reopen = true;
-                            manager.LoadFromFile();
+                            GameManager.Instance.reopen = true;
+                            GameManager.Instance.LoadFromFile();
                             return;
                         case "Buy":
-                            stall.AddItems(manager.GetStallItems());
+                            stall.AddItems(GameManager.Instance.GetStallItems());
                             dialogBox.SetActive(false);
                             break;
                         default:

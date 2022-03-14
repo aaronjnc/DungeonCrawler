@@ -11,24 +11,22 @@ public static class SaveSystem
     /// </summary>
     public static void Save()
     {
-        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
+        string path = Path.Combine(Application.persistentDataPath, "saves", GameManager.Instance.worldName);
         if (!Directory.Exists(path))
         {
             Directory.CreateDirectory(path);
         }
         GameInformation.Instance.SetLocation(path);
-        GameInformation.Instance.SaveAll(manager);
+        GameInformation.Instance.SaveAll();
     }
     /// <summary>
     /// loads world with given path
     /// </summary>
     public static void Load()
     {
-        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        manager.loadFromFile = true;
-        string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
+        GameManager.Instance.loadFromFile = true;
+        string path = Path.Combine(Application.persistentDataPath, "saves", GameManager.Instance.worldName);
         GameInformation.Instance.SetLocation(path);
-        manager.LoadFromFile();
+        GameManager.Instance.LoadFromFile();
     }
 }

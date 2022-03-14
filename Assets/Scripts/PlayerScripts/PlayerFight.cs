@@ -8,8 +8,6 @@ public class PlayerFight : MonoBehaviour
 {
     [Tooltip("Pplayer controls")]
     private PlayerControls controls;
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("Chosen item")]
     private ItemSlot invItem;
     [Tooltip("Player health")] [HideInInspector]
@@ -31,7 +29,6 @@ public class PlayerFight : MonoBehaviour
         healthSlider.minValue = 0;
         healthSlider.value = health;
         controls = new PlayerControls();
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         controls.Interact.Press.canceled += BaseAttack;
         controls.Interact.Press.Enable();
         controls.Fight.AdvanceAttack.canceled += AdvancedAttack;
@@ -56,9 +53,9 @@ public class PlayerFight : MonoBehaviour
     /// <param name="ctx"></param>
     void BaseAttack(CallbackContext ctx)
     {
-        if (manager.fighting && !manager.paused)
+        if (GameManager.Instance.fighting && !GameManager.Instance.paused)
         {
-            invItem.AddExisting(manager.currentItem);
+            invItem.AddExisting(GameManager.Instance.currentItem);
             if (invItem.IsWeapon())
             {
                 invItem.GetWeaponScript().BaseAttack(gameObject.transform);
@@ -71,9 +68,9 @@ public class PlayerFight : MonoBehaviour
     /// <param name="ctx"></param>
     void AdvancedAttack(CallbackContext ctx)
     {
-        if (manager.fighting && !manager.paused)
+        if (GameManager.Instance.fighting && !GameManager.Instance.paused)
         {
-            invItem.AddExisting(manager.currentItem);
+            invItem.AddExisting(GameManager.Instance.currentItem);
             if (invItem.IsWeapon())
             {
                 invItem.GetWeaponScript().AdvancedAttack(gameObject.transform);
