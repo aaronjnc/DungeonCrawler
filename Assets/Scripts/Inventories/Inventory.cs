@@ -363,7 +363,10 @@ public class Inventory : Singleton<Inventory>
     /// </summary>
     private void OnDestroy()
     {
-        GameManager.Instance.StoreInventory(itemSlots);
-        GameManager.Instance.SetMoney(playerMoney);
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.StoreInventory(itemSlots);
+            GameManager.Instance.SetMoney(playerMoney);
+        }
     }
 }

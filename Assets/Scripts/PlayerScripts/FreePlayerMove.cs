@@ -41,13 +41,35 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     [Tooltip("Player can move")]
     [HideInInspector] public bool canMove = true;
-    [Tooltip("Sprint modifier")]
-    private float sprintMod = 1f;
+    [Tooltip("Player animation controller")]
+    private Animator animator;
+    [Tooltip("Player standing still sprite")]
+    private Sprite standingSprite;
+    [Tooltip("Player sprite renderer")]
+    private SpriteRenderer spriteRenderer;
+    [Tooltip("Previous sprite")]
+    private Sprite previousSprite;
+    [Tooltip("Player is sprinting")]
+    [SerializeField] private bool sprinting;
+    [SerializeField] private float sprintMod = 2f;
+    [Tooltip("Idle state hash")]
+    private int idleHash;
+    [Tooltip("Sprint state hash")]
+    private int sprintHash;
+    [Tooltip("Walk state hash")]
+    private int walkHash;
     void Start()
     {
         base.Awake();
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        idleHash = Animator.StringToHash("Base Layer.Idle");
+        sprintHash = Animator.StringToHash("Base Layer.Running");
+        walkHash = Animator.StringToHash("Base Layer.Walking");
+        standingSprite = spriteRenderer.sprite;
+        previousSprite = standingSprite;
         controls = new PlayerControls();
         blockBreaking = grid.GetComponent<BlockBreaking>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
@@ -56,8 +78,8 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
         controls.Movement.Vertical.performed += ctx => dir.y += ctx.ReadValue<float>();
         controls.Movement.Vertical.canceled += ctx => dir.y = 0;
         controls.Movement.Vertical.Enable();
-        controls.Movement.Sprint.performed += ctx => sprintMod = 2f;
-        controls.Movement.Sprint.canceled += ctx => sprintMod = 1f;
+        controls.Movement.Sprint.performed += ctx => sprinting = true;
+        controls.Movement.Sprint.canceled += ctx => sprinting = false;
         controls.Movement.Sprint.Enable();
         controls.Interact.Inventory.performed += OpenInventory;
         controls.Interact.Inventory.Enable();
@@ -153,13 +175,33 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
             float angleDeg = (180 / Mathf.PI) * angleRad;
             transform.rotation = Quaternion.Euler(0, 0, angleDeg);
             dir = dir.normalized;
-            Vector3 velDir = (-dir.x * transform.up + dir.y * transform.right) * sprintMod;
+            Vector3 velDir = -dir.x * transform.up + dir.y * transform.right;
             rotDir = new Vector2(Mathf.Round(transform.up.y), Mathf.Round(-transform.up.x));
+            if (sprinting)
+            {
+                velDir *= sprintMod;
+            }
+            if (dir != Vector2.zero && animator.GetCurrentAnimatorStateInfo(0).fullPathHash != walkHash && !sprinting)
+            {
+                SetState("Walking");
+            }
+            else if (dir != Vector2.zero && animator.GetCurrentAnimatorStateInfo(0).fullPathHash != sprintHash && sprinting)
+            {
+                SetState("Sprinting");
+            }
+            else if (animator.GetCurrentAnimatorStateInfo(0).fullPathHash != idleHash && dir == Vector2.zero)
+            {
+                StopAnimation();
+            }
             player.velocity = velDir * speed;
             Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
             Actions();
             if (pos != prevpos)
                 prevpos = pos;
+        }
+        else if (animator.GetCurrentAnimatorStateInfo(0).fullPathHash != idleHash)
+        {
+            StopAnimation();
         }
     }
     /// <summary>
@@ -209,5 +251,24 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
         pos.x = newPos.x;
         pos.y = newPos.y;
         ChunkGen.Instance.GenerateSurroundingChunks();
+    }
+    /// <summary>
+    /// Stops animation and resets sprite
+    /// </summary>
+    private void StopAnimation()
+    {
+        SetState("Idle");
+    }
+    /// <summary>
+    /// Resets player sprite to standing sprite
+    /// </summary>
+    public void ResetSprite()
+    {
+        if (spriteRenderer != null)
+            SetState("Idle");
+    }
+    private void SetState(string animatorState)
+    {
+        animator.SetTrigger(animatorState);
     }
 }
