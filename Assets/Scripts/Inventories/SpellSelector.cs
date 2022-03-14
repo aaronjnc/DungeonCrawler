@@ -6,8 +6,6 @@ using UnityEngine.InputSystem;
 
 public class SpellSelector : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    //game manager
-    private GameManager manager;
     //mouse is down
     private bool mouseDown = false;
     //start pos of player
@@ -23,7 +21,6 @@ public class SpellSelector : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
     // Start is called before the first frame update
     void Start()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         startpos = transform.position;
     }
     /// <summary>

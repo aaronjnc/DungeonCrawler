@@ -27,8 +27,6 @@ public class ItemRotator : MonoBehaviour
     public int current = 0;
     [Tooltip("Player inventory")]
     [SerializeField] private Inventory inv;
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("Rotator has been instantiated")]
     private bool started = false;
     [Tooltip("Sprite renderer of player")]
@@ -46,7 +44,6 @@ public class ItemRotator : MonoBehaviour
     /// </summary>
     void StartMethod()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         controls = new PlayerControls();
         foreach (Image img in images)
         {
@@ -178,29 +175,29 @@ public class ItemRotator : MonoBehaviour
     /// </summary>
     void CurrentItem()
     {
-        manager.currentItem.AddExisting(itemSlots[current]);
+        GameManager.Instance.currentItem.AddExisting(itemSlots[current]);
         if (!itemSlots[current].IsEmpty())
         {
             DisableBlockPlacing();
-            manager.fighting = false;
+            GameManager.Instance.fighting = false;
             switch (itemSlots[current].GetItemType())
             {
                 case InventoryItem.ItemType.Weapon:
-                    manager.fighting = true;
+                    GameManager.Instance.fighting = true;
                     itemSlots[current].GetWeaponScript().Pickup(playerRenderer);
                     break;
                 case InventoryItem.ItemType.Consumable:
                     //consumable
                     break;
                 case InventoryItem.ItemType.Tool:
-                    manager.blockBreaking = true;
+                    GameManager.Instance.blockBreaking = true;
                     break;
             }
         }
         else
         {
             DisableBlockPlacing();
-            manager.fighting = false;
+            GameManager.Instance.fighting = false;
         }
     }
     /// <summary>
@@ -216,8 +213,8 @@ public class ItemRotator : MonoBehaviour
     /// </summary>
     public void DisableBlockPlacing()
     {
-        manager.DisableBlockBreaking();
-        manager.blockBreaking = false;
+        GameManager.Instance.DisableBlockBreaking();
+        GameManager.Instance.blockBreaking = false;
     }
     /// <summary>
     /// Disable controls on destroy

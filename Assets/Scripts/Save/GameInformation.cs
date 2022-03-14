@@ -55,22 +55,22 @@ public class GameInformation : ScriptableObject
     /// Saves all world data
     /// </summary>
     /// <param name="manager"></param>
-    public void SaveAll(GameManager manager)
+    public void SaveAll()
     {
-        SaveGameInfo(manager);
-        SaveWorld(manager.gen);
+        SaveGameInfo();
+        SaveWorld();
         GameObject player = GameObject.Find("Player");
         SavePlayer(player);
-        SaveInventory(manager.inv);
+        SaveInventory();
     }
     /// <summary>
     /// Saves information contained within gamemanager
     /// </summary>
     /// <param name="manager"></param>
-    public void SaveGameInfo(GameManager manager)
+    public void SaveGameInfo()
     {
         string worldInfo = Path.Combine(saveLocation, "worldInfo.txt");
-        WorldInfo info = new WorldInfo(manager.gen, manager);
+        WorldInfo info = new WorldInfo();
         FileStream fs = new FileStream(worldInfo, FileMode.Create);
         formatter.Serialize(fs, info);
         fs.Close();
@@ -79,9 +79,9 @@ public class GameInformation : ScriptableObject
     /// Saves chunk information
     /// </summary>
     /// <param name="gen"></param>
-    public void SaveWorld(ChunkGen gen)
+    public void SaveWorld()
     {
-        Hashtable chunks = gen.GetChunks();
+        Hashtable chunks = ChunkGen.Instance.GetChunks();
         foreach (Chunk chunk in chunks.Values)
         {
             if (chunk.changed)
@@ -111,11 +111,11 @@ public class GameInformation : ScriptableObject
     /// saves inventory
     /// </summary>
     /// <param name="inv"></param>
-    public void SaveInventory(Inventory inv)
+    public void SaveInventory()
     {
         string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
         FileStream fs = new FileStream(inventoryInfo, FileMode.Create);
-        InventorySave i = new InventorySave(inv);
+        InventorySave i = new InventorySave();
         formatter.Serialize(fs, i);
         fs.Close();
     }

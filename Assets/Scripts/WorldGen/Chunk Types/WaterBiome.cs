@@ -151,7 +151,7 @@ public class WaterBiome : Chunk
                         Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
-                        if (rando > enemyChance && manager.spawnEnemies && GetSurroundingWalls(x, y, 2) == 0 && numEnemies > 0)
+                        if (rando > enemyChance && GameManager.Instance.spawnEnemies && GetSurroundingWalls(x, y, 2) == 0 && numEnemies > 0)
                         {
                             SpawnEnemy(x, y);
                         }

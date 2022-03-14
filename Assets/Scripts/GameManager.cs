@@ -8,10 +8,8 @@ using System.IO;
 using System;
 using static System.Collections.Generic.Dictionary<byte, InventoryItem>;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    [Tooltip("Current game manager")]
-    public static GameManager currentManager;
     [Header("Game Testing Modes:")]
     [Tooltip("Test world generation")]
     public bool testingmode = true;
@@ -21,16 +19,12 @@ public class GameManager : MonoBehaviour
     public bool spawnEnemies;
     [Tooltip("Breaking blocks")]
     [HideInInspector] public bool blockBreaking = false;
-    [Tooltip("Current player position")]
-    [HideInInspector] public Vector3Int pos = Vector3Int.zero;
     [Tooltip("Reference to block breaking script")]
     [HideInInspector] public BlockBreaking blockBreakingScript;
     [Tooltip("Map z position")]
     [HideInInspector] public int mapz;
     [Tooltip("Foor z position")]
     [HideInInspector] public int floorz;
-    [Tooltip("Player inventory")]
-    [HideInInspector] public Inventory inv;
     [Tooltip("Player is holding a weapon")]
     [HideInInspector] public bool fighting = false;
     [Tooltip("Item player is currently holding")]
@@ -41,8 +35,6 @@ public class GameManager : MonoBehaviour
     private Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
     [Tooltip("Dictionary of all items")]
     private Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
-    [Tooltip("Current chunk of player")]
-    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
     [Tooltip("Game is paused")]
     [HideInInspector] public bool paused = false;
     [Tooltip("All premade sections")]
@@ -57,8 +49,6 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public DateTime startTime;
     [Tooltip("Hours in world")]
     [HideInInspector] public double hours;
-    [Tooltip("ChunkGen script")]
-    [HideInInspector] public ChunkGen gen;
     [Tooltip("Stall items")]
     private List<ItemSlot> stallItems = new List<ItemSlot>();
     [Tooltip("Stored inventory array")]
@@ -70,7 +60,11 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        gen = GetComponent<ChunkGen>();
+        if (Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        base.Awake();
         GameInformation.CreateInstance<GameInformation>();
         if (!Directory.Exists(Application.persistentDataPath + "/saves"))
         {
@@ -80,7 +74,6 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         mapz = 0;
         floorz = 1;
-        currentManager = this;
         currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
@@ -167,7 +160,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public byte GetByte(Vector3Int tilePos, Vector2Int currentChunk)
     {
-        return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), currentChunk);
+        return ChunkGen.Instance.GetBlock(new Vector2Int(tilePos.x, tilePos.y), currentChunk);
     }
     /// <summary>
     /// Returns true if there is a block with given ID
@@ -218,9 +211,9 @@ public class GameManager : MonoBehaviour
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
         ResumeGame();
-        if (!scene.name.Equals("World"))
+        if (!scene.name.Equals("World") && ChunkGen.Instance != null)
         {
-            gen.enabled = false;
+            ChunkGen.Instance.enabled = false;
         }
     }
     /// <summary>
@@ -229,8 +222,8 @@ public class GameManager : MonoBehaviour
     public void SetValues()
     {
         blockBreakingScript = GameObject.Find("Grid").GetComponent<BlockBreaking>();
-        gen.enabled = true;
-        gen.StartUp();
+        ChunkGen.Instance.enabled = true;
+        ChunkGen.Instance.StartUp();
         startTime = DateTime.Now;
     }
     /// <summary>

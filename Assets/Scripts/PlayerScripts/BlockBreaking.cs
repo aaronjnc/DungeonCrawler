@@ -6,8 +6,6 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class BlockBreaking : MonoBehaviour
 {
-    [Tooltip("Game manager")]
-    private GameManager manager;
     [Tooltip("Player controls")]
     private PlayerControls controls;
     [Tooltip("Previous tile position")]
@@ -40,16 +38,15 @@ public class BlockBreaking : MonoBehaviour
     private int damage;
     void Awake()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         controls = new PlayerControls();
-        mapz = manager.mapz;
+        mapz = GameManager.Instance.mapz;
         mapPos.z = mapz;
         controls.Interact.Press.performed += ReplaceTile;
         controls.Interact.Press.canceled += StopBreaking;
         controls.Interact.Enable();
-        destroy = new Tile();
+        destroy = ScriptableObject.CreateInstance<Tile>();
         destroy.color = new Color(255, 0, 0);
-        refillTile = new Tile();
+        refillTile = ScriptableObject.CreateInstance<Tile>();
         refillTile.color = new Color(255, 255, 255, 255);
     }
     /// <summary>
@@ -59,7 +56,7 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     public void Positioning(Vector3Int newPos, Vector2Int chunkPos)
     {
-        if (!breaking && prevmapPos != Vector3Int.zero && ChunkGen.currentWorld.GetBlock(new Vector2Int(prevmapPos.x, prevmapPos.y), currentChunk) != 127)
+        if (!breaking && prevmapPos != Vector3Int.zero && ChunkGen.Instance.GetBlock(new Vector2Int(prevmapPos.x, prevmapPos.y), currentChunk) != 127)
         {
             ResetPrevious();
         }
@@ -90,7 +87,7 @@ public class BlockBreaking : MonoBehaviour
         mapPos.z = mapz;
         if (breaking && mapPos != destroyPos)
             ChangeBreaking(mapPos, currentChunk, GetBlock(mapPos, currentChunk));
-        if (GetTile(mapPos, currentChunk) != null && manager.IsBreakable(mapPos, currentChunk))
+        if (GetTile(mapPos, currentChunk) != null && GameManager.Instance.IsBreakable(mapPos, currentChunk))
         {
             UpdateColor(mapPos, destroy, currentChunk);
             prevmapPos = mapPos;
@@ -123,11 +120,11 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="ctx"></param>
     void ReplaceTile(CallbackContext ctx)
     {
-        if (manager.paused)
+        if (GameManager.Instance.paused)
             return;
-        if (manager.GetByte(mapPos, currentChunk) == 127)
+        if (GameManager.Instance.GetByte(mapPos, currentChunk) == 127)
             return;
-        if (manager.blockBreaking && !manager.inv.gameObject.activeInHierarchy)
+        if (GameManager.Instance.blockBreaking && !Inventory.Instance.gameObject.activeInHierarchy)
         {
             if (GetTile(mapPos,currentChunk).color.b != 255)
             {
@@ -143,7 +140,7 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="newID">new item id</param>
     void ChangeBreaking(Vector3Int newPos, Vector2Int newChunk, byte newID)
     {
-        blockHealth = manager.GetBlock(newID).durability;
+        blockHealth = GameManager.Instance.GetBlock(newID).durability;
         destroyPos = newPos;
         destroyChunkPos = newChunk;
         damage = rotator.getChosen().GetDamage();
@@ -158,7 +155,7 @@ public class BlockBreaking : MonoBehaviour
     void DestroyBlock(Vector3Int newPos, Vector2Int newChunk, byte blockID)
     {
         breaking = false;
-        manager.inv.ReduceChosen(rotator.current);
+        Inventory.Instance.ReduceChosen(rotator.current);
         AddItem(blockID);
         UpdateTile(newPos, 127, newChunk);
     }
@@ -168,13 +165,13 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="blockId"></param>
     private void AddItem(byte blockId)
     {
-        Blocks block = manager.GetBlock(blockId);
+        Blocks block = GameManager.Instance.GetBlock(blockId);
         float randomVal = UnityEngine.Random.value;
         for (int i = 0; i < block.drops.Count; i++)
         {
             if (randomVal < block.chances[i])
             {
-                manager.inv.AddItem(block.drops[i].itemID);
+                Inventory.Instance.AddItem(block.drops[i].itemID);
                 return;
             }
         }
@@ -211,7 +208,7 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     void UpdateTile(Vector3Int tilePos, byte tile, Vector2Int chunkPos)
     {
-        ChunkGen.currentWorld.UpdateByte(new Vector2Int(tilePos.x, tilePos.y),tile, chunkPos);
+        ChunkGen.Instance.UpdateByte(new Vector2Int(tilePos.x, tilePos.y),tile, chunkPos);
     }
     /// <summary>
     /// Updates color of tile at given position
@@ -221,7 +218,7 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     void UpdateColor(Vector3Int tilePos, Tile updateTile, Vector2Int chunkPos)
     {
-        ChunkGen.currentWorld.UpdateTileColor(new Vector2Int(tilePos.x, tilePos.y), updateTile, chunkPos);
+        ChunkGen.Instance.UpdateTileColor(new Vector2Int(tilePos.x, tilePos.y), updateTile, chunkPos);
     }/// <summary>
     /// Updates collider of tile at given position
     /// </summary>
@@ -230,7 +227,7 @@ public class BlockBreaking : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     void UpdateCollider(Vector3Int tilePos, Tile.ColliderType tileCollider, Vector2Int chunkPos)
     {
-        ChunkGen.currentWorld.UpdateTileCollider(tilePos, tileCollider, chunkPos);
+        ChunkGen.Instance.UpdateTileCollider(tilePos, tileCollider, chunkPos);
     }
     /// <summary>
     /// Returns tile at given position
@@ -240,7 +237,7 @@ public class BlockBreaking : MonoBehaviour
     /// <returns></returns>
     Tile GetTile(Vector3Int tilePos, Vector2Int chunkPos)
     {
-        return ChunkGen.currentWorld.GetTile(tilePos, chunkPos);
+        return ChunkGen.Instance.GetTile(tilePos, chunkPos);
     }
     /// <summary>
     /// Returns the byte of block at given position
@@ -250,7 +247,7 @@ public class BlockBreaking : MonoBehaviour
     /// <returns></returns>
     byte GetBlock(Vector3Int tilePos, Vector2Int chunkPos)
     {
-        return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), chunkPos);
+        return ChunkGen.Instance.GetBlock(new Vector2Int(tilePos.x, tilePos.y), chunkPos);
     }
     /// <summary>
     /// Disables controls

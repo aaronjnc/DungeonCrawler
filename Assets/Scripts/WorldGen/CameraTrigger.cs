@@ -17,7 +17,7 @@ public class CameraTrigger : MonoBehaviour
             enemy.enabled = true;
         }
         if (collision.gameObject.tag.Equals("MapCollider"))
-            ChunkGen.currentWorld.LoadChunk(collision.gameObject.transform.parent.transform.position);
+            ChunkGen.Instance.LoadChunk(collision.gameObject.transform.parent.transform.position);
     }
     /// <summary>
     /// Unloads enemies and chunks when leaving
@@ -31,6 +31,6 @@ public class CameraTrigger : MonoBehaviour
             enemy.enabled = false;
         }
         if (collision.gameObject.tag.Equals("MapCollider"))
-            ChunkGen.currentWorld.UnloadChunk(collision.gameObject.transform.parent.transform.position);
+            ChunkGen.Instance.UnloadChunk(collision.gameObject.transform.parent.transform.position);
     }
 }

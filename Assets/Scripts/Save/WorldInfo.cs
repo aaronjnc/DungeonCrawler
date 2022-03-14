@@ -15,14 +15,12 @@ public class WorldInfo
     /// <summary>
     /// Creates new world info object
     /// </summary>
-    /// <param name="gen"></param>
-    /// <param name="manager"></param>
-    public WorldInfo(ChunkGen gen, GameManager manager)
+    public WorldInfo()
     {
-        worldSeed = gen.seed;
-        biomeSeed = gen.biomeseed;
-        TimeSpan playTime = System.DateTime.Now.Subtract(manager.startTime);
-        this.playTime = manager.hours + playTime.TotalHours;
+        worldSeed = ChunkGen.Instance.seed;
+        biomeSeed = ChunkGen.Instance.biomeseed;
+        TimeSpan playTime = System.DateTime.Now.Subtract(GameManager.Instance.startTime);
+        this.playTime = GameManager.Instance.hours + playTime.TotalHours;
     }
     /// <summary>
     /// Returns world seed

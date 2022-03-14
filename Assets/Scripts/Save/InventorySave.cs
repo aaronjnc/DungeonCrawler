@@ -21,16 +21,16 @@ public class InventorySave
     /// Saves inventory information
     /// </summary>
     /// <param name="inv"></param>
-    public InventorySave(Inventory inv)
+    public InventorySave()
     {
-        UpdateInventory(inv.GetInventory());
+        UpdateInventory(Inventory.Instance.GetInventory());
         for (int i = 0; i < 7; i++)
         {
-            chosenItems[i, 0] = inv.chosenItems[i].x;
-            chosenItems[i, 1] = inv.chosenItems[i].y;
+            chosenItems[i, 0] = Inventory.Instance.chosenItems[i].x;
+            chosenItems[i, 1] = Inventory.Instance.chosenItems[i].y;
         }
-        currentChoice = inv.itemRotator.current;
-        playerMoney = inv.GetMoney();
+        currentChoice = Inventory.Instance.itemRotator.current;
+        playerMoney = Inventory.Instance.GetMoney();
     }
     /// <summary>
     /// Update inventory save with item slots

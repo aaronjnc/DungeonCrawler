@@ -4,12 +4,8 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using System;
 
-public class ChunkGen : MonoBehaviour
+public class ChunkGen : Singleton<ChunkGen>
 {
-    [Tooltip("ChunkGen script")]
-    public static ChunkGen currentWorld;
-    [Tooltip("Game manager")]
-    [HideInInspector] public GameManager manager;
     [Tooltip("Tilemap prefab")]
     public GameObject map;
     [Tooltip("Grid used for tilemaps")]
@@ -23,7 +19,7 @@ public class ChunkGen : MonoBehaviour
     [Tooltip("Previous player position")]
     private Vector3Int previousPos = Vector3Int.zero;
     [Tooltip("Player chunk")]
-    public Vector2Int currentChunk = Vector2Int.zero;
+    [HideInInspector] private Vector2Int currentChunk = Vector2Int.zero;
     [Tooltip("Hashtable containg all created chunks")]
     private Hashtable chunks;
     [Tooltip("Array of biome scripts")]
@@ -56,23 +52,27 @@ public class ChunkGen : MonoBehaviour
     [HideInInspector] public Transform enemyParent;
     [Tooltip("Chance of special tile")]
     public int specialTileChance;
+    public void Awake()
+    {
+        base.Awake();
+        this.enabled = false;
+        chunks = new Hashtable();
+    }
     /// <summary>
     /// Sets up world
     /// </summary>
     public void StartUp()
     {
-        manager = GetComponent<GameManager>();
-        currentWorld = this;
         grid = GameObject.Find("Grid").transform;
         playerMovement = GameObject.Find("Player").GetComponent<FreePlayerMove>();
         enemyParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
         chunks = new Hashtable();
-        if (manager.loadFromFile)
+        if (GameManager.Instance.loadFromFile)
         {
             LoadFromFile();
-            foreach (PremadeSection sections in manager.sections)
+            foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
                 {
@@ -88,7 +88,7 @@ public class ChunkGen : MonoBehaviour
                 seed = UnityEngine.Random.Range(0, int.MaxValue);
             if (randomBiomeSeed)
                 biomeseed = UnityEngine.Random.Range(0, 1000000);
-            foreach (PremadeSection sections in manager.sections)
+            foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
                 {
@@ -106,10 +106,10 @@ public class ChunkGen : MonoBehaviour
                 }
             }
             currentChunk = new Vector2Int(0, 0);
-            if (manager.testingmode)
+            if (GameManager.Instance.testingmode)
             {
                 GetComponent<WorldCreationTesting>().enabled = true;
-                GetComponent<WorldCreationTesting>().size = manager.testingsize;
+                GetComponent<WorldCreationTesting>().size = GameManager.Instance.testingsize;
             }
         }
     }
@@ -117,10 +117,10 @@ public class ChunkGen : MonoBehaviour
     {
         if (playerMovement.dir != Vector2.zero)
         {
-            pos = manager.pos;
+            pos = FreePlayerMove.Instance.pos;
             if (pos != previousPos)
             {
-                currentChunk = manager.currentChunk;
+                currentChunk = FreePlayerMove.Instance.currentChunk;
                 if (!WithinBounds())
                 {
                     GenerateSurroundingChunks();
@@ -144,7 +144,8 @@ public class ChunkGen : MonoBehaviour
     /// </summary>
     public void GenerateSurroundingChunks()
     {
-        pos = manager.pos;
+        pos = FreePlayerMove.Instance.pos;
+        currentChunk = FreePlayerMove.Instance.currentChunk;
         Vector2Int relGen;
         int relx = 0;
         int rely = 0;
@@ -349,7 +350,7 @@ public class ChunkGen : MonoBehaviour
     /// <param name="chunkPos">Chunk position</param>
     public void UnloadChunk(Vector3 chunkPos)
     {
-        if (!manager.testingmode)
+        if (!GameManager.Instance.testingmode)
         {
             Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
             if (newChunkPos != currentChunk)
@@ -478,6 +479,7 @@ public class ChunkGen : MonoBehaviour
     /// </summary>
     private void OnDisable()
     {
-        chunks.Clear();
+        if (chunks != null)
+            chunks.Clear();
     }
 }

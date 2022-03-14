@@ -63,8 +63,7 @@ public class LoadWorld : MonoBehaviour
     /// <param name="worldFile">textbox of world name</param>
     public void LoadWorldFile(Text worldFile)
     {
-        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        manager.worldName = worldFile.text;
+        GameManager.Instance.worldName = worldFile.text;
         SaveSystem.Load();
     }
     /// <summary>

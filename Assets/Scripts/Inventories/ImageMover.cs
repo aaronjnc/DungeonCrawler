@@ -17,23 +17,17 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     private GameObject itemCounter;
     [Tooltip("Image is movable")]
     [SerializeField] private bool movable = true;
-    [Tooltip("Game manager")]
-    GameManager manager;
     [Tooltip("Mouse is being held down")]
     private bool mouseDown = false;
     [Tooltip("Initial start position of image")]
     private Vector3 startpos = Vector3.zero;
     [Tooltip("Inventory position related to item")]
     [HideInInspector] public Vector2Int itemPos;
-    [Tooltip("Inventory object")]
-    private Inventory inv;
     /// <summary>
     /// Sets up manager, inventory reference, and start pos
     /// </summary>
     void Start()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        inv = manager.inv;
         startpos = transform.position;
     }
     /// <summary>
@@ -63,7 +57,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// <param name="eventData"></param>
     public void OnPointerDown(PointerEventData eventData)
     {
-        if (movable && !inv.IsEmpty(itemPos))
+        if (movable && !Inventory.Instance.IsEmpty(itemPos))
         {
             mouseDown = true;
         }
@@ -116,7 +110,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         if (closestObj != null)
         {
-            inv.DropItem(GetArrayPos(), closestObj.GetComponent<ImageMover>().GetArrayPos());
+            Inventory.Instance.DropItem(GetArrayPos(), closestObj.GetComponent<ImageMover>().GetArrayPos());
         }
         transform.position = startpos;
     }
