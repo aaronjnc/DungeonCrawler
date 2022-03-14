@@ -4,32 +4,31 @@ using UnityEngine;
 
 public class InventoryItem : MonoBehaviour
 {
-    //name of item
+    [Tooltip("Name of item")]
     public string itemName;
-    //item sprite
+    [Tooltip("Item sprite")]
     public Sprite itemSprite;
-    //maximum number of items in a stack
+    [Tooltip("Max item stack size")]
     public byte stackSize;
-    //maximum durability of item
+    [Tooltip("Starting item durabiliy")]
     public byte baseDurability;
-    //damage done by item if tool or weapon
+    [Tooltip("Damage done by item")]
     public byte damage;
-    //if item is used for fighting
-    public bool fighting;
-    //item level
+    [Tooltip("Item is a weapon")]
+    public bool weapon;
+    [Tooltip("Item level")]
     public int level;
-    //cost to buy item
-    public int cost;
-    //cost to craft item
-    public int craftcost;
-    //identifying number of item
+    [Tooltip("Cost to buy item")]
+    public int buyCost;
+    [Tooltip("Cost to craft item")]
+    public int craftCost;
+    [Tooltip("Identifying number of item")]
     public byte itemID;
-    //list of items that are used to craft the item
+    [Tooltip("List of items used in crafting")]
     public List<InventoryItem> ingredients = new List<InventoryItem>();
-    //list of number relating to number of ingredients used to craft the item
+    [Tooltip("List of counts for ingredients")]
     public List<int> ingredientCount = new List<int>();
-    // script related to weapon if a weapon
-    public WeaponInterface<Transform,PlayerFight> weaponScript { get { return (WeaponInterface<Transform, PlayerFight>)gameObject.GetComponent(typeof(WeaponInterface<Transform, PlayerFight>)); } }
+    public WeaponInterface weaponScript { get { return (WeaponInterface)gameObject.GetComponent(typeof(WeaponInterface)); } }
     //different types of items
     public enum ItemType
     {
@@ -38,6 +37,6 @@ public class InventoryItem : MonoBehaviour
         Tool,
         Mineral,
     }
-    //type of item
+    [Tooltip("Type of item")]
     public ItemType itemType;
 }

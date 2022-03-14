@@ -8,34 +8,53 @@ using System;
 public abstract class Chunk
 {
     public abstract float chance { get; }
+    [Tooltip("Biome ID of this chunk")]
     public byte biomeId;
-    protected GameManager manager { get { return ChunkGen.currentWorld.manager; } }
-    public Tilemap map;
-    protected GameObject tilemap { get { return ChunkGen.currentWorld.map; } }
-    protected Transform grid { get { return ChunkGen.currentWorld.grid; } }
-    protected Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
+    [Tooltip("Tilemap used for this chunk")]
+    [SerializeField] private Tilemap map;
+    protected GameObject tilemap { get { return ChunkGen.Instance.map; } }
+    protected Transform grid { get { return ChunkGen.Instance.grid; } }
+    protected Biomes[] biomeScripts { get { return ChunkGen.Instance.biomes; } }
+    [Tooltip("Wall z position")]
     protected int mapz = 0;
+    [Tooltip("Floor z position")]
     protected int floorz = 1;
-    protected int width { get { return ChunkGen.currentWorld.chunkWidth; } }
-    protected int height { get { return ChunkGen.currentWorld.chunkHeight; } }
-    protected int randomFillPercent { get { return ChunkGen.currentWorld.randomFillPercent; } }
-    protected int smooths { get { return ChunkGen.currentWorld.smooths; } }
-    protected int biomesmooths { get { return ChunkGen.currentWorld.biomesmooths; } }
-    protected float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
-    protected int maxenemies { get { return ChunkGen.currentWorld.maxenemies; } }
-    protected Transform enemyParent { get { return ChunkGen.currentWorld.enemyParent; } }
+    protected int width { get { return ChunkGen.Instance.chunkWidth; } }
+    protected int height { get { return ChunkGen.Instance.chunkHeight; } }
+    protected int randomFillPercent { get { return ChunkGen.Instance.randomFillPercent; } }
+    protected int smooths { get { return ChunkGen.Instance.smooths; } }
+    protected int biomesmooths { get { return ChunkGen.Instance.biomesmooths; } }
+    protected float enemyChance { get { return ChunkGen.Instance.enemyChance; } }
+    protected int maxenemies { get { return ChunkGen.Instance.maxenemies; } }
+    protected Transform enemyParent { get { return ChunkGen.Instance.enemyParent; } }
+    [Tooltip("Array of bytes representing chunk walls")]
     protected byte[,] blocks;
+    [Tooltip("Array of bytes representing block biomes")]
     protected byte[,] biomes;
+    [Tooltip("Array of bytes representing floor blocks in chunk")]
     protected byte[,] floor;
+    [Tooltip("Chunk seed")]
     protected int seed;
+    [Tooltip("Biome seed")]
     protected int biomeseed;
+    [Tooltip("Number of enemies to spawn in this chunk")]
     protected int numEnemies;
+    [Tooltip("Chunk is generated")]
     public bool generated = false;
+    [Tooltip("Chunk position")]
     public Vector2Int chunkPos;
+    [Tooltip("List of preset tile positions")]
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
+    [Tooltip("List of enemies in chunk")]
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    [Tooltip("List of interactables in chunk")]
     protected List<GameObject> interactables = new List<GameObject>();
+    [Tooltip("List of changed blocks in chunk")]
+    protected Dictionary<Vector2Int, byte> changes = new Dictionary<Vector2Int, byte>();
+    [Tooltip("Random number generator")]
     protected System.Random random;
+    [Tooltip("Chunk has been changed")]
+    public bool changed = false;
     protected abstract void FillBiomeMap();
     /// <summary>
     /// Initializes chunk script at given chunk position
@@ -44,12 +63,13 @@ public abstract class Chunk
     public Chunk(Vector2Int pos)
     {
         chunkPos = pos;
-        seed = ChunkGen.currentWorld.seed;
+        seed = ChunkGen.Instance.seed;
         seed -= pos.ToString().GetHashCode();
-        biomeseed = ChunkGen.currentWorld.biomeseed;
+        biomeseed = ChunkGen.Instance.biomeseed;
         blocks = new byte[width, height];
         biomes = new byte[width, height];
         floor = new byte[width, height];
+        UnityEngine.Random.InitState(seed);
         numEnemies = UnityEngine.Random.Range(1, maxenemies+1);
     }
     /// <summary>
@@ -65,6 +85,9 @@ public abstract class Chunk
             floor[pos.x, pos.y] = tile;
         presetTiles.Add(pos);
     }
+    /// <summary>
+    /// Method used to call other methods and generate the chunk
+    /// </summary>
     public abstract void GenerateChunk();
     /// <summary>
     /// Generates array of bytes determining type of block (empty or wall)
@@ -83,7 +106,7 @@ public abstract class Chunk
                 }
                 if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                 {
-                    SmoothChunk(x, y);
+                    SmoothEdgeBlocks(x, y);
                 }
                 else
                 {
@@ -97,7 +120,7 @@ public abstract class Chunk
     /// </summary>
     /// <param name="gridX">X position of the tile</param>
     /// <param name="gridY">Y position of the tile</param>
-    protected void SmoothChunk(int gridX, int gridY)
+    protected void SmoothEdgeBlocks(int gridX, int gridY)
     {
         Vector2Int relPos = chunkPos;
         int newgridx = gridX;
@@ -123,9 +146,9 @@ public abstract class Chunk
             newgridY = 0;
         }
         int blockFillVal = randomFillPercent;
-        if (ChunkGen.currentWorld.ChunkGenerated(relPos))
+        if (ChunkGen.Instance.ChunkGenerated(relPos))
         {
-            byte block = ChunkGen.currentWorld.GetChunk(relPos).GetBlock(newgridx, newgridY);
+            byte block = ChunkGen.Instance.GetChunk(relPos).GetBlockID(newgridx, newgridY);
             blockFillVal += (block == 1) ? 10 : -10;
         }
         blocks[gridX, gridY] = (byte)((random.Next(0, 100) < blockFillVal) ? 1 : 0);
@@ -194,13 +217,13 @@ public abstract class Chunk
                         relPos += new Vector2Int(0, 1);
                         newgridY = 0;
                     }
-                    if (ChunkGen.currentWorld.ChunkGenerated(relPos))
+                    if (ChunkGen.Instance.ChunkGenerated(relPos))
                     {
-                        Chunk adjacentChunk = ChunkGen.currentWorld.GetChunk(relPos);
-                        wallCount += GetType(adjacentChunk.GetBlock(newgridX, newgridY));
+                        Chunk adjacentChunk = ChunkGen.Instance.GetChunk(relPos);
+                        wallCount += GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY));
                         if (calc && i == 1)
                         {
-                            return (byte)((GetType(adjacentChunk.GetBlock(newgridX, newgridY)) == 1) ? 5 : 0);
+                            return (byte)((GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY)) == 1) ? 5 : 0);
                         }
                     }
                     else
@@ -210,7 +233,7 @@ public abstract class Chunk
                 }
                 else if (x != gridX || y != gridY)
                 {
-                    wallCount += GetType(blocks[x, y]);
+                    wallCount += GetBlockType(blocks[x, y]);
                 }
             }
         }
@@ -260,7 +283,8 @@ public abstract class Chunk
                         strongFloorIndex = biomeScripts[biomes[x, y]].floorBlocks[i].index;
                     }
                 }
-                floor[x, y] = strongFloorIndex;
+                if (!presetTiles.Contains(new Vector3Int(x,y,floorz))) 
+                    floor[x, y] = strongFloorIndex;
                 if (!presetTiles.Contains(new Vector3Int(x,y,mapz)))
                 {
                     if (blocks[x, y] == 1)
@@ -282,10 +306,10 @@ public abstract class Chunk
                     else
                     {
                         int rando = UnityEngine.Random.Range(0, 100);
-                        Vector3 worldPos = GetWorldPos(x, y, -1);
+                        Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
-                        if (rando > enemyChance && manager.spawnEnemies && GetSurroundingWalls(x,y,2)==0 && numEnemies > 0)
+                        if (rando > enemyChance && GameManager.Instance.spawnEnemies && GetSurroundingWalls(x,y,2)==0 && numEnemies > 0)
                         {
                             SpawnEnemy(x,y);
                         }
@@ -321,7 +345,7 @@ public abstract class Chunk
             }
         }
         GameObject enemy = GameObject.Instantiate(biomeScripts[biomes[x, y]].enemies[maxIndex], enemyParent) as GameObject;
-        enemy.transform.position = GetWorldPos(x, y, -1);
+        enemy.transform.position = GetTileWorldPos(x, y, -1);
         enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
         enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, enemyParent.position.z);
         enemies.Add(enemy.GetHashCode(), enemy);
@@ -389,11 +413,11 @@ public abstract class Chunk
     /// <summary>
     /// Places the tiles related to the block array in the tilemap
     /// </summary>
-    protected void DrawMap()
+    protected void DrawTileMap()
     {
         if (map == null)
         {
-            GenerateMaps();
+            CreateTileMaps();
         }
         for (int x = 0; x < width; x++)
         {
@@ -402,9 +426,9 @@ public abstract class Chunk
                 Vector3Int pos = new Vector3Int(x, y, mapz);
                 Vector3Int floorPos = pos;
                 floorPos.z = floorz;
-                SetTile(pos, blocks[x, y]);
+                SetTileMapTile(pos, blocks[x, y]);
                 if (blocks[x,y] == 127)
-                    SetTile(floorPos, floor[x,y]);
+                    SetTileMapTile(floorPos, floor[x,y]);
             }
         }
     }
@@ -413,7 +437,7 @@ public abstract class Chunk
     /// </summary>
     /// <param name="tilePos">Chunk pos of the tile</param>
     /// <param name="index">Index of the new block</param>
-    protected void SetTile(Vector3Int tilePos, byte index)
+    protected void SetTileMapTile(Vector3Int tilePos, byte index)
     {
         if (index == 127)
         {
@@ -421,7 +445,7 @@ public abstract class Chunk
         }
         else
         {
-            Blocks block = manager.GetBlock(index);
+            Blocks block = GameManager.Instance.GetBlock(index);
             map.SetTile(tilePos, block.tile);
             if (block.solid)
             {
@@ -435,7 +459,7 @@ public abstract class Chunk
     /// <summary>
     /// Generates the tilemap
     /// </summary>
-    protected void GenerateMaps()
+    protected void CreateTileMaps()
     {
         GameObject newMap = GameObject.Instantiate(tilemap, grid);
         newMap.transform.position = new Vector3(chunkPos.x * width, chunkPos.y * height,mapz);
@@ -446,11 +470,11 @@ public abstract class Chunk
     /// </summary>
     /// <param name="tile">ID of the block</param>
     /// <returns></returns>
-    protected byte GetType(byte tile)
+    protected byte GetBlockType(byte tile)
     {
         if (tile == 127)
             return 0;
-        if (manager.GetBlock(tile).blockType == Blocks.Type.Wall)
+        if (GameManager.Instance.GetBlock(tile).blockType == Blocks.Type.Wall)
             return 1;
         else
             return 0;
@@ -461,7 +485,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <returns></returns>
-    public byte GetBlock(int x, int y)
+    public byte GetBlockID(int x, int y)
     {
         return blocks[x, y];
     }
@@ -471,7 +495,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <returns></returns>
-    public byte GetBiome(int x, int y)
+    public byte GetTileBiome(int x, int y)
     {
         return biomes[x, y];
     }
@@ -487,15 +511,24 @@ public abstract class Chunk
         if (block == 127)
         {
             map.SetTile(new Vector3Int(x, y, mapz), null);
-            map.SetTile(new Vector3Int(x, y, floorz), manager.GetBlock(floor[x,y]).tile);
+            map.SetTile(new Vector3Int(x, y, floorz), GameManager.Instance.GetBlock(floor[x,y]).tile);
         }
         else
         {
-            map.SetTile(new Vector3Int(x, y, mapz), manager.GetBlock(block).tile);
-            if (manager.GetBlock(block).solid)
-                UpdateCollider(x, y,Tile.ColliderType.Grid);
+            map.SetTile(new Vector3Int(x, y, mapz), GameManager.Instance.GetBlock(block).tile);
+            if (GameManager.Instance.GetBlock(block).solid)
+                UpdateTileCollider(x, y,Tile.ColliderType.Grid);
             map.SetTile(new Vector3Int(x, y, floorz), null);
         }
+        if (changes.ContainsKey(new Vector2Int(x, y)))
+        {
+            changes[new Vector2Int(x, y)] = block;
+        }
+        else
+        {
+            changes.Add(new Vector2Int(x, y), block);
+        }
+        changed = true;
         map.RefreshTile(new Vector3Int(x, y, mapz));
     }
     /// <summary>
@@ -534,7 +567,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <param name="newTile">Tile with new color scheme</param>
-    public void UpdateColor(int x, int y, Tile newTile)
+    public void UpdateTileColor(int x, int y, Tile newTile)
     {
         Tile t = map.GetTile<Tile>(new Vector3Int(x, y, mapz));
         if (t == null)
@@ -559,7 +592,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <param name="tileCollider">Type of tilecollider</param>
-    public void UpdateCollider(int x, int y, Tile.ColliderType tileCollider)
+    public void UpdateTileCollider(int x, int y, Tile.ColliderType tileCollider)
     {
         map.GetTile<Tile>(new Vector3Int(x, y, mapz)).colliderType = tileCollider;
     }
@@ -572,11 +605,11 @@ public abstract class Chunk
     {
         if (map == null)
         {
-            GenerateMaps();
+            CreateTileMaps();
         }
         if (blocks[x, y] == 127)
             return;
-        Blocks interactBlock = manager.GetBlock(blocks[x, y]);
+        Blocks interactBlock = GameManager.Instance.GetBlock(blocks[x, y]);
         if (interactBlock.interactable)
         {
             Vector3 interactablePos = map.GetCellCenterWorld(new Vector3Int(x, y, mapz));
@@ -594,7 +627,7 @@ public abstract class Chunk
     /// <param name="y">Chunk relative y</param>
     /// <param name="z">Chunk relative z</param>
     /// <returns></returns>
-    protected Vector3 GetWorldPos(int x, int y, int z)
+    protected Vector3 GetTileWorldPos(int x, int y, int z)
     {
         Vector3 worldPos = Vector3.zero;
         if (chunkPos.x < 0)
@@ -612,46 +645,16 @@ public abstract class Chunk
     /// Called to kill enemy and open up spawn spot
     /// </summary>
     /// <param name="enemy">Gameobject for enemy</param>
-    public void KillEnemy(GameObject enemy)
+    public void DestroyEnemy(GameObject enemy)
     {
         enemies.Remove(enemy.GetHashCode());
         GameObject.Destroy(enemy);
     }
     /// <summary>
-    /// returns string array containing wall id, floor id, and biome id for each position in chunk
-    /// </summary>
-    /// <returns></returns>
-    public string[] getChunkMap()
-    {
-        string[] chunkString = new string[3];
-        chunkString[0] = chunkPos.x + "," + chunkPos.y + "," + biomeId + "\n";
-        chunkString[1] = chunkPos.x + "," + chunkPos.y + "," + biomeId + "\n";
-        chunkString[2] = chunkPos.x + "," + chunkPos.y + "," + biomeId + "\n";
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                chunkString[0] += blocks[i, j];
-                chunkString[1] += floor[i, j];
-                chunkString[2] += biomes[i, j];
-                if (j != height-1)
-                {
-                    chunkString[0] += ",";
-                    chunkString[1] += ",";
-                    chunkString[2] += ",";
-                }    
-            }
-            chunkString[0] += "\n";
-            chunkString[1] += "\n";
-            chunkString[2] += "\n";
-        }
-        return chunkString;
-    }
-    /// <summary>
     /// returns array of all enemies' information
     /// </summary>
     /// <returns></returns>
-    public string[] getEnemies()
+    public string[] GetEnemies()
     {
         string[] enemyString = new string[enemies.Count];
         for (int i = 0; i < enemyString.Length; i++)
@@ -661,42 +664,37 @@ public abstract class Chunk
         return enemyString;
     }
     /// <summary>
-    /// loads chunk from file
+    /// Returns string array of map changes
     /// </summary>
-    /// <param name="stringMap">string array holding chunk information</param>
-    public void loadFromFile(string[] stringMap)
+    /// <returns></returns>
+    public string[] GetChanges()
     {
-        string[] blockMap = stringMap[0].Split('\n');
-        string[] floorMap = stringMap[1].Split('\n');
-        string[] biomeMap = stringMap[2].Split('\n');
-        biomeId = (byte)Int32.Parse(blockMap[0].Split(',')[2]);
-        blocks = new byte[width, height];
-        floor = new byte[width, height];
-        biomes = new byte[width, height];
-        for (int i = 0; i < height; i++)
+        string[] blocksChanged = new string[changes.Count];
+        int i = 0;
+        foreach (Vector2Int change in changes.Keys)
         {
-            string[] blockIds = blockMap[i + 1].Split(',');
-            string[] floorIds = floorMap[i + 1].Split(',');
-            string[] biomeIds = biomeMap[i + 1].Split(',');
-            for (int j = 0; j < blockIds.Length; j++)
-            {
-                int blockId = Int32.Parse(blockIds[j]);
-                int floorId = Int32.Parse(floorIds[j]);
-                int biomeId = Int32.Parse(biomeIds[j]);
-                blocks[i, j] = (byte)blockId;
-                floor[i, j] = (byte)floorId;
-                biomes[i, j] = (byte)biomeId;
-                foreach(Blocks specialBlock in biomeScripts[biomeId].specialBlocks)
-                {
-                    if (specialBlock.index == blocks[i,j])
-                    {
-                        AddInteractable(i, j);
-                    }
-                }
-            }
+            blocksChanged[i] = change.x + " " + change.y + "|" + changes[change];
+            i++;
         }
-        DrawMap();
-        map.GetComponent<TilemapRenderer>().enabled = false;
-        generated = true;
+        return blocksChanged;
+    }
+    /// <summary>
+    /// Adds block change to list
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="id"></param>
+    public void AddChange(Vector2Int pos, byte id)
+    {
+        changes.Add(pos, id);
+    }
+    /// <summary>
+    /// Change block in array to changed versions
+    /// </summary>
+    public void AddChangedBlocks()
+    {
+        foreach (Vector2Int pos in changes.Keys)
+        {
+            blocks[pos.x, pos.y] = changes[pos];
+        }
     }
 }

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ItemSlot
 {
-    //number of items in current stack
+    [Tooltip("Number of items in slot")]
     private byte currentStack = 0;
-    //reference to inventory item
+    [Tooltip("Reference to inventory item in slot")]
     private InventoryItem itemRef;
-    //durability of current item
+    [Tooltip("Current durability of item in slot")]
     private byte durability;
     /// <summary>
     /// Adds item to slot using given item reference with stack of 1
@@ -36,7 +36,7 @@ public class ItemSlot
     /// Determines of slot is empty
     /// </summary>
     /// <returns>true if empty</returns>
-    public bool isEmpty()
+    public bool IsEmpty()
     {
         if (itemRef == null)
         {
@@ -44,7 +44,7 @@ public class ItemSlot
         }
         if ((durability <= 0 && itemRef.baseDurability != 0) || currentStack <= 0)
         {
-            emptySlot();
+            EmptySlot();
             return true;
         } else
         {
@@ -54,7 +54,7 @@ public class ItemSlot
     /// <summary>
     /// Empties the slot removing the info
     /// </summary>
-    public void emptySlot()
+    public void EmptySlot()
     {
         itemRef = null;
         currentStack = 0;
@@ -65,7 +65,7 @@ public class ItemSlot
     /// </summary>
     /// <param name="stackAmount">amount to add to stack</param>
     /// <returns></returns>
-    public int addToStack(byte stackAmount)
+    public int AddToStack(byte stackAmount)
     {
         currentStack += stackAmount;
         if (currentStack > itemRef.stackSize)
@@ -80,7 +80,7 @@ public class ItemSlot
     /// Increase durability of item
     /// </summary>
     /// <param name="fixAmount">adds this number of current durability</param>
-    public void increaseDurability(byte fixAmount)
+    public void IncreaseDurability(byte fixAmount)
     {
         durability = (byte)Mathf.Clamp(durability + fixAmount, 0, itemRef.baseDurability);
     }
@@ -88,7 +88,7 @@ public class ItemSlot
     /// Determines if item slot is full
     /// </summary>
     /// <returns></returns>
-    public bool isFull()
+    public bool IsFull()
     {
         return currentStack == itemRef.stackSize;
     }
@@ -96,7 +96,7 @@ public class ItemSlot
     /// reduces the number of items in slot
     /// </summary>
     /// <param name="reduceAmount">amount to reduce by</param>
-    public void reduceStack(byte reduceAmount)
+    public void ReduceStack(byte reduceAmount)
     {
         currentStack -= reduceAmount;
     }
@@ -104,7 +104,7 @@ public class ItemSlot
     /// reduces durability of item
     /// </summary>
     /// <param name="reduceAmount">amount to reduce by</param>
-    public void reduceDurability(byte reduceAmount)
+    public void ReduceDurability(byte reduceAmount)
     {
         durability -= reduceAmount;
     }
@@ -112,7 +112,7 @@ public class ItemSlot
     /// returns the sprite for item in the slot
     /// </summary>
     /// <returns></returns>
-    public Sprite getSprite()
+    public Sprite GetSprite()
     {
         if (itemRef == null)
             return null;
@@ -122,27 +122,27 @@ public class ItemSlot
     /// returns true if slot contains a weapon
     /// </summary>
     /// <returns></returns>
-    public bool fighting()
+    public bool IsWeapon()
     {
         if (itemRef == null)
             return false;
-        return itemRef.fighting;
+        return itemRef.weapon;
     }
     /// <summary>
     /// returns cost to buy item
     /// </summary>
     /// <returns></returns>
-    public int getCost()
+    public int GetBuyCost()
     {
         if (itemRef == null)
             return 0;
-        return itemRef.cost;
+        return itemRef.buyCost;
     }
     /// <summary>
     /// Returns identifying number of item
     /// </summary>
     /// <returns></returns>
-    public byte getItemId()
+    public byte GetItemID()
     {
         if (itemRef == null)
             return 127;
@@ -152,7 +152,7 @@ public class ItemSlot
     /// returns InventoryItem reference of item in slot
     /// </summary>
     /// <returns></returns>
-    public InventoryItem getItem()
+    public InventoryItem GetItemRef()
     {
         return itemRef;
     }
@@ -160,7 +160,7 @@ public class ItemSlot
     /// returns number of items in this slot
     /// </summary>
     /// <returns></returns>
-    public byte getCurrentCount()
+    public byte GetCount()
     {
         return currentStack;
     }
@@ -168,7 +168,7 @@ public class ItemSlot
     /// returns durability of the item in this slot
     /// </summary>
     /// <returns></returns>
-    public byte getDurability()
+    public byte GetDurability()
     {
         return durability;
     }
@@ -176,17 +176,17 @@ public class ItemSlot
     /// transfers information from another itemSlot into this one
     /// </summary>
     /// <param name="newInfo">ItemSlot to transfer info from</param>
-    public void addExisting(ItemSlot newInfo)
+    public void AddExisting(ItemSlot newInfo)
     {
-        currentStack = newInfo.getCurrentCount();
-        itemRef = newInfo.getItem();
-        durability = newInfo.getDurability();
+        currentStack = newInfo.GetCount();
+        itemRef = newInfo.GetItemRef();
+        durability = newInfo.GetDurability();
     }
     /// <summary>
     /// returns the damage done by this item
     /// </summary>
     /// <returns></returns>
-    public byte getDamage()
+    public byte GetDamage()
     {
         if (itemRef == null)
             return 0;
@@ -196,7 +196,7 @@ public class ItemSlot
     /// returns the weapon script associated with this item
     /// </summary>
     /// <returns></returns>
-    public WeaponInterface<Transform, PlayerFight> getWeaponScript()
+    public WeaponInterface GetWeaponScript()
     {
         if (itemRef == null)
             return null;
@@ -230,9 +230,9 @@ public class ItemSlot
     /// returns cost to craft item
     /// </summary>
     /// <returns></returns>
-    public float GetCraftCost()
+    public int GetCraftCost()
     {
-        return itemRef.craftcost;
+        return itemRef.craftCost;
     }
     /// <summary>
     /// returns item name

@@ -2,102 +2,173 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 [System.Serializable]
-public class GameInformation
+public class GameInformation : ScriptableObject
 {
-    public double playHours = 0;
-    public string[][] worldMap;
-    public string[][] enemies;
-    public float[] playerPos;
-    public float[] playerRot;
-    public float[] playerSize;
-    public int[] currentChunk;
-    public float health;
-    public float magic;
-    public int[] enabledSpells;
-    public int seed;
-    public int biomeSeed;
-    public byte[,] inventory = new byte[5,7];
-    public byte[,] stackSize = new byte[5, 7];
-    public byte[,] durability = new byte[5,7];
-    public int rotator;
-    public int currentChoice;
-    public int[,] chosenItems = new int[7, 2];
+    [Tooltip("Name of chunks folder")]
+    private const string chunks = "world";
+    [Tooltip("string representing main folder for save")]
+    private string saveLocation;
+    [Tooltip("string representing chunk save location")]
+    private string chunkLocation;
+    [Tooltip("Binary formatter used for serialization")]
+    private BinaryFormatter formatter;
+    [Tooltip("instance of GameInformation")]
+    private static GameInformation _instance;
+    public static GameInformation Instance
+    {
+        get
+        {
+            return _instance;
+        }
+    }
+    private void OnEnable()
+    {
+        if (_instance != null && _instance != this)
+        {
+            Destroy(this);
+        }
+        else
+        {
+            _instance = this;
+        }
+    }
     /// <summary>
-    /// Sets up game information with passed in manager
+    /// Sets save location with given string
+    /// </summary>
+    /// <param name="location"></param>
+    public void SetLocation(string location)
+    {
+        formatter = new BinaryFormatter();
+        saveLocation = location;
+        chunkLocation = Path.Combine(location, chunks);
+        if (!Directory.Exists(chunkLocation))
+        {
+            Directory.CreateDirectory(chunkLocation);
+        }
+    }
+    /// <summary>
+    /// Saves all world data
     /// </summary>
     /// <param name="manager"></param>
-    public GameInformation(GameObject manager)
+    public void SaveAll()
     {
-        SaveWorld(manager.GetComponent<ChunkGen>());
-        SaveManager(manager.GetComponent<GameManager>());
-        SavePlayer(GameObject.Find("Player"));
+        SaveGameInfo();
+        SaveWorld();
+        GameObject player = GameObject.Find("Player");
+        SavePlayer(player);
+        SaveInventory();
     }
     /// <summary>
     /// Saves information contained within gamemanager
     /// </summary>
     /// <param name="manager"></param>
-    void SaveManager(GameManager manager)
+    public void SaveGameInfo()
     {
-        TimeSpan playTime = System.DateTime.Now.Subtract(manager.startTime);
-        playHours = manager.hours + playTime.TotalHours;
+        string worldInfo = Path.Combine(saveLocation, "worldInfo.txt");
+        WorldInfo info = new WorldInfo();
+        FileStream fs = new FileStream(worldInfo, FileMode.Create);
+        formatter.Serialize(fs, info);
+        fs.Close();
     }
     /// <summary>
     /// Saves chunk information
     /// </summary>
     /// <param name="gen"></param>
-    void SaveWorld(ChunkGen gen)
+    public void SaveWorld()
     {
-        worldMap = gen.getWorldMap();
-        seed = gen.seed;
-        biomeSeed = gen.biomeseed;
+        Hashtable chunks = ChunkGen.Instance.GetChunks();
+        foreach (Chunk chunk in chunks.Values)
+        {
+            if (chunk.changed)
+            {
+                string chunkName = chunk.chunkPos.x + "_" + chunk.chunkPos.y + ".txt";
+                string chunkPath = Path.Combine(chunkLocation, chunkName);
+                FileStream fs = new FileStream(chunkPath, FileMode.Create);
+                ChunkSave c = new ChunkSave(chunk);
+                formatter.Serialize(fs, c);
+                fs.Close();
+            }
+        }
     }
     /// <summary>
     /// Saves player information
     /// </summary>
     /// <param name="player"></param>
-    void SavePlayer(GameObject player)
+    public void SavePlayer(GameObject player)
     {
-        Transform p = player.transform;
-        playerPos = new float[] { p.position.x, p.position.y, p.position.z };
-        playerRot = new float[] { p.eulerAngles.x, p.eulerAngles.y, p.eulerAngles.z };
-        playerSize = new float[] { p.lossyScale.x, p.lossyScale.y, p.lossyScale.z };
-        Vector2Int chunk = player.GetComponent<FreePlayerMove>().currentChunk;
-        currentChunk = new int[] { chunk.x, chunk.y };
-        health = player.GetComponent<PlayerFight>().health;
-        magic = player.GetComponent<Magic>().magic;
-        enabledSpells = player.GetComponent<Magic>().enabledSpells;
-        SaveInventory(player.GetComponent<FreePlayerMove>().canvas.GetComponent<Inventory>());
+        string playerInfo = Path.Combine(saveLocation, "player.txt");
+        FileStream fs = new FileStream(playerInfo, FileMode.Create);
+        PlayerSave p = new PlayerSave(player);
+        formatter.Serialize(fs, p);
+        fs.Close();
     }
     /// <summary>
-    /// Saves inventory information
+    /// saves inventory
     /// </summary>
     /// <param name="inv"></param>
-    void SaveInventory(Inventory inv)
+    public void SaveInventory()
     {
-        for (int i = 0; i < 5; i++)
+        string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
+        FileStream fs = new FileStream(inventoryInfo, FileMode.Create);
+        InventorySave i = new InventorySave();
+        formatter.Serialize(fs, i);
+        fs.Close();
+    }
+    /// <summary>
+    /// Loads inventory
+    /// </summary>
+    /// <returns></returns>
+    public InventorySave LoadInventory()
+    {
+        string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
+        FileStream fs = new FileStream(inventoryInfo, FileMode.Open);
+        InventorySave i = (InventorySave)formatter.Deserialize(fs);
+        fs.Close();
+        return i;
+    }
+    /// <summary>
+    /// loads player
+    /// </summary>
+    /// <returns></returns>
+    public PlayerSave LoadPlayer()
+    {
+        string playerInfo = Path.Combine(saveLocation, "player.txt");
+        FileStream fs = new FileStream(playerInfo, FileMode.Open);
+        PlayerSave p = (PlayerSave)formatter.Deserialize(fs);
+        fs.Close();
+        return p;
+    }
+    /// <summary>
+    /// loads world
+    /// </summary>
+    /// <returns></returns>
+    public List<ChunkSave> LoadWorld()
+    {
+        List<ChunkSave> chunks = new List<ChunkSave>();
+        foreach(string file in Directory.GetFiles(chunkLocation))
         {
-            for (int j = 0; j < 7; j++)
-            {
-                ItemSlot iRef = inv.getItemSlot(i, j);
-                if (!iRef.isEmpty())
-                {
-                    inventory[i, j] = iRef.getItemId();
-                    stackSize[i, j] = iRef.getCurrentCount();
-                    durability[i,j] = iRef.getDurability();
-                } 
-                else
-                {
-                    inventory[i, j] = 127;
-                }
-            }
+            FileStream fs = new FileStream(file, FileMode.Open);
+            ChunkSave s = (ChunkSave)formatter.Deserialize(fs);
+            fs.Close();
+            chunks.Add(s);
         }
-        for (int i = 0; i < 7; i++)
-        {
-            chosenItems[i, 0] = inv.chosenItems[i].x;
-            chosenItems[i, 1] = inv.chosenItems[i].y;
-        }
-        currentChoice = inv.itemRotator.current;
+        return chunks;
+    }
+    /// <summary>
+    /// load game information
+    /// </summary>
+    /// <returns></returns>
+    public WorldInfo LoadGameInfo()
+    {
+        string worldInfo = Path.Combine(saveLocation, "worldInfo.txt");
+        FileStream fs = new FileStream(worldInfo, FileMode.Open);
+        WorldInfo w = (WorldInfo)formatter.Deserialize(fs);
+        fs.Close();
+        return w;
     }
 }

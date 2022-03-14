@@ -6,33 +6,34 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using static UnityEngine.InputSystem.InputAction;
 
-public class Inventory : MonoBehaviour
+public class Inventory : Singleton<Inventory>
 {
-    //manager reference
-    private GameManager manager;
-    //2D array of images
+    [Tooltip("Amount of money player has")]
+    private int playerMoney = 0;
+    [Tooltip("Array of inventory item game objects")]
     private GameObject[,] images = new GameObject[5, 7];
-    //array of images for chosen objects
-    public GameObject[] chosenImages = new GameObject[7];
-    //2D array of item slots to represent inventory
+    [Tooltip("Array of chosen item game objects")]
+    [SerializeField] private GameObject[] chosenImages = new GameObject[7];
+    [Tooltip("Array of inventory item slots")]
     private ItemSlot[,] itemSlots = new ItemSlot[5, 7];
-    //list of chosen items vector2 positions
+    [Tooltip("Inventory positions of chosen items")]
     [HideInInspector] public List<Vector2Int> chosenItems = new List<Vector2Int>();
-    //reference to item rotator
+    [Tooltip("Item rotator script")]
     public ItemRotator itemRotator;
+    [Tooltip("Inventory money text boxes")]
+    [SerializeField] private Text[] moneyObjects;
     /// <summary>
     /// Sets up inventory
     /// </summary>
     void Awake()
     {
+        base.Awake();
         chosenItems.Capacity = 7;
         for (int i = 0; i < 7; i++)
         {
             chosenItems.Add(new Vector2Int(int.MaxValue, int.MaxValue));
         }
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        manager.LoadWorld();
-        manager.inv = this;
+        GameManager.Instance.SetValues();
         int imgnum = 0;
         foreach (ImageMover imageMover in GetComponentsInChildren<ImageMover>())
         {
@@ -44,25 +45,28 @@ public class Inventory : MonoBehaviour
             imageMover.SetArrayPos(new Vector2Int(row, col));
             imgnum++;
         }
-        for (int i = 0; i < 5; i++)
+        for (int row = 0; row < 5; row++)
         {
-            for (int row = 0; row < 5; row++)
+            for (int col = 0; col < 7; col++)
             {
-                for (int col = 0; col < 7; col++)
-                {
-                    itemSlots[row, col] = new ItemSlot();
-                }
+                itemSlots[row, col] = new ItemSlot();
             }
         }
-        if (manager.loadFromFile)
+        if (GameManager.Instance.reopen)
         {
-            LoadFromFile(manager.GetGameInformation());
-        } else
+            Reopen();
+        }
+        else if (GameManager.Instance.loadFromFile)
         {
-            InventoryItem item = manager.GetItem("Base Pickaxe");
+            LoadFromFile();
+        } 
+        else
+        {
+            InventoryItem item = GameManager.Instance.GetItem("Base Pickaxe");
             AddItem(item,1,item.baseDurability);
-            item = manager.GetItem("Extendo Sword");
+            item = GameManager.Instance.GetItem("Extendo Sword");
             AddItem(item,1, item.baseDurability);
+            AddMoney(150);
         }
         gameObject.SetActive(false);
     }
@@ -72,7 +76,7 @@ public class Inventory : MonoBehaviour
     /// <param name="ID">Item ID to add to inventory</param>
     public void AddItem(byte ID)
     {
-        InventoryItem newItem = manager.GetItem(ID);
+        InventoryItem newItem = GameManager.Instance.GetItem(ID);
         AddItem(newItem, 1, newItem.baseDurability);
     }
     /// <summary>
@@ -89,17 +93,17 @@ public class Inventory : MonoBehaviour
         {
             for (int col = 0; col < 7; col++)
             {
-                if (itemRef.itemID == itemSlots[row, col].getItemId() && !itemSlots[row, col].isFull())
+                if (itemRef.itemID == itemSlots[row, col].GetItemID() && !itemSlots[row, col].IsFull())
                 {
                     spot = new Vector2Int(row, col);
                     found = true;
-                    int leftOver = itemSlots[spot.x, spot.y].addToStack((byte)currentStack);
-                    images[spot.x, spot.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[spot.x, spot.y].getCurrentCount());
+                    int leftOver = itemSlots[spot.x, spot.y].AddToStack((byte)currentStack);
+                    images[spot.x, spot.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[spot.x, spot.y].GetCount());
                     if (leftOver > 0)
                         AddItem(itemRef, leftOver, durability);
                     break;
                 }
-                if (itemSlots[row,col].isEmpty() && !emptySpot)
+                if (itemSlots[row,col].IsEmpty() && !emptySpot)
                 {
                     empty = new Vector2Int(row, col);
                     emptySpot = true;
@@ -111,7 +115,7 @@ public class Inventory : MonoBehaviour
         if (emptySpot)
         {
             itemSlots[empty.x, empty.y].AddItem(itemRef, (byte)currentStack, (byte)durability);
-            images[empty.x, empty.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[empty.x, empty.y].getCurrentCount());
+            images[empty.x, empty.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[empty.x, empty.y].GetCount());
             UpdateImage(new Vector2Int(empty.x, empty.y), itemRef.itemSprite);
         }
     }
@@ -151,9 +155,9 @@ public class Inventory : MonoBehaviour
         Vector2Int chosenItemPos = chosenItems[pos];
         if (itemSlots[chosenItemPos.x, chosenItemPos.y].GetItemType() == InventoryItem.ItemType.Consumable)
         {
-            itemSlots[chosenItemPos.x, chosenItemPos.y].reduceStack(1);
-            images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[chosenItemPos.x, chosenItemPos.y].getCurrentCount());
-            bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
+            itemSlots[chosenItemPos.x, chosenItemPos.y].ReduceStack(1);
+            images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[chosenItemPos.x, chosenItemPos.y].GetCount());
+            bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].IsEmpty();
             if (empty)
             {
                 RemoveChosen(pos);
@@ -161,8 +165,8 @@ public class Inventory : MonoBehaviour
         } 
         else
         {
-            itemSlots[chosenItemPos.x, chosenItemPos.y].reduceDurability(1);
-            bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].isEmpty();
+            itemSlots[chosenItemPos.x, chosenItemPos.y].ReduceDurability(1);
+            bool empty = itemSlots[chosenItemPos.x, chosenItemPos.y].IsEmpty();
             if (empty)
             {
                 RemoveChosen(pos);
@@ -176,7 +180,7 @@ public class Inventory : MonoBehaviour
     private void RemoveChosen(int pos)
     {
         Vector2Int chosenItemPos = chosenItems[pos];
-        itemSlots[chosenItemPos.x, chosenItemPos.y].emptySlot();
+        itemSlots[chosenItemPos.x, chosenItemPos.y].EmptySlot();
         images[chosenItemPos.x, chosenItemPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(0);
         UpdateImage(chosenItemPos, null);
         UpdateChosen(pos, null);
@@ -205,18 +209,24 @@ public class Inventory : MonoBehaviour
                 default:
                     if (chosenItems.Contains(arrayPos))
                     {
-                        chosenItems[chosenItems.IndexOf(arrayPos)] = new Vector2Int(int.MaxValue, int.MaxValue);
+                        int previousChosen = chosenItems.IndexOf(arrayPos);
+                        chosenItems[previousChosen] = new Vector2Int(int.MaxValue, int.MaxValue);
+                        UpdateChosen(previousChosen, null);
                     }
                     chosenItems[chosenSpot] = arrayPos;
-                    UpdateChosen(chosenSpot, slot.getSprite());
+                    UpdateChosen(chosenSpot, slot.GetSprite());
                     break;
             }
             return;
         }
         if (IsEmpty(dropPos))
         {
-            itemSlots[dropPos.x, dropPos.y].addExisting(itemSlots[arrayPos.x, arrayPos.y]);
-            itemSlots[arrayPos.x, arrayPos.y].emptySlot();
+            itemSlots[dropPos.x, dropPos.y].AddExisting(itemSlots[arrayPos.x, arrayPos.y]);
+            itemSlots[arrayPos.x, arrayPos.y].EmptySlot();
+            images[dropPos.x, dropPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[dropPos.x, dropPos.y].GetCount());
+            images[arrayPos.x, arrayPos.y].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[arrayPos.x, arrayPos.y].GetCount());
+            UpdateImage(dropPos, itemSlots[dropPos.x, dropPos.y].GetSprite());
+            UpdateImage(arrayPos, null);
             if (chosenItems.Contains(arrayPos))
             {
                 chosenItems[chosenItems.IndexOf(arrayPos)] = dropPos;
@@ -239,27 +249,34 @@ public class Inventory : MonoBehaviour
     /// loads inventory from file
     /// </summary>
     /// <param name="info">GameInformation file to get inventory from</param>
-    private void LoadFromFile(GameInformation info)
+    private void LoadFromFile()
     {
+        InventorySave inv = GameInformation.Instance.LoadInventory();
+        byte[,] items = inv.GetItems();
+        byte[,] sizes = inv.GetStackSizes();
+        byte[,] durabilities = inv.GetDurabilities();
         for (int i = 0; i < 5; i++)
         {
-            for (int j = 0; j < 5; j++)
+            for (int j = 0; j < 7; j++)
             {
-                byte infoItem = info.inventory[i, j];
+                byte infoItem = items[i, j];
                 if (infoItem != 127)
                 {
-                    InventoryItem item = manager.GetItem(infoItem);
-                    AddItem(item, info.stackSize[i, j], info.durability[i, j]);
+                    InventoryItem item = GameManager.Instance.GetItem(infoItem);
+                    AddItem(item, sizes[i, j], durabilities[i, j]);
                 }
             }
         }
+        int[,] chosen = inv.GetChosenItems();
         for (int i = 0; i < 7; i++)
         {
-            chosenItems[i] = new Vector2Int(info.chosenItems[i, 0], info.chosenItems[i, 1]);
+            chosenItems[i] = new Vector2Int(chosen[i, 0], chosen[i, 1]);
             if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
-                UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].getSprite());
+                UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].GetSprite());
         }
         itemRotator.UpdateItems();
+        AddMoney(inv.GetMoney());
+        UpdateMoney();
     }
     /// <summary>
     /// returns ItemSlot at given position
@@ -271,8 +288,82 @@ public class Inventory : MonoBehaviour
     {
         return itemSlots[row, col];
     }
+    /// <summary>
+    /// Adds given amount to player money
+    /// </summary>
+    /// <param name="num"></param>
+    public void AddMoney(int num)
+    {
+        playerMoney += num;
+        UpdateMoney();
+    }
+    /// <summary>
+    /// Returns amount of money
+    /// </summary>
+    /// <returns></returns>
+    public int GetMoney()
+    {
+        return playerMoney;
+    }
+    /// <summary>
+    /// Updates the money text objects
+    /// </summary>
+    public void UpdateMoney()
+    {
+        int emerald = playerMoney / 1000;
+        int leftOver = playerMoney % 1000;
+        int gold = leftOver / 100;
+        leftOver %= 100;
+        int silver = leftOver / 10;
+        leftOver %= 10;
+        int bronze = leftOver;
+        moneyObjects[0].text = emerald + "";
+        moneyObjects[1].text = gold + "";
+        moneyObjects[2].text = silver + "";
+        moneyObjects[3].text = bronze + "";
+    }
+    /// <summary>
+    /// Returns array of inventory items
+    /// </summary>
+    /// <returns></returns>
+    public ItemSlot[,] GetInventory()
+    {
+        return itemSlots;
+    }
+    /// <summary>
+    /// Reopen inventory, loads from game manager
+    /// </summary>
+    public void Reopen()
+    {
+        InventorySave inv = GameInformation.Instance.LoadInventory();
+        ItemSlot[,] slot = GameManager.Instance.GetInventory();
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                itemSlots[i, j].AddExisting(slot[i, j]);
+                images[i, j].gameObject.GetComponent<ImageMover>().UpdateCount(itemSlots[i, j].GetCount());
+                UpdateImage(new Vector2Int(i, j), itemSlots[i, j].GetSprite());
+            }
+        }
+        int[,] chosen = inv.GetChosenItems();
+        for (int i = 0; i < 7; i++)
+        {
+            chosenItems[i] = new Vector2Int(chosen[i, 0], chosen[i, 1]);
+            if (chosenItems[i] != new Vector2Int(int.MaxValue, int.MaxValue))
+                UpdateChosen(i, itemSlots[chosenItems[i].x, chosenItems[i].y].GetSprite());
+        }
+        itemRotator.UpdateItems();
+        AddMoney(GameManager.Instance.GetMoney());
+        UpdateMoney();
+        GameManager.Instance.reopen = false;
+    }
+    /// <summary>
+    /// Method called when inventory is destroyed (scene change)
+    /// </summary>
     private void OnDestroy()
     {
-        manager.SaveInventory(itemSlots);
+        GameManager.Instance.StoreInventory(itemSlots);
+        GameManager.Instance.SetMoney(playerMoney);
     }
 }

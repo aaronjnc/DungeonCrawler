@@ -4,15 +4,9 @@ using UnityEngine;
 
 public class FireRing : MonoBehaviour
 {
-    GameManager manager;
     public float radius;
     public float speed;
     public float damage;
-    // Start is called before the first frame update
-    void Start()
-    {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-    }
 
     // Update is called once per frame
     void FixedUpdate()
