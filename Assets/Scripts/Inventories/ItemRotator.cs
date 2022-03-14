@@ -176,6 +176,7 @@ public class ItemRotator : MonoBehaviour
     void CurrentItem()
     {
         GameManager.Instance.currentItem.AddExisting(itemSlots[current]);
+        FreePlayerMove.Instance.ResetSprite();
         if (!itemSlots[current].IsEmpty())
         {
             DisableBlockPlacing();
