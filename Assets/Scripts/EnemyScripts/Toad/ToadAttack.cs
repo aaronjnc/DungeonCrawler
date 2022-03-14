@@ -7,7 +7,7 @@ public class ToadAttack : EnemyAttack
     /// <summary>
     /// toad performs attack
     /// </summary>
-    protected override void performAttack()
+    protected override void PerformAttack()
     {
         
     }

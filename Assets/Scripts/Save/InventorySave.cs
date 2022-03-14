@@ -29,11 +29,11 @@ public class InventorySave
         {
             for (int j = 0; j < 7; j++)
             {
-                if (!items[i, j].isEmpty())
+                if (!items[i, j].IsEmpty())
                 {
-                    inventory[i, j] = items[i, j].getItemId();
-                    stackSize[i, j] = items[i, j].getCurrentCount();
-                    durability[i, j] = items[i, j].getDurability();
+                    inventory[i, j] = items[i, j].GetItemID();
+                    stackSize[i, j] = items[i, j].GetCount();
+                    durability[i, j] = items[i, j].GetDurability();
                 }
                 else
                 {

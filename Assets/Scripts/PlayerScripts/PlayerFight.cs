@@ -6,13 +6,21 @@ using UnityEngine.UI;
 
 public class PlayerFight : MonoBehaviour
 {
+    [Tooltip("player controls")]
     PlayerControls controls;
+    [Tooltip("game manager")]
     GameManager manager;
+    [Tooltip("chosen item")]
     ItemSlot invItem;
+    [Tooltip("player health")] [HideInInspector]
     public float health;
+    [Tooltip("max player health")]
     public float maxHealth = 100;
+    [Tooltip("health slider")]
     public Slider healthSlider;
+    [Tooltip("enemy layer")]
     public LayerMask enemy;
+    [Tooltip("player reach")]
     public float reach;
     // Start is called before the first frame update
     void Start()
@@ -50,10 +58,10 @@ public class PlayerFight : MonoBehaviour
     {
         if (manager.fighting && !manager.paused)
         {
-            invItem.addExisting(manager.currentItem);
-            if (invItem.fighting())
+            invItem.AddExisting(manager.currentItem);
+            if (invItem.IsWeapon())
             {
-                invItem.getWeaponScript().BaseAttack(gameObject.transform);
+                invItem.GetWeaponScript().BaseAttack(gameObject.transform);
             }
         }
     }
@@ -65,10 +73,10 @@ public class PlayerFight : MonoBehaviour
     {
         if (manager.fighting && !manager.paused)
         {
-            invItem.addExisting(manager.currentItem);
-            if (invItem.fighting())
+            invItem.AddExisting(manager.currentItem);
+            if (invItem.IsWeapon())
             {
-                invItem.getWeaponScript().AdvancedAttack(gameObject.transform);
+                invItem.GetWeaponScript().AdvancedAttack(gameObject.transform);
             }
         }
     }        

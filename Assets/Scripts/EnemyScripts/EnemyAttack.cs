@@ -42,13 +42,13 @@ public abstract class EnemyAttack : MonoBehaviour
     /// <summary>
     /// perform attack if charged
     /// </summary>
-    public void attack()
+    public void Attack()
     {
         if (!attackCharged && !charging)
-            StartCoroutine(chargeAttack());
+            StartCoroutine(ChargeAttack());
         if (attackCharged)
         {
-            performAttack();
+            PerformAttack();
             attackCharged = false;
         }
     }
@@ -56,7 +56,7 @@ public abstract class EnemyAttack : MonoBehaviour
     /// charge enemy attack
     /// </summary>
     /// <returns></returns>
-    IEnumerator chargeAttack()
+    IEnumerator ChargeAttack()
     {
         charging = true;
         yield return new WaitForSeconds(attackSpeed);
@@ -66,7 +66,7 @@ public abstract class EnemyAttack : MonoBehaviour
     /// <summary>
     /// abstract method called within each special enemy class to perform attack
     /// </summary>
-    protected abstract void performAttack();
+    protected abstract void PerformAttack();
     /// <summary>
     /// determines if player is visible once within range
     /// </summary>

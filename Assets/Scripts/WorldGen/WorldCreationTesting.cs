@@ -16,10 +16,10 @@ public class WorldCreationTesting : MonoBehaviour
         {
             for (int y = 0; y < size/2;y++)
             {
-                chunkGen.GenerateNewChunk(new Vector2Int(x, y));
-                chunkGen.GenerateNewChunk(new Vector2Int(-x-1, -y-1));
-                chunkGen.GenerateNewChunk(new Vector2Int(x, -y-1));
-                chunkGen.GenerateNewChunk(new Vector2Int(-x-1, y));
+                chunkGen.GenerateChunk(new Vector2Int(x, y));
+                chunkGen.GenerateChunk(new Vector2Int(-x-1, -y-1));
+                chunkGen.GenerateChunk(new Vector2Int(x, -y-1));
+                chunkGen.GenerateChunk(new Vector2Int(-x-1, y));
             }
         }
     }

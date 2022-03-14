@@ -31,7 +31,7 @@ public class WaterBiome : Chunk
     public override void GenerateChunk()
     {
         FillBiomeMap();
-        GenerateMaps();
+        CreateTileMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -46,7 +46,7 @@ public class WaterBiome : Chunk
         DetermineWall();
         SpecialBlockGeneration();
         AddChangedBlocks();
-        DrawMap();
+        DrawTileMap();
         generated = true;
     }
 
@@ -135,7 +135,7 @@ public class WaterBiome : Chunk
                     else
                     {
                         int rando = UnityEngine.Random.Range(0, 100);
-                        Vector3 worldPos = GetWorldPos(x, y, -1);
+                        Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
                         if (rando > enemyChance && manager.spawnEnemies && GetSurroundingWalls(x, y, 2) == 0 && numEnemies > 0)

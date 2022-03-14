@@ -7,7 +7,7 @@ using UnityEngine;
 public class Stall : MonoBehaviour
 {
     //refernce to manager script
-    GameManager manager;
+    private GameManager manager;
     //type of stall
     public enum StallType
     {

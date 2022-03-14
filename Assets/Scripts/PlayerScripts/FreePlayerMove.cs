@@ -7,25 +7,45 @@ using UnityEngine.Tilemaps;
 [RequireComponent(typeof(Rigidbody2D))]
 public class FreePlayerMove : MonoBehaviour
 {
-    Rigidbody2D player;
-    PlayerControls controls;
-    GameManager manager;
+    [Tooltip("player body")]
+    private Rigidbody2D player;
+    [Tooltip("player controls")]
+    private PlayerControls controls;
+    //game manager
+    private GameManager manager;
+    //look direction
     public Vector2 dir = Vector2.zero;
-    Vector2 previousDir = Vector2.zero;
+    //previous look direction
+    private Vector2 previousDir = Vector2.zero;
+    //player speed
     public float speed = 5f;
+    //player rotation speed
     public float rotSpeed = 10f;
-    DestroyandPlace blockplacing;
+    //block breaking script
+    private BlockBreaking blockBreaking;
+    //current tile position
     public Vector3Int pos = Vector3Int.zero;
-    Vector3Int prevpos = Vector3Int.zero;
-    public GameObject canvas;
-    Vector2 rotDir = Vector2.zero;
+    //previous tile position
+    private Vector3Int prevpos = Vector3Int.zero;
+    //inventory
+    public GameObject inv;
+    //rotation direction
+    private Vector2 rotDir = Vector2.zero;
+    //menu object
     public GameObject menu;
+    //magic menu object
     public GameObject magicTree;
-    Vector3Int lookPos = Vector3Int.zero;
-    Vector3Int prevlookPos = Vector3Int.zero;
+    //look position
+    private Vector3Int lookPos = Vector3Int.zero;
+    //previous look position
+    private Vector3Int prevlookPos = Vector3Int.zero;
+    //interactable layer mask
     public LayerMask interactable;
+    [Tooltip("current chunk")]
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
+    [Tooltip("player can move")]
     public bool canMove = true;
+    [Tooltip("sprint modifier")]
     private float sprintMod = 1f;
     void Start()
     {
@@ -33,7 +53,7 @@ public class FreePlayerMove : MonoBehaviour
         player = GetComponent<Rigidbody2D>();
         controls = new PlayerControls();
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        blockplacing = grid.GetComponent<DestroyandPlace>();
+        blockBreaking = grid.GetComponent<BlockBreaking>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
         controls.Movement.Horizontal.Enable();
@@ -56,7 +76,7 @@ public class FreePlayerMove : MonoBehaviour
         prevpos.z = manager.mapz;
         if (manager.loadFromFile)
         {
-            loadFromFile();
+            LoadFromFile();
         }
         SaveSystem.Save();
     }
@@ -116,14 +136,14 @@ public class FreePlayerMove : MonoBehaviour
     /// <param name="ctx"></param>
     void Inventory(CallbackContext ctx)
     {
-        if (canvas.activeInHierarchy)
+        if (inv.activeInHierarchy)
         {
-            canvas.SetActive(false);
+            inv.SetActive(false);
             manager.ResumeGame();
         }
         else if (!manager.paused)
         {
-            canvas.SetActive(true);
+            inv.SetActive(true);
             manager.PauseGame();
         }
     }
@@ -168,8 +188,8 @@ public class FreePlayerMove : MonoBehaviour
         {
             if (manager.blockBreaking)
             {
-                blockplacing.enabled = true;
-                blockplacing.Positioning(lookPos,currentChunk);
+                blockBreaking.enabled = true;
+                blockBreaking.Positioning(lookPos,currentChunk);
             }
             prevlookPos = lookPos;
         }
@@ -184,8 +204,7 @@ public class FreePlayerMove : MonoBehaviour
     /// <summary>
     /// loads player information from file
     /// </summary>
-    /// <param name="info"></param>
-    private void loadFromFile()
+    private void LoadFromFile()
     {
         PlayerSave p = GameInformation.Instance.LoadPlayer();
         transform.position = p.GetPlayerPos();
@@ -198,6 +217,6 @@ public class FreePlayerMove : MonoBehaviour
         manager.pos = pos;
         manager.currentChunk = currentChunk;
         ChunkGen.currentWorld.currentChunk = currentChunk;
-        ChunkGen.currentWorld.GenerateNewChunks();
+        ChunkGen.currentWorld.GenerateSurroundingChunks();
     }
 }

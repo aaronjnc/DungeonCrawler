@@ -30,6 +30,6 @@ public static class SaveSystem
         manager.loadFromFile = true;
         string path = Path.Combine(Application.persistentDataPath, "saves", manager.worldName);
         GameInformation.Instance.SetLocation(path);
-        manager.loadWorld();
+        manager.LoadFromFile();
     }
 }
