@@ -6,21 +6,21 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class DialogManager : MonoBehaviour
 {
-    //controls reference
+    [Tooltip("Player controls")]
     private PlayerControls controls;
-    //reference to dialog asset script associated with this manager
+    [Tooltip("Dialog asset")]
     private DialogAsset asset;
-    //textbox to display text
+    [Tooltip("Dialog text box")]
     private Text textbox;
-    //name box to display name
-    public Text namebox;
-    // boolean to determine if player is speaking
+    [Tooltip("Dialog name box")]
+    [SerializeField] private Text namebox;
+    [Tooltip("Player is speaking")]
     private bool player = false;
-    //lines to display
+    [Tooltip("Current lines")]
     private List<string> lines = new List<string>();
-    //selected line
+    [Tooltip("Line currently highlighted")]
     private int selectedLine = 0;
-    //whether start method has been called
+    [Tooltip("Dialog manager created")]
     private bool started = false;
     /// <summary>
     /// sets ups controls and updates lines with retrieved asset

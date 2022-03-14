@@ -7,30 +7,30 @@ using UnityEngine.AI;
 /// </summary>
 public abstract class EnemyAttack : MonoBehaviour
 {
-    //reach of basic attack
+    [Tooltip("Base attack reach")]
     public float reach;
-    //enemy view angle
+    [Tooltip("Enemy view angle")]
     public float viewangle;
-    //damage performed by basic attack
-    public float damage;
-    //layer of player
-    public LayerMask player;
-    //layer of tile
-    public LayerMask tile;
-    //last location player was seen
+    [Tooltip("Base attack damage")]
+    [SerializeField] protected float damage;
+    [Tooltip("Player layer")]
+    [SerializeField] protected LayerMask player;
+    [Tooltip("Tile layer")]
+    [SerializeField] protected LayerMask tile;
+    [Tooltip("Player last location")]
     [HideInInspector] public Vector3 lastLocation;
-    //true if enemy can see player
+    [Tooltip("Player spotted")]
     [HideInInspector] public bool spotted;
-    //reference to the player's fight script
-    PlayerFight fightScript;
-    //speed of basic attack
+    [Tooltip("Player fight script")]
+    protected PlayerFight fightScript;
+    [Tooltip("Base attack speed")]
     public float attackSpeed;
-    //if attack is charged and ready to be performed
+    [Tooltip("Base attack is charged")]
     protected bool attackCharged = true;
-    //if attack is charging
+    [Tooltip("Attack is charging")]
     protected bool charging;
-    //movement script reference
-    EnemyMovement movement;
+    [Tooltip("Enemy movement script")]
+    protected EnemyMovement movement;
     /// <summary>
     /// sets up enemy components
     /// </summary>

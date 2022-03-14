@@ -6,36 +6,37 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class BlockBreaking : MonoBehaviour
 {
-    //game manager
+    [Tooltip("Game manager")]
     private GameManager manager;
-    //player controls
+    [Tooltip("Player controls")]
     private PlayerControls controls;
-    //previous tile pos
-    public Vector3Int prevmapPos = Vector3Int.zero;
-    //current tile pos
+    [Tooltip("Previous tile position")]
+    [HideInInspector] public Vector3Int prevmapPos = Vector3Int.zero;
+    [Tooltip("Current tile position")]
     private Vector3Int mapPos = Vector3Int.zero;
-    //map z position
+    [Tooltip("Z position of tiles")]
     private int mapz;
-    //item rotator
-    public ItemRotator rotator;
-    //player inventory
-    public Inventory inventory;
-    //current chunk
+    [Tooltip("Item rotator script")]
+    [SerializeField] private ItemRotator rotator;
+    [Tooltip("Player inventory")]
+    [SerializeField] private Inventory inventory;
+    [Tooltip("Chunk of current map pos")]
     private Vector2Int currentChunk = Vector2Int.zero;
-    //previous chunk
+    [Tooltip("Chunk of previous map pos")]
     private Vector2Int prevChunk = Vector2Int.zero;
-    //destroy tile
+    [Tooltip("Tile used when destroying a tile")]
     private Tile destroy;
-    //refill file
+    [Tooltip("Tile used to reset tile")]
     private Tile refillTile;
-    //breaking
+    [Tooltip("Breaking a block")]
     private bool breaking;
-    //block health
+    [Tooltip("Health of block")]
     private float blockHealth;
-    //destroy position
+    [Tooltip("Position of block being broken")]
     private Vector3Int destroyPos;
-    //destroy chunk position
+    [Tooltip("Chunk of block being broken")]
     private Vector2Int destroyChunkPos;
+    [Tooltip("Damage done when breaking")]
     private int damage;
     void Awake()
     {

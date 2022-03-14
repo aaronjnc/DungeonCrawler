@@ -11,21 +11,21 @@ using System;
 [RequireComponent(typeof(BoxCollider2D))]
 public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    //textbox prefab representing how many items are in current stack
-    public Text itemCount;
-    //gameobject instantiated at runtime to hold item count
+    [Tooltip("Textbox containing number of objects in this slot")]
+    [SerializeField] private Text itemCount;
+    [Tooltip("GameObject to hold item counter")]
     private GameObject itemCounter;
-    //image is movable
-    public bool movable = true;
-    //manager reference
+    [Tooltip("Image is movable")]
+    [SerializeField] private bool movable = true;
+    [Tooltip("Game manager")]
     GameManager manager;
-    //if mouse is held down on image
+    [Tooltip("Mouse is being held down")]
     private bool mouseDown = false;
-    //initial position of image
-    Vector3 startpos = Vector3.zero;
-    //array position of item
-    public Vector2Int itemPos;
-    //inventory reference
+    [Tooltip("Initial start position of image")]
+    private Vector3 startpos = Vector3.zero;
+    [Tooltip("Inventory position related to item")]
+    [HideInInspector] public Vector2Int itemPos;
+    [Tooltip("Inventory object")]
     private Inventory inv;
     /// <summary>
     /// Sets up manager, inventory reference, and start pos

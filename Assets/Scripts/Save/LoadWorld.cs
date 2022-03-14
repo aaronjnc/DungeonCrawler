@@ -9,10 +9,14 @@ using UnityEditor;
 
 public class LoadWorld : MonoBehaviour
 {
-    public GameObject[] loadPanels;
-    public GameObject[] createPanels;
-    public Text[] textBoxes;
-    public Text[] hours;
+    [Tooltip("Array of load world panel GameObjects")]
+    [SerializeField] private GameObject[] loadPanels;
+    [Tooltip("Array of create new world panel GameObjects")]
+    [SerializeField] private GameObject[] createPanels;
+    [Tooltip("World name text boxes")]
+    [SerializeField] private Text[] textBoxes;
+    [Tooltip("Hours played text boxes")]
+    [SerializeField] private Text[] hours;
     // Start is called before the first frame update
     void Start()
     {
@@ -34,10 +38,10 @@ public class LoadWorld : MonoBehaviour
                 continue;
             }
             createPanels[i].SetActive(false);
-            string directoryInfo = dirInfo[i].Name;
-            textBoxes[i].text = directoryInfo;
+            string worldName = dirInfo[i].Name;
+            textBoxes[i].text = worldName;
             BinaryFormatter formatter = new BinaryFormatter();
-            string infoPath = Path.Combine(Application.persistentDataPath, "saves", directoryInfo, "worldInfo.txt");
+            string infoPath = Path.Combine(Application.persistentDataPath, "saves", worldName, "worldInfo.txt");
             if (!File.Exists(infoPath))
             {
                 Debug.Log("Deleted " + dirInfo[i].FullName);
@@ -79,6 +83,10 @@ public class LoadWorld : MonoBehaviour
             LoadScreen();
         }
     }
+    /// <summary>
+    /// Helper method to delte contents of directories
+    /// </summary>
+    /// <param name="directory"></param>
     private void DeleteContents(string directory)
     {
         string[] dirs = Directory.GetDirectories(directory);

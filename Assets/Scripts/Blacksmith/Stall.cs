@@ -6,7 +6,7 @@ using UnityEngine;
 /// </summary>
 public class Stall : MonoBehaviour
 {
-    //refernce to manager script
+    [Tooltip("Game manager")]
     private GameManager manager;
     //type of stall
     public enum StallType
@@ -14,9 +14,9 @@ public class Stall : MonoBehaviour
         Blacksmith,
         Wizard,
     }
-    //the type of stall this stall is
+    [Tooltip("Stall type")]
     public StallType stallType;
-    //list of items in this stall
+    [Tooltip("Items in stall")]
     public List<ItemSlot> stallItems = new List<ItemSlot>();
     /// <summary>
     /// call methods based on type of stall upon awake

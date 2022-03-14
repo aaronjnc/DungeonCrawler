@@ -4,32 +4,32 @@ using UnityEngine;
 using UnityEngine.AI;
 public abstract class EnemyMovement : MonoBehaviour
 {
-    //movement speed of enemy
-    public float speed;
-    //turn speed of enemy
-    public float turnSpeed;
-    //maximum distance of patrol point
-    public float maxMoveDistance;
-    //minimum distance of patrol point
-    public float minMoveDistance;
-    //enemy spawn point
+    [Tooltip("Speed of enemy")]
+    [SerializeField] protected float speed;
+    [Tooltip("Turn speed of enemy")]
+    [SerializeField] protected float turnSpeed;
+    [Tooltip("Maximum move distance")]
+    [SerializeField] protected float maxMoveDistance;
+    [Tooltip("Minimum move distance")]
+    [SerializeField] protected float minMoveDistance;
+    [Tooltip("Enemy spawn point")]
     protected Vector2 centerPos;
-    //enemy attack script
+    [Tooltip("Enemy attack script")]
     protected EnemyAttack attack;
-    //next patrol point
+    [Tooltip("Next patrol point")]
     protected Vector2 nextPoint;
-    //quaternion rotating to
+    [Tooltip("End rotation")]
     protected Quaternion endRot;
-    //if enemy is attacking
+    [Tooltip("Enemy is attacking player")]
     protected bool attacking;
-    //z coordinate
+    [Tooltip("Z position")]
     protected float zPos;
-    //true if moving
+    [Tooltip("Is moving")]
     protected bool moving;
-    //true if waiting
+    [Tooltip("Waiting at patrol point")]
     protected bool waiting;
-    //how long to wait between moves
-    public float waitTime;
+    [Tooltip("How long to wait at each point")]
+    [SerializeField] protected float waitTime;
     /// <summary>
     /// sets next travel point
     /// </summary>

@@ -49,7 +49,9 @@ public class WaterBiome : Chunk
         DrawTileMap();
         generated = true;
     }
-
+    /// <summary>
+    /// Fill in floor of water biome
+    /// </summary>
     private void DetermineFloor()
     {
         for (int x = 0; x < width; x++)
@@ -70,6 +72,9 @@ public class WaterBiome : Chunk
             }
         }
     }
+    /// <summary>
+    /// Smooth river objects
+    /// </summary>
     private void SmoothRiver()
     {
         for (int x = 0; x < width; x++)
@@ -87,6 +92,12 @@ public class WaterBiome : Chunk
             }
         }
     }
+    /// <summary>
+    /// Get bytes of surrounding floor tiles
+    /// </summary>
+    /// <param name="gridX"></param>
+    /// <param name="gridY"></param>
+    /// <returns></returns>
     private byte GetSurroundingFloor(int gridX, int gridY)
     {
         byte riverIndex = (byte)biomeScripts[biomeId].floorBlocks[1].index;
@@ -107,7 +118,9 @@ public class WaterBiome : Chunk
         }
         return riverCount;
     }
-
+    /// <summary>
+    /// Determine if is a wall
+    /// </summary>
     private void DetermineWall()
     {
         for (int x = 0; x < width; x++)

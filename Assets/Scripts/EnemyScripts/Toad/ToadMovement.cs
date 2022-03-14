@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class ToadMovement : EnemyMovement
 {
-    //time needed to ready jump
+    [Tooltip("Time needed to ready jump")]
     public float readyJump;
-    //readying jump
-    bool readying = true;
-    //jumping
-    bool jumping;
+    [Tooltip("Toad is readying jump")]
+    private bool readying = true;
+    [Tooltip("Toad is jumping")]
+    private bool jumping;
     /// <summary>
     /// sets up basic movement information
     /// </summary>

@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ItemSlot
 {
-    //number of items in current stack
+    [Tooltip("Number of items in slot")]
     private byte currentStack = 0;
-    //reference to inventory item
+    [Tooltip("Reference to inventory item in slot")]
     private InventoryItem itemRef;
-    //durability of current item
+    [Tooltip("Current durability of item in slot")]
     private byte durability;
     /// <summary>
     /// Adds item to slot using given item reference with stack of 1
@@ -126,7 +126,7 @@ public class ItemSlot
     {
         if (itemRef == null)
             return false;
-        return itemRef.fighting;
+        return itemRef.weapon;
     }
     /// <summary>
     /// returns cost to buy item
@@ -136,7 +136,7 @@ public class ItemSlot
     {
         if (itemRef == null)
             return 0;
-        return itemRef.cost;
+        return itemRef.buyCost;
     }
     /// <summary>
     /// Returns identifying number of item
@@ -232,7 +232,7 @@ public class ItemSlot
     /// <returns></returns>
     public int GetCraftCost()
     {
-        return itemRef.craftcost;
+        return itemRef.craftCost;
     }
     /// <summary>
     /// returns item name

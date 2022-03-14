@@ -9,24 +9,24 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class DialogAsset : MonoBehaviour
 {
-    //reference to stall which is using this script
-    public StallManager stall;
-    //game object which displays all dialog
-    public GameObject dialogBox;
-    //manager reference
-    GameManager manager;
-    //string containing all the text in the text asset
-    string fullText;
-    //current text options
-    string[] currentGroupings;
-    //integer value referencing line chosen in current groupings
-    int currentLine = 0;
-    //current line options
+    [Tooltip("Stall manager")]
+    [SerializeField] private StallManager stall;
+    [Tooltip("Dialog box object")]
+    [SerializeField] private GameObject dialogBox;
+    [Tooltip("Game manager")]
+    private GameManager manager;
+    [Tooltip("String containing all the text in the text asset")]
+    private string fullText;
+    [Tooltip("Current text options")]
+    private string[] currentGroupings;
+    [Tooltip("Chosen line number")]
+    private int currentLine = 0;
+    [Tooltip("List of line options")]
     List<string> currentOptions;
-    //strings containing commands that must be performed
-    List<string> commandStrings = new List<string>();
-    //name of npc you are talking to
-    public string npcName;
+    [Tooltip("Lines containing commands")]
+    private List<string> commandStrings = new List<string>();
+    [Tooltip("Name of npc")]
+    [HideInInspector] public string npcName;
     /// <summary>
     /// gets the text asset and sets up lines
     /// </summary>

@@ -6,22 +6,22 @@ using UnityEngine.UI;
 
 public class PlayerFight : MonoBehaviour
 {
-    [Tooltip("player controls")]
-    PlayerControls controls;
-    [Tooltip("game manager")]
-    GameManager manager;
-    [Tooltip("chosen item")]
-    ItemSlot invItem;
-    [Tooltip("player health")] [HideInInspector]
+    [Tooltip("Pplayer controls")]
+    private PlayerControls controls;
+    [Tooltip("Game manager")]
+    private GameManager manager;
+    [Tooltip("Chosen item")]
+    private ItemSlot invItem;
+    [Tooltip("Player health")] [HideInInspector]
     public float health;
-    [Tooltip("max player health")]
-    public float maxHealth = 100;
-    [Tooltip("health slider")]
-    public Slider healthSlider;
-    [Tooltip("enemy layer")]
-    public LayerMask enemy;
-    [Tooltip("player reach")]
-    public float reach;
+    [Tooltip("Max player health")]
+    [SerializeField] private float maxHealth = 100;
+    [Tooltip("Health slider")]
+    [SerializeField] private Slider healthSlider;
+    [Tooltip("Enemy layer")]
+    [SerializeField] private LayerMask enemy;
+    [Tooltip("Player reach")]
+    [SerializeField] private float reach;
     // Start is called before the first frame update
     void Start()
     {

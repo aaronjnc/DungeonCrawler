@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public abstract class InteractableTile : MonoBehaviour
 {
-    //game manager reference
+    [Tooltip("Game manager reference")]
     protected GameManager manager;
     /// <summary>
     /// sets up manager

@@ -4,6 +4,6 @@ using UnityEngine;
 
 public class InteractReference : MonoBehaviour
 {
-    //reference to interactable prefab game object
+    [Tooltip("Interact reference")]
     public GameObject interactable;
 }

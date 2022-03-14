@@ -6,23 +6,23 @@ using UnityEngine.UI;
 
 public class ChosenItem : MonoBehaviour
 {
-    //reference to chosen item
-    public ItemSlot chosenItem;
-    //image for chosen item
-    public Image chosenImage;
-    //textbox for chosen item name
-    public Text itemName;
-    //textbox above list of ingredients (de-activate if no ingredients)
-    public Text ingredient;
-    //textboxes to hold ingredients
-    public Text[] ingredients;
-    //button used to buy item
-    public GameObject buyButton;
-    //button used to sell item
-    public GameObject craftButton;
-    //inventory
-    public StallPlayerInventory inv;
-    //Dictionary of minerals and their count
+    [Tooltip("Reference to chosen item")]
+    [SerializeField] private ItemSlot chosenItem;
+    [Tooltip("Image for chosen item")]
+    [SerializeField] private Image chosenImage;
+    [Tooltip("Textbox for chosen item name")]
+    [SerializeField] private Text itemName;
+    [Tooltip("Textbox above list of ingredients (de-activate if no ingredients)")]
+    [SerializeField] private Text ingredient;
+    [Tooltip("Textboxes to hold ingredients")]
+    [SerializeField] private Text[] ingredients;
+    [Tooltip("Button used to buy item")]
+    [SerializeField] private GameObject buyButton;
+    [Tooltip("Button used to sell item")]
+    [SerializeField] private GameObject craftButton;
+    [Tooltip("Inventory")]
+    [SerializeField] private StallPlayerInventory inv;
+    [Tooltip("Dictionary of minerals and their count")]
     private Dictionary<string, int> invMinerals = new Dictionary<string, int>();
     public void Awake()
     {

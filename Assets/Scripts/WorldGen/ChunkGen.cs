@@ -6,34 +6,59 @@ using System;
 
 public class ChunkGen : MonoBehaviour
 {
+    [Tooltip("ChunkGen script")]
     public static ChunkGen currentWorld;
+    [Tooltip("Game manager")]
     [HideInInspector] public GameManager manager;
+    [Tooltip("Tilemap prefab")]
     public GameObject map;
+    [Tooltip("Grid used for tilemaps")]
     [HideInInspector] public Transform grid;
+    [Tooltip("Wall z position")]
     [HideInInspector] public int mapz;
+    [Tooltip("Floor z position")]
     [HideInInspector] public int floorz;
+    [Tooltip("Player position")]
     private Vector3Int pos = Vector3Int.zero;
+    [Tooltip("Previous player position")]
     private Vector3Int previousPos = Vector3Int.zero;
+    [Tooltip("Player chunk")]
     public Vector2Int currentChunk = Vector2Int.zero;
+    [Tooltip("Hashtable containg all created chunks")]
     private Hashtable chunks;
+    [Tooltip("Array of biome scripts")]
     public Biomes[] biomes;
+    [Tooltip("Player movement script")]
     [HideInInspector] public FreePlayerMove playerMovement;
+    [Tooltip("Width of chunk")]
     public int chunkWidth;
+    [Tooltip("Height of chunk")]
     public int chunkHeight;
+    [Tooltip("World seed")]
     public int seed;
-    public bool randomSeed;
+    [Tooltip("Generate a random world seed")]
+    [SerializeField] private bool randomSeed;
+    [Tooltip("Biome seed")]
     public int biomeseed;
-    public bool randomBiomeSeed;
-    [Range(0, 100)]
-    public int randomFillPercent;
-    [Range(0, 100)]
-    public int randomBiomePercent;
+    [Tooltip("Generate a random biome seed")]
+    [SerializeField] public bool randomBiomeSeed;
+    [Tooltip("Wall fill percent")]
+    [Range(0, 100)] public int randomFillPercent;
+    [Tooltip("Number of wall smooths to perform")]
     public int smooths;
+    [Tooltip("Number of biome smooths to perform")]
     public int biomesmooths;
+    [Tooltip("Enemy spawn chance")]
     public float enemyChance;
+    [Tooltip("Maximum number of enemeis")]
     public int maxenemies;
+    [Tooltip("Enemy parent transform")]
     [HideInInspector] public Transform enemyParent;
+    [Tooltip("Chance of special tile")]
     public int specialTileChance;
+    /// <summary>
+    /// Sets up world
+    /// </summary>
     public void StartUp()
     {
         manager = GetComponent<GameManager>();

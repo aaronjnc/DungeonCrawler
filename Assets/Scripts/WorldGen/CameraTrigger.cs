@@ -5,11 +5,6 @@ using UnityEngine.Tilemaps;
 
 public class CameraTrigger : MonoBehaviour
 {
-    BoxCollider2D cameraCollider;
-    private void Start()
-    {
-        cameraCollider = GetComponent<BoxCollider2D>();
-    }
     /// <summary>
     /// Loads chunks and enemies upon contact
     /// </summary>

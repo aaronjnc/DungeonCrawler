@@ -6,46 +6,66 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
+using static System.Collections.Generic.Dictionary<byte, InventoryItem>;
 
 public class GameManager : MonoBehaviour
 {
+    [Tooltip("Current game manager")]
     public static GameManager currentManager;
     [Header("Game Testing Modes:")]
+    [Tooltip("Test world generation")]
     public bool testingmode = true;
-    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize;
+    [Tooltip("Pregenerated mapsize (size x size)")] 
+    public int testingsize;
+    [Tooltip("Spawn enemies into the game")]
     public bool spawnEnemies;
-
+    [Tooltip("Breaking blocks")]
     [HideInInspector] public bool blockBreaking = false;
-    [HideInInspector] public byte currentTileID;
+    [Tooltip("Current player position")]
     [HideInInspector] public Vector3Int pos = Vector3Int.zero;
-    [HideInInspector] public BlockBreaking destroyandPlace;
-    private Sprite[] sprites;
-    List<string> spriteNames = new List<string>();
+    [Tooltip("Reference to block breaking script")]
+    [HideInInspector] public BlockBreaking blockBreakingScript;
+    [Tooltip("Map z position")]
     [HideInInspector] public int mapz;
+    [Tooltip("Foor z position")]
     [HideInInspector] public int floorz;
-    [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
+    [Tooltip("Player inventory")]
     [HideInInspector] public Inventory inv;
+    [Tooltip("Player is holding a weapon")]
     [HideInInspector] public bool fighting = false;
+    [Tooltip("Item player is currently holding")]
     [HideInInspector] public ItemSlot currentItem;
+    [Tooltip("Inventory is open")]
     [HideInInspector] public bool invOpen = false;
-    [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
-    [HideInInspector] public GameObject character;
+    [Tooltip("Dictionary of all blocks")]
     private Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
+    [Tooltip("Dictionary of all items")]
     private Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
+    [Tooltip("Current chunk of player")]
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
-    [HideInInspector] public int gold = 0;
+    [Tooltip("Game is paused")]
     [HideInInspector] public bool paused = false;
+    [Tooltip("All premade sections")]
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    [Tooltip("String of full text file for dialog")]
     [HideInInspector] public string fullText;
-    public TextAsset[] textFiles;
+    [Tooltip("Load world from file")]
     [HideInInspector] public bool loadFromFile = false;
+    [Tooltip("Name of world")]
     [HideInInspector] public string worldName;
+    [Tooltip("Start time of world")]
     [HideInInspector] public DateTime startTime;
+    [Tooltip("Hours in world")]
     [HideInInspector] public double hours;
+    [Tooltip("ChunkGen script")]
     [HideInInspector] public ChunkGen gen;
+    [Tooltip("Stall items")]
     private List<ItemSlot> stallItems = new List<ItemSlot>();
+    [Tooltip("Stored inventory array")]
     private ItemSlot[,] inventory = new ItemSlot[5, 7];
+    [Tooltip("Player money")]
     private int playerMoney;
+    [Tooltip("Transitioning from dialog to world")]
     [HideInInspector] public bool reopen = false;
     // Start is called before the first frame update
     void Awake()
@@ -70,17 +90,11 @@ public class GameManager : MonoBehaviour
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
             InventoryItem invItem = item.GetComponent<InventoryItem>();
-            items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
         }
         foreach(GameObject item in Resources.LoadAll("PremadeSections"))
         {
             sections.Add(item.GetComponent<PremadeSection>());
-        }
-        sprites = Resources.LoadAll<Sprite>("Images");
-        foreach(Sprite sprite in sprites)
-        {
-            spriteNames.Add(sprite.name);
         }
     }
     /// <summary>
@@ -97,9 +111,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void DisableBlockBreaking()
     {
-        if (destroyandPlace.prevmapPos != Vector3Int.zero)
-            destroyandPlace.ResetPrevious();
-        destroyandPlace.enabled = false;
+        if (blockBreakingScript.prevmapPos != Vector3Int.zero)
+            blockBreakingScript.ResetPrevious();
+        blockBreakingScript.enabled = false;
     }
     /// <summary>
     /// Returns the Script related to the Item name
@@ -108,7 +122,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public InventoryItem GetItem(string name)
     {
-        foreach (InventoryItem item in items)
+        foreach (InventoryItem item in itemScripts.Values)
         {
             if (item.itemName.Equals(name))
                 return item;
@@ -214,8 +228,7 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void SetValues()
     {
-        destroyandPlace = GameObject.Find("Grid").GetComponent<BlockBreaking>();
-        character = GameObject.Find("Player");
+        blockBreakingScript = GameObject.Find("Grid").GetComponent<BlockBreaking>();
         gen.enabled = true;
         gen.StartUp();
         startTime = DateTime.Now;
@@ -224,9 +237,9 @@ public class GameManager : MonoBehaviour
     /// Returns list of item scripts
     /// </summary>
     /// <returns>List of inventory items</returns>
-    public List<InventoryItem> GetItemScripts()
+    public ValueCollection GetItemScripts()
     {
-        return items;
+        return itemScripts.Values;
     }
     /// <summary>
     /// Adds items to stallitems

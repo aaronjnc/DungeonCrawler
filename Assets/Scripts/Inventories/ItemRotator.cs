@@ -7,34 +7,32 @@ using UnityEngine.InputSystem;
 
 public class ItemRotator : MonoBehaviour
 {
-    //image object for rotator
-    public Image itemRotator;
-    //slots for expanded rotator
-    public ItemSlot[] itemSlots = new ItemSlot[7];
-    //sprites for the full rotator
-    public Sprite[] fullRotators = new Sprite[7];
-    //images for expanded rotator
-    public List<Image> images = new List<Image>();
-    //sprite for minimized rotator
-    public Sprite smallRotator;
-    //image slot for chosen item
-    public Image centralImage;
-    //player controls reference
-    PlayerControls controls;
-    //true if rotator is expanded
-    bool open = false;
-    //reference to player movement script
-    public FreePlayerMove playerMovement;
-    //chosen item index
+    [Tooltip("Image of item rotator")]
+    [SerializeField] private Image itemRotator;
+    [Tooltip("Item slots of item rotator")]
+    [SerializeField] private ItemSlot[] itemSlots = new ItemSlot[7];
+    [Tooltip("Sprites for different item rotator stages")]
+    [SerializeField] private Sprite[] fullRotators = new Sprite[7];
+    [Tooltip("Images for chosen items on rotator")]
+    [SerializeField] private List<Image> images = new List<Image>();
+    [Tooltip("Image for chosen item")]
+    [SerializeField] private Image chosenItem;
+    [Tooltip("Player controls")]
+    private PlayerControls controls;
+    [Tooltip("Item rotator is expanded")]
+    private bool open = false;
+    [Tooltip("Player movement script")]
+    [SerializeField] private FreePlayerMove playerMovement;
+    [Tooltip("Index of chosen item in inventory chosen items")]
     public int current = 0;
-    //inventory reference
-    public Inventory inv;
-    //game manager reference
-    GameManager manager;
-    //has rotator been instantiated
-    bool started = false;
-    //player renderer
-    public SpriteRenderer playerRenderer;
+    [Tooltip("Player inventory")]
+    [SerializeField] private Inventory inv;
+    [Tooltip("Game manager")]
+    private GameManager manager;
+    [Tooltip("Rotator has been instantiated")]
+    private bool started = false;
+    [Tooltip("Sprite renderer of player")]
+    [SerializeField] private SpriteRenderer playerRenderer;
     /// <summary>
     /// call start method on start up
     /// </summary>
@@ -62,7 +60,7 @@ public class ItemRotator : MonoBehaviour
         controls.Inventory.ItemRotator.canceled += MinimizeRotator;
         controls.Inventory.ItemRotator.Enable();
         controls.Movement.MousePosition.Enable();
-        centralImage.sprite = itemSlots[current].GetSprite();
+        chosenItem.sprite = itemSlots[current].GetSprite();
         itemRotator.gameObject.SetActive(false);
         started = true;
         current = 0;
@@ -131,15 +129,15 @@ public class ItemRotator : MonoBehaviour
                 current = 5;
             }
             itemRotator.sprite = fullRotators[current];
-            centralImage.sprite = itemSlots[current].GetSprite();
+            chosenItem.sprite = itemSlots[current].GetSprite();
             if (itemSlots[current].GetSprite() != null)
             {
-                centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+                chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 255);
 
             }
             else
             {
-                centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 0);
+                chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 0);
             }
             CurrentItem();
         }
@@ -163,15 +161,15 @@ public class ItemRotator : MonoBehaviour
             else
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
-        centralImage.sprite = itemSlots[current].GetSprite();
+        chosenItem.sprite = itemSlots[current].GetSprite();
         itemRotator.sprite = fullRotators[current];
         if (itemSlots[current].GetSprite() != null)
         {
-            centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+            chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 255);
         }
         else
         {
-            centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 0);
+            chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
         CurrentItem();
     }
