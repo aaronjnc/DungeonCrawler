@@ -6,12 +6,12 @@ using UnityEngine.SceneManagement;
 
 public class CreateWorld : MonoBehaviour
 {
-    [Tooltip("input for world name")]
-    public InputField inputbox;
-    [Tooltip("game object for invalid world name")]
-    public GameObject failureText;
-    [Tooltip("array of text objects for loaded worlds")]
-    public Text[] loadedWorlds;
+    [Tooltip("Input for world name")]
+    [SerializeField] private InputField inputbox;
+    [Tooltip("Game object for invalid world name")]
+    [SerializeField] private GameObject failureText;
+    [Tooltip("Array of text objects for loaded worlds")]
+    [SerializeField] private Text[] loadedWorlds;
     /// <summary>
     /// Creates new world with input information
     /// </summary>

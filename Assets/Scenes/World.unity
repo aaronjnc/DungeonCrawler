@@ -1128,7 +1128,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 912ade0818909a44a83fa5f3949df30b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spriteName: 
   prevmapPos: {x: 0, y: 0, z: 0}
   rotator: {fileID: 1712494413}
   inventory: {fileID: 593902144}
@@ -11838,7 +11837,7 @@ GameObject:
   - component: {fileID: 1712494411}
   - component: {fileID: 1712494413}
   m_Layer: 5
-  m_Name: ItemRotator
+  m_Name: ChosenItem
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -11931,8 +11930,7 @@ MonoBehaviour:
   - {fileID: 1324373515}
   - {fileID: 1578631262}
   - {fileID: 1703138710}
-  smallRotator: {fileID: 21300000, guid: 61d255677bb716241b3e49351ab5ce3a, type: 3}
-  centralImage: {fileID: 783437203}
+  chosenItem: {fileID: 783437203}
   playerMovement: {fileID: 668468346}
   current: 0
   inv: {fileID: 593902144}

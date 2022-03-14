@@ -1,17 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class SpiderAttack : EnemyAttack
 {
-    //damage count for the stinger
-    public float stingerDamage;
-    //shoot distance for web
-    public float webReach;
-    //how long webbing lasts
-    public float webTime;
-    //how long posion lasts
-    public float poisonTime;
+    [Tooltip("Damage done by stinger attack")]
+    [SerializeField] private float stingerDamage;
+    [Tooltip("Reach of web attack")]
+    [SerializeField] private float webReach;
+    [Tooltip("How long webbing lasts")]
+    [SerializeField] private float webTime;
+    [Tooltip("How long poison lasts")]
+    [SerializeField] private float poisonTime;
     /// <summary>
     /// Determines type of attack to perform based on player location
     /// </summary>
@@ -55,10 +54,10 @@ public class SpiderAttack : EnemyAttack
                 }
             }
         }
-        IEnumerator webbed(FreePlayerMove playerMove)
-        {
-            yield return new WaitForSeconds(webTime);
-            playerMove.canMove = true;
-        }
+    }
+    IEnumerator webbed(FreePlayerMove playerMove)
+    {
+        yield return new WaitForSeconds(webTime);
+        playerMove.canMove = true;
     }
 }

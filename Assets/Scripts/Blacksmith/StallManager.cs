@@ -8,21 +8,22 @@ using static UnityEngine.InputSystem.InputAction;
 /// </summary>
 public class StallManager : MonoBehaviour
 {
+    [Tooltip("Player controls")]
     private PlayerControls controls;
-    //the type of stall this is
+    [Tooltip("Stall type")]
     public Stall.StallType stallType;
-    //array of images to hold items for sale
-    public Image[] images;
-    //list of items in the stall
-    public List<ItemSlot> inventoryItems = new List<ItemSlot>();
-    //reference to chosen item script for when item is chosen
-    public ChosenItem chosenItem;
-    //inventory gameobject
-    public GameObject inventory;
-    //dialog gameobject
-    public GameObject dialog;
+    [Tooltip("Stall images")]
+    [SerializeField] private Image[] images;
+    [Tooltip("List of items in the stall")]
+    [SerializeField] private List<ItemSlot> stallitems = new List<ItemSlot>();
+    [Tooltip("Chosen item")]
+    [SerializeField] private ChosenItem chosenItem;
+    [Tooltip("Inventory object")]
+    [SerializeField] private GameObject inventory;
+    [Tooltip("Dialog object")]
+    [SerializeField] private GameObject dialog;
     /// <summary>
-    /// Adds new item slots to inventory and deactivates image slots
+    /// Adds new item slots to stall and deactivates image slots
     /// </summary>
     private void Awake()
     {
@@ -31,7 +32,7 @@ public class StallManager : MonoBehaviour
         controls.Interact.Inventory.Enable();
         for (int i = 0; i < images.Length; i++)
         {
-            inventoryItems.Add(new ItemSlot());
+            stallitems.Add(new ItemSlot());
             images[i].gameObject.SetActive(false);
         }
     }
@@ -56,8 +57,8 @@ public class StallManager : MonoBehaviour
         {
             if (i < items.Count)
             {
-                inventoryItems[i].AddExisting(items[i]);
-                images[i].sprite = inventoryItems[i].GetSprite();
+                stallitems[i].AddExisting(items[i]);
+                images[i].sprite = stallitems[i].GetSprite();
                 images[i].gameObject.SetActive(true);
             }
             else
@@ -73,7 +74,7 @@ public class StallManager : MonoBehaviour
     /// <param name="idx"></param> index of chosen item
     public void ChooseItem(int idx)
     {
-        chosenItem.ChooseItem(inventoryItems[idx]);
+        chosenItem.ChooseItem(stallitems[idx]);
     }
     /// <summary>
     /// Reopens the dialog box

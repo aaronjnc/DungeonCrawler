@@ -5,21 +5,21 @@ using UnityEngine.UI;
 
 public class StallPlayerInventory : MonoBehaviour
 {
-    // inventory object
-    public GameObject inventoryObj;
-    //array of inventory images
+    [Tooltip("Inventory object")]
+    [SerializeField] private GameObject inventoryObj;
+    [Tooltip("Array of inventory images")]
     private GameObject[,] images = new GameObject[5, 7];
-    //array of inventory slots
+    [Tooltip("Array of inventory slots")]
     private ItemSlot[,] inv = new ItemSlot[5, 7];
-    //game manager
+    [Tooltip("Game manager")]
     private GameManager manager;
-    //chosen image
-    public Image chosenImage;
-    //player money
+    [Tooltip("Chosen image")]
+    [SerializeField] private Image chosenImage;
+    [Tooltip("Player money")]
     private int money;
-    //position of chosen item
+    [Tooltip("Inventory position of chosen item")]
     private Vector2Int chosenItem;
-    //true if inventory is set up
+    [Tooltip("Inventory is setup")]
     private bool setUp = false;
     /// <summary>
     /// sets up the inventory

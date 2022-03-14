@@ -8,13 +8,17 @@ using System;
 public abstract class Chunk
 {
     public abstract float chance { get; }
+    [Tooltip("Biome ID of this chunk")]
     public byte biomeId;
     protected GameManager manager { get { return ChunkGen.currentWorld.manager; } }
-    public Tilemap map;
+    [Tooltip("Tilemap used for this chunk")]
+    [SerializeField] private Tilemap map;
     protected GameObject tilemap { get { return ChunkGen.currentWorld.map; } }
     protected Transform grid { get { return ChunkGen.currentWorld.grid; } }
     protected Biomes[] biomeScripts { get { return ChunkGen.currentWorld.biomes; } }
+    [Tooltip("Wall z position")]
     protected int mapz = 0;
+    [Tooltip("Floor z position")]
     protected int floorz = 1;
     protected int width { get { return ChunkGen.currentWorld.chunkWidth; } }
     protected int height { get { return ChunkGen.currentWorld.chunkHeight; } }
@@ -24,21 +28,35 @@ public abstract class Chunk
     protected float enemyChance { get { return ChunkGen.currentWorld.enemyChance; } }
     protected int maxenemies { get { return ChunkGen.currentWorld.maxenemies; } }
     protected Transform enemyParent { get { return ChunkGen.currentWorld.enemyParent; } }
+    [Tooltip("Array of bytes representing chunk walls")]
     protected byte[,] blocks;
+    [Tooltip("Array of bytes representing block biomes")]
     protected byte[,] biomes;
+    [Tooltip("Array of bytes representing floor blocks in chunk")]
     protected byte[,] floor;
+    [Tooltip("Chunk seed")]
     protected int seed;
+    [Tooltip("Biome seed")]
     protected int biomeseed;
+    [Tooltip("Number of enemies to spawn in this chunk")]
     protected int numEnemies;
+    [Tooltip("Chunk is generated")]
     public bool generated = false;
+    [Tooltip("Chunk position")]
     public Vector2Int chunkPos;
+    [Tooltip("List of preset tile positions")]
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
+    [Tooltip("List of enemies in chunk")]
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
+    [Tooltip("List of interactables in chunk")]
     protected List<GameObject> interactables = new List<GameObject>();
+    [Tooltip("List of changed blocks in chunk")]
     protected Dictionary<Vector2Int, byte> changes = new Dictionary<Vector2Int, byte>();
+    [Tooltip("Random number generator")]
     protected System.Random random;
-    protected abstract void FillBiomeMap();
+    [Tooltip("Chunk has been changed")]
     public bool changed = false;
+    protected abstract void FillBiomeMap();
     /// <summary>
     /// Initializes chunk script at given chunk position
     /// </summary>

@@ -11,41 +11,41 @@ public class FreePlayerMove : MonoBehaviour
     private Rigidbody2D player;
     [Tooltip("player controls")]
     private PlayerControls controls;
-    //game manager
+    [Tooltip("Game manager")]
     private GameManager manager;
-    //look direction
-    public Vector2 dir = Vector2.zero;
-    //previous look direction
+    [Tooltip("Movement direction")]
+    [HideInInspector] public Vector2 dir = Vector2.zero;
+    [Tooltip("Previous look direction")]
     private Vector2 previousDir = Vector2.zero;
-    //player speed
-    public float speed = 5f;
-    //player rotation speed
-    public float rotSpeed = 10f;
-    //block breaking script
+    [Tooltip("Base speed of player")]
+    [SerializeField] private float speed = 5f;
+    [Tooltip("Rotation speed of player")]
+    [SerializeField] private float rotSpeed = 10f;
+    [Tooltip("Block breaking script")]
     private BlockBreaking blockBreaking;
-    //current tile position
+    [Tooltip("Integer position of player")]
     public Vector3Int pos = Vector3Int.zero;
-    //previous tile position
+    [Tooltip("Previous integer position of player")]
     private Vector3Int prevpos = Vector3Int.zero;
-    //inventory
-    public GameObject inv;
-    //rotation direction
+    [Tooltip("Inventory game object")]
+    [SerializeField] private GameObject inv;
+    [Tooltip("Look direction")]
     private Vector2 rotDir = Vector2.zero;
-    //menu object
-    public GameObject menu;
-    //magic menu object
-    public GameObject magicTree;
-    //look position
+    [Tooltip("Menu game object")]
+    [SerializeField] private GameObject menu;
+    [Tooltip("Magic menu game object")]
+    [SerializeField] private GameObject magicTree;
+    [Tooltip("Position of tile being looked at")]
     private Vector3Int lookPos = Vector3Int.zero;
-    //previous look position
+    [Tooltip("Position of tile previously being looked at")]
     private Vector3Int prevlookPos = Vector3Int.zero;
-    //interactable layer mask
+    [Tooltip("Layer of interactable objects")]
     public LayerMask interactable;
-    [Tooltip("current chunk")]
+    [Tooltip("Current chunk player is in")]
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
-    [Tooltip("player can move")]
-    public bool canMove = true;
-    [Tooltip("sprint modifier")]
+    [Tooltip("Player can move")]
+    [HideInInspector] public bool canMove = true;
+    [Tooltip("Sprint modifier")]
     private float sprintMod = 1f;
     void Start()
     {

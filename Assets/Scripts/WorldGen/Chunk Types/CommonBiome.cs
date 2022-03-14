@@ -8,7 +8,6 @@ public class CommonBiome : Chunk
     {
         biomeId = 0;
     }
-
     public override float chance {
         get 
         {

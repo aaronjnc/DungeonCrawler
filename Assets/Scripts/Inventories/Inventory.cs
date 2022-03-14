@@ -8,22 +8,22 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class Inventory : MonoBehaviour
 {
-    //player money
+    [Tooltip("Amount of money player has")]
     private int playerMoney = 0;
-    //manager reference
+    [Tooltip("Game manager")]
     private GameManager manager;
-    //2D array of images
+    [Tooltip("Array of inventory item game objects")]
     private GameObject[,] images = new GameObject[5, 7];
-    //array of images for chosen objects
-    public GameObject[] chosenImages = new GameObject[7];
-    //2D array of item slots to represent inventory
+    [Tooltip("Array of chosen item game objects")]
+    [SerializeField] private GameObject[] chosenImages = new GameObject[7];
+    [Tooltip("Array of inventory item slots")]
     private ItemSlot[,] itemSlots = new ItemSlot[5, 7];
-    //list of chosen items vector2 positions
+    [Tooltip("Inventory positions of chosen items")]
     [HideInInspector] public List<Vector2Int> chosenItems = new List<Vector2Int>();
-    //reference to item rotator
+    [Tooltip("Item rotator script")]
     public ItemRotator itemRotator;
-    //money text objects
-    public Text[] moneyObjects;
+    [Tooltip("Inventory money text boxes")]
+    [SerializeField] private Text[] moneyObjects;
     /// <summary>
     /// Sets up inventory
     /// </summary>

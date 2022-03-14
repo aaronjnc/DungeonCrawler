@@ -5,12 +5,16 @@ using UnityEngine;
 [System.Serializable]
 public class ChunkSave
 {
-    [Tooltip("chunk x position")]
+    [Tooltip("Chunk x position")]
     private int chunkX;
-    [Tooltip("chunk y position")]
+    [Tooltip("Chunk y position")]
     private int chunkY;
-    [Tooltip("string array of changed blocks")]
+    [Tooltip("String array of changed blocks")]
     private string[] changed;
+    /// <summary>
+    /// Saves chunk data
+    /// </summary>
+    /// <param name="chunk"></param>
     public ChunkSave(Chunk chunk)
     {
         chunkX = chunk.chunkPos.x;

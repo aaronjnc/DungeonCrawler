@@ -23,7 +23,6 @@ public static class SaveSystem
     /// <summary>
     /// loads world with given path
     /// </summary>
-    /// <param name="path">path of world to load</param>
     public static void Load()
     {
         GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
