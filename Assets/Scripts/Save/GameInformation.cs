@@ -9,10 +9,15 @@ using System.Runtime.Serialization.Formatters.Binary;
 [System.Serializable]
 public class GameInformation : ScriptableObject
 {
+    [Tooltip("Name of chunks folder")]
     private const string chunks = "world";
+    [Tooltip("string representing main folder for save")]
     private string saveLocation;
+    [Tooltip("string representing chunk save location")]
     private string chunkLocation;
+    [Tooltip("Binary formatter used for serialization")]
     private BinaryFormatter formatter;
+    [Tooltip("instance of GameInformation")]
     private static GameInformation _instance;
     public static GameInformation Instance
     {
@@ -32,6 +37,10 @@ public class GameInformation : ScriptableObject
             _instance = this;
         }
     }
+    /// <summary>
+    /// Sets save location with given string
+    /// </summary>
+    /// <param name="location"></param>
     public void SetLocation(string location)
     {
         formatter = new BinaryFormatter();
@@ -42,6 +51,10 @@ public class GameInformation : ScriptableObject
             Directory.CreateDirectory(chunkLocation);
         }
     }
+    /// <summary>
+    /// Saves all world data
+    /// </summary>
+    /// <param name="manager"></param>
     public void SaveAll(GameManager manager)
     {
         SaveGameInfo(manager);
@@ -82,6 +95,10 @@ public class GameInformation : ScriptableObject
             }
         }
     }
+    /// <summary>
+    /// Saves player information
+    /// </summary>
+    /// <param name="player"></param>
     public void SavePlayer(GameObject player)
     {
         string playerInfo = Path.Combine(saveLocation, "player.txt");
@@ -90,6 +107,10 @@ public class GameInformation : ScriptableObject
         formatter.Serialize(fs, p);
         fs.Close();
     }
+    /// <summary>
+    /// saves inventory
+    /// </summary>
+    /// <param name="inv"></param>
     public void SaveInventory(Inventory inv)
     {
         string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
@@ -98,6 +119,10 @@ public class GameInformation : ScriptableObject
         formatter.Serialize(fs, i);
         fs.Close();
     }
+    /// <summary>
+    /// Loads inventory
+    /// </summary>
+    /// <returns></returns>
     public InventorySave LoadInventory()
     {
         string inventoryInfo = Path.Combine(saveLocation, "inventory.txt");
@@ -106,6 +131,10 @@ public class GameInformation : ScriptableObject
         fs.Close();
         return i;
     }
+    /// <summary>
+    /// loads player
+    /// </summary>
+    /// <returns></returns>
     public PlayerSave LoadPlayer()
     {
         string playerInfo = Path.Combine(saveLocation, "player.txt");
@@ -114,6 +143,10 @@ public class GameInformation : ScriptableObject
         fs.Close();
         return p;
     }
+    /// <summary>
+    /// loads world
+    /// </summary>
+    /// <returns></returns>
     public List<ChunkSave> LoadWorld()
     {
         List<ChunkSave> chunks = new List<ChunkSave>();
@@ -126,6 +159,10 @@ public class GameInformation : ScriptableObject
         }
         return chunks;
     }
+    /// <summary>
+    /// load game information
+    /// </summary>
+    /// <returns></returns>
     public WorldInfo LoadGameInfo()
     {
         string worldInfo = Path.Combine(saveLocation, "worldInfo.txt");

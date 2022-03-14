@@ -18,7 +18,7 @@ public class CommonBiome : Chunk
     public override void GenerateChunk()
     {
         FillBiomeMap();
-        GenerateMaps();
+        CreateTileMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -27,7 +27,7 @@ public class CommonBiome : Chunk
         DetermineBlock();
         SpecialBlockGeneration();
         AddChangedBlocks();
-        DrawMap();
+        DrawTileMap();
         generated = true;
     }
     protected override void FillBiomeMap()

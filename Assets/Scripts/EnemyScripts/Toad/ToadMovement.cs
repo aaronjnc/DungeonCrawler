@@ -29,7 +29,7 @@ public class ToadMovement : EnemyMovement
         if (attacking)
         {
             nextPoint = new Vector2(attack.lastLocation.x, attack.lastLocation.y);
-            getEndRotation();
+            GetEndRotation();
             moving = true;
         }
         if (!moving && !waiting)
@@ -48,7 +48,7 @@ public class ToadMovement : EnemyMovement
                 if (readying)
                 {
                     readying = false;
-                    wait(readyJump);
+                    Wait(readyJump);
                     jumping = true;
                 } 
                 if (jumping)
@@ -59,7 +59,7 @@ public class ToadMovement : EnemyMovement
                     {
                         waiting = true;
                         moving = false;
-                        StartCoroutine(wait(waitTime));
+                        StartCoroutine(Wait(waitTime));
                     }
                 }
 
@@ -88,7 +88,7 @@ public class ToadMovement : EnemyMovement
     /// </summary>
     /// <param name="time"> time to wait</param>
     /// <returns></returns>
-    IEnumerator wait(float time)
+    IEnumerator Wait(float time)
     {
         yield return new WaitForSeconds(time);
         waiting = false;

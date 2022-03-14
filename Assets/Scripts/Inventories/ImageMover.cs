@@ -20,13 +20,13 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     //manager reference
     GameManager manager;
     //if mouse is held down on image
-    bool mouseDown = false;
+    private bool mouseDown = false;
     //initial position of image
     Vector3 startpos = Vector3.zero;
     //array position of item
     public Vector2Int itemPos;
     //inventory reference
-    Inventory inv;
+    private Inventory inv;
     /// <summary>
     /// Sets up manager, inventory reference, and start pos
     /// </summary>
@@ -53,7 +53,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
     /// returns item array position
     /// </summary>
     /// <returns>Vector2Int array pos</returns>
-    public Vector2Int getArrayPos()
+    public Vector2Int GetArrayPos()
     {
         return itemPos;
     }
@@ -116,7 +116,7 @@ public class ImageMover : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         }
         if (closestObj != null)
         {
-            inv.DropItem(getArrayPos(), closestObj.GetComponent<ImageMover>().getArrayPos());
+            inv.DropItem(GetArrayPos(), closestObj.GetComponent<ImageMover>().GetArrayPos());
         }
         transform.position = startpos;
     }

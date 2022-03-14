@@ -36,21 +36,21 @@ public class DialogAsset : MonoBehaviour
         fullText = manager.fullText;
         npcName = fullText.Split('\n')[0];
         fullText = string.Join("\n", Regex.Split(fullText, "\n").Skip(1).ToArray());
-        getLines(fullText);
+        GetLines(fullText);
     }
     /// <summary>
     /// takes the large string and separates current options
     /// </summary>
     /// <param name="text"> text asset for dialog
     /// </param> 
-    void getLines(string text)
+    void GetLines(string text)
     {
         currentOptions = new List<string>();
         currentGroupings = text.Split(currentLine.ToString()[0]);
         for (int i = 1; i < currentGroupings.Length; i++)
         {
             currentOptions.Add(currentGroupings[i].Split('\n')[0]);
-            checkForCommand(currentOptions[i-1]);
+            CheckForCommand(currentOptions[i-1]);
         }
     }
     /// <summary>
@@ -58,21 +58,21 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <param name="choice"> line number
     /// </param> 
-    public void chooseLine(int choice)
+    public void ChooseLine(int choice)
     {
         choice++;
         var newLines = Regex.Split(currentGroupings[choice], "\n").Skip(1);
         string currentGroup = string.Join("\n", newLines.ToArray());
         currentLine++;
-        performCommand(currentOptions[choice-1]);
+        PerformCommand(currentOptions[choice-1]);
         if (!currentGroup.Contains(currentLine.ToString()))
         {
             currentLine = 0;
-            getLines(fullText);
+            GetLines(fullText);
         } 
         else
         {
-            getLines(currentGroup);
+            GetLines(currentGroup);
         }
     }
     /// <summary>
@@ -80,7 +80,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <param name="lineChoice"> line to check
     /// </param> 
-    void checkForCommand(string lineChoice)
+    void CheckForCommand(string lineChoice)
     {
         if (lineChoice.Contains("[") && lineChoice.Contains("]"))
         {
@@ -92,7 +92,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <param name="chosenLine"> line chosen with command
     /// </param> 
-    void performCommand(string chosenLine)
+    void PerformCommand(string chosenLine)
     {
         if (commandStrings.Count == 0)
             return;
@@ -109,7 +109,7 @@ public class DialogAsset : MonoBehaviour
                     {
                         case "Leave":
                             manager.reopen = true;
-                            manager.loadWorld();
+                            manager.LoadFromFile();
                             return;
                         case "Buy":
                             stall.AddItems(manager.GetStallItems());
@@ -128,7 +128,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <returns> string list of options
     /// </returns> 
-    public List<string> getLineOptions()
+    public List<string> GetLineOptions()
     {
         List<string> lineOptions = new List<string>();
         foreach (string option in currentOptions)

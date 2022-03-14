@@ -15,7 +15,7 @@ public class MixedBiome : Chunk
     public override void GenerateChunk()
     {
         FillBiomeMap();
-        GenerateMaps();
+        CreateTileMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -28,7 +28,7 @@ public class MixedBiome : Chunk
         DetermineBlock();
         SpecialBlockGeneration();
         AddChangedBlocks();
-        DrawMap();
+        DrawTileMap();
         generated = true;
     }
 
@@ -158,7 +158,7 @@ public class MixedBiome : Chunk
                     if (ChunkGen.currentWorld.ChunkGenerated(relPos))
                     {
                         Chunk adjacentChunk = ChunkGen.currentWorld.GetChunk(relPos);
-                        biomeCount[adjacentChunk.GetBiome(newgridX, newgridY)] += 1;
+                        biomeCount[adjacentChunk.GetTileBiome(newgridX, newgridY)] += 1;
                     }
                 }
                 else if (x != gridX || y != gridY)

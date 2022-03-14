@@ -10,6 +10,10 @@ public class CameraTrigger : MonoBehaviour
     {
         cameraCollider = GetComponent<BoxCollider2D>();
     }
+    /// <summary>
+    /// Loads chunks and enemies upon contact
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
         EnemyMovement enemy;
@@ -20,6 +24,10 @@ public class CameraTrigger : MonoBehaviour
         if (collision.gameObject.tag.Equals("MapCollider"))
             ChunkGen.currentWorld.LoadChunk(collision.gameObject.transform.parent.transform.position);
     }
+    /// <summary>
+    /// Unloads enemies and chunks when leaving
+    /// </summary>
+    /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
         EnemyMovement enemy;

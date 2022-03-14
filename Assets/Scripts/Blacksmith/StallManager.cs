@@ -8,7 +8,7 @@ using static UnityEngine.InputSystem.InputAction;
 /// </summary>
 public class StallManager : MonoBehaviour
 {
-    PlayerControls controls;
+    private PlayerControls controls;
     //the type of stall this is
     public Stall.StallType stallType;
     //array of images to hold items for sale
@@ -17,7 +17,9 @@ public class StallManager : MonoBehaviour
     public List<ItemSlot> inventoryItems = new List<ItemSlot>();
     //reference to chosen item script for when item is chosen
     public ChosenItem chosenItem;
+    //inventory gameobject
     public GameObject inventory;
+    //dialog gameobject
     public GameObject dialog;
     /// <summary>
     /// Adds new item slots to inventory and deactivates image slots
@@ -33,6 +35,10 @@ public class StallManager : MonoBehaviour
             images[i].gameObject.SetActive(false);
         }
     }
+    /// <summary>
+    /// Enables inventory when 'i' is pressed
+    /// </summary>
+    /// <param name="ctx"></param>
     private void EnableInventory(CallbackContext ctx)
     {
         if (inventory.activeInHierarchy)
@@ -50,8 +56,8 @@ public class StallManager : MonoBehaviour
         {
             if (i < items.Count)
             {
-                inventoryItems[i].addExisting(items[i]);
-                images[i].sprite = inventoryItems[i].getSprite();
+                inventoryItems[i].AddExisting(items[i]);
+                images[i].sprite = inventoryItems[i].GetSprite();
                 images[i].gameObject.SetActive(true);
             }
             else
@@ -69,11 +75,16 @@ public class StallManager : MonoBehaviour
     {
         chosenItem.ChooseItem(inventoryItems[idx]);
     }
-
+    /// <summary>
+    /// Reopens the dialog box
+    /// </summary>
     public void ReopenDialog()
     {
         dialog.SetActive(true);
     }
+    /// <summary>
+    /// Disable controls
+    /// </summary>
     private void OnDestroy()
     {
         if (controls != null)

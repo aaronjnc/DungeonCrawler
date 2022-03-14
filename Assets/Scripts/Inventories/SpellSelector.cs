@@ -6,12 +6,19 @@ using UnityEngine.InputSystem;
 
 public class SpellSelector : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
-    GameManager manager;
-    bool mouseDown = false;
+    //game manager
+    private GameManager manager;
+    //mouse is down
+    private bool mouseDown = false;
+    //start pos of player
     Vector3 startpos = Vector3.zero;
+    //item position
     Vector2Int itemPos;
+    //spell manager script
     public SpellManager spellManager;
+    //activated
     public bool activated;
+    //spell position
     public int spellPos;
     // Start is called before the first frame update
     void Start()
@@ -19,12 +26,19 @@ public class SpellSelector : MonoBehaviour, IPointerDownHandler, IPointerUpHandl
         manager = GameObject.Find("GameController").GetComponent<GameManager>();
         startpos = transform.position;
     }
-
+    /// <summary>
+    /// On mouse press
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerDown(PointerEventData eventData)
     {
         if (activated)
             mouseDown = true;
     }
+    /// <summary>
+    /// On mouse lift
+    /// </summary>
+    /// <param name="eventData"></param>
     public void OnPointerUp(PointerEventData eventData)
     {
         if (mouseDown)

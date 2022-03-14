@@ -15,7 +15,7 @@ public class SpiderAttack : EnemyAttack
     /// <summary>
     /// Determines type of attack to perform based on player location
     /// </summary>
-    protected override void performAttack()
+    protected override void PerformAttack()
     {
         Collider2D playerColl = Physics2D.OverlapCircle(transform.position, webReach, player);
         if (playerColl != null)

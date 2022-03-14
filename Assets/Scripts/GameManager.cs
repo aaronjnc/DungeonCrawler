@@ -10,24 +10,16 @@ using System;
 public class GameManager : MonoBehaviour
 {
     public static GameManager currentManager;
-    [Tooltip("Eliminate lone tiles")] public bool revisiting = false;
-
-    [Header("Modes:")]
+    [Header("Game Testing Modes:")]
     public bool testingmode = true;
     [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize;
     public bool spawnEnemies;
 
-    [Header("Abilities:")]
-    [HideInInspector]
-    public bool blockBreaking = false;
-    [HideInInspector]
-    public byte currentTileID;
-    [HideInInspector]
-    public Vector3Int pos = Vector3Int.zero;
-    [Header("Script Refs:")]
-    public DestroyandPlace destroyandPlace;
-    Sprite[] sprites;
-    Sprite[] posts;
+    [HideInInspector] public bool blockBreaking = false;
+    [HideInInspector] public byte currentTileID;
+    [HideInInspector] public Vector3Int pos = Vector3Int.zero;
+    [HideInInspector] public BlockBreaking destroyandPlace;
+    private Sprite[] sprites;
     List<string> spriteNames = new List<string>();
     [HideInInspector] public int mapz;
     [HideInInspector] public int floorz;
@@ -37,11 +29,11 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public ItemSlot currentItem;
     [HideInInspector] public bool invOpen = false;
     [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
-    public GameObject character;
-    Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
-    Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
+    [HideInInspector] public GameObject character;
+    private Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
+    private Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
-    public int gold = 0;
+    [HideInInspector] public int gold = 0;
     [HideInInspector] public bool paused = false;
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
     [HideInInspector] public string fullText;
@@ -50,15 +42,15 @@ public class GameManager : MonoBehaviour
     [HideInInspector] public string worldName;
     [HideInInspector] public DateTime startTime;
     [HideInInspector] public double hours;
-    public ChunkGen gen;
+    [HideInInspector] public ChunkGen gen;
     private List<ItemSlot> stallItems = new List<ItemSlot>();
     private ItemSlot[,] inventory = new ItemSlot[5, 7];
     private int playerMoney;
-    public bool initialStartUp = true;
-    public bool reopen = false;
+    [HideInInspector] public bool reopen = false;
     // Start is called before the first frame update
     void Awake()
     {
+        gen = GetComponent<ChunkGen>();
         GameInformation.CreateInstance<GameInformation>();
         if (!Directory.Exists(Application.persistentDataPath + "/saves"))
         {
@@ -86,14 +78,9 @@ public class GameManager : MonoBehaviour
             sections.Add(item.GetComponent<PremadeSection>());
         }
         sprites = Resources.LoadAll<Sprite>("Images");
-        posts = Resources.LoadAll<Sprite>("Images/Posts");
         foreach(Sprite sprite in sprites)
         {
             spriteNames.Add(sprite.name);
-        }
-        foreach(Sprite post in posts)
-        {
-            spriteNames.Add(post.name);
         }
     }
     /// <summary>
@@ -106,9 +93,9 @@ public class GameManager : MonoBehaviour
         return blocks[tileID].tile;
     }
     /// <summary>
-    /// Resets the tile to what it previously was before highlighted
+    /// Used to disable destroying blocks
     /// </summary>
-    public void ResetPreviousTile()
+    public void DisableBlockBreaking()
     {
         if (destroyandPlace.prevmapPos != Vector3Int.zero)
             destroyandPlace.ResetPrevious();
@@ -193,15 +180,27 @@ public class GameManager : MonoBehaviour
         paused = false;
         Time.timeScale = 1;
     }
+    /// <summary>
+    /// Assigns given text file to the fullText property
+    /// </summary>
+    /// <param name="text">Text file</param>
     public void assignTextFile(TextAsset text)
     {
         fullText = text.text;
     }
-    public void loadWorld()
+    /// <summary>
+    /// Sets load from file to true then loads game world scene
+    /// </summary>
+    public void LoadFromFile()
     {
         loadFromFile = true;
         SceneLoader.LoadScene(1);
     }
+    /// <summary>
+    /// Called when scene changes
+    /// </summary>
+    /// <param name="scene">New scene</param>
+    /// <param name="mode">Load type</param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
         ResumeGame();
@@ -210,20 +209,29 @@ public class GameManager : MonoBehaviour
             gen.enabled = false;
         }
     }
-
-    public void LoadWorld()
+    /// <summary>
+    /// Sets game manager values upon loading main game world
+    /// </summary>
+    public void SetValues()
     {
-        destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
+        destroyandPlace = GameObject.Find("Grid").GetComponent<BlockBreaking>();
         character = GameObject.Find("Player");
         gen.enabled = true;
         gen.StartUp();
         startTime = DateTime.Now;
     }
-
+    /// <summary>
+    /// Returns list of item scripts
+    /// </summary>
+    /// <returns>List of inventory items</returns>
     public List<InventoryItem> GetItemScripts()
     {
         return items;
     }
+    /// <summary>
+    /// Adds items to stallitems
+    /// </summary>
+    /// <param name="items"></param>
     public void AddStallItems(List<ItemSlot> items)
     {
         foreach (ItemSlot item in items)
@@ -231,29 +239,49 @@ public class GameManager : MonoBehaviour
             stallItems.Add(item);
         }
     }
+    /// <summary>
+    /// Returns list of stall items
+    /// </summary>
+    /// <returns></returns>
     public List<ItemSlot> GetStallItems()
     {
         return stallItems;
     }
-    public void SaveInventory(ItemSlot[,] itemSlots)
+    /// <summary>
+    /// Stores the inventory in the game manager
+    /// </summary>
+    /// <param name="itemSlots">Slots to store</param>
+    public void StoreInventory(ItemSlot[,] itemSlots)
     {
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 7; j++)
             {
                 inventory[i, j] = new ItemSlot();
-                inventory[i, j].addExisting(itemSlots[i, j]);
+                inventory[i, j].AddExisting(itemSlots[i, j]);
             }
         }
     }
+    /// <summary>
+    /// Returns the stored inventory
+    /// </summary>
+    /// <returns></returns>
     public ItemSlot[,] GetInventory()
     {
         return inventory;
     }
+    /// <summary>
+    /// Sets current amount of money
+    /// </summary>
+    /// <param name="money"></param>
     public void SetMoney(int money)
     {
         playerMoney = money;
     }
+    /// <summary>
+    /// returns current amount of money
+    /// </summary>
+    /// <returns></returns>
     public int GetMoney()
     {
         return playerMoney;

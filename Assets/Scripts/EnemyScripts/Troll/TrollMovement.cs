@@ -24,7 +24,7 @@ public class TrollMovement : EnemyMovement
         if (attacking)
         {
             nextPoint = new Vector2(attack.lastLocation.x, attack.lastLocation.y);
-            getEndRotation();
+            GetEndRotation();
             moving = true;
         }
         if (!moving && !waiting)
@@ -44,7 +44,7 @@ public class TrollMovement : EnemyMovement
                 if (attacking && Mathf.Abs(Vector2.Distance(pos, nextPoint)) < attack.reach)
                 {
                     moving = false;
-                    attack.attack();
+                    attack.Attack();
                 } else
                 {
                     transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
@@ -54,7 +54,7 @@ public class TrollMovement : EnemyMovement
                 {
                     waiting = true;
                     moving = false;
-                    StartCoroutine(wait());
+                    StartCoroutine(Wait());
                 }
             }
         }
@@ -63,7 +63,7 @@ public class TrollMovement : EnemyMovement
     /// wait at end of every patrol point
     /// </summary>
     /// <returns></returns>
-    IEnumerator wait()
+    IEnumerator Wait()
     {
         yield return new WaitForSeconds(waitTime);
         waiting = false;

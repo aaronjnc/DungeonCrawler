@@ -42,14 +42,14 @@ public abstract class EnemyMovement : MonoBehaviour
         if (hit.collider == null)
         {
             nextPoint = new Vector2(point.x, point.y);
-            getEndRotation();
+            GetEndRotation();
             moving = true;
         }
     }
     /// <summary>
     /// gets rotation to travel to next point
     /// </summary>
-    protected void getEndRotation()
+    protected void GetEndRotation()
     {
         Vector3 point = new Vector3(nextPoint.x, nextPoint.y, zPos);
         Vector3 dir = (point - transform.position).normalized;

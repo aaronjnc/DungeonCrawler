@@ -68,6 +68,9 @@ public abstract class Chunk
             floor[pos.x, pos.y] = tile;
         presetTiles.Add(pos);
     }
+    /// <summary>
+    /// Method used to call other methods and generate the chunk
+    /// </summary>
     public abstract void GenerateChunk();
     /// <summary>
     /// Generates array of bytes determining type of block (empty or wall)
@@ -86,7 +89,7 @@ public abstract class Chunk
                 }
                 if (x == 0 || x == width - 1 || y == 0 || y == height - 1)
                 {
-                    SmoothChunk(x, y);
+                    SmoothEdgeBlocks(x, y);
                 }
                 else
                 {
@@ -100,7 +103,7 @@ public abstract class Chunk
     /// </summary>
     /// <param name="gridX">X position of the tile</param>
     /// <param name="gridY">Y position of the tile</param>
-    protected void SmoothChunk(int gridX, int gridY)
+    protected void SmoothEdgeBlocks(int gridX, int gridY)
     {
         Vector2Int relPos = chunkPos;
         int newgridx = gridX;
@@ -128,7 +131,7 @@ public abstract class Chunk
         int blockFillVal = randomFillPercent;
         if (ChunkGen.currentWorld.ChunkGenerated(relPos))
         {
-            byte block = ChunkGen.currentWorld.GetChunk(relPos).GetBlock(newgridx, newgridY);
+            byte block = ChunkGen.currentWorld.GetChunk(relPos).GetBlockID(newgridx, newgridY);
             blockFillVal += (block == 1) ? 10 : -10;
         }
         blocks[gridX, gridY] = (byte)((random.Next(0, 100) < blockFillVal) ? 1 : 0);
@@ -200,10 +203,10 @@ public abstract class Chunk
                     if (ChunkGen.currentWorld.ChunkGenerated(relPos))
                     {
                         Chunk adjacentChunk = ChunkGen.currentWorld.GetChunk(relPos);
-                        wallCount += GetType(adjacentChunk.GetBlock(newgridX, newgridY));
+                        wallCount += GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY));
                         if (calc && i == 1)
                         {
-                            return (byte)((GetType(adjacentChunk.GetBlock(newgridX, newgridY)) == 1) ? 5 : 0);
+                            return (byte)((GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY)) == 1) ? 5 : 0);
                         }
                     }
                     else
@@ -213,7 +216,7 @@ public abstract class Chunk
                 }
                 else if (x != gridX || y != gridY)
                 {
-                    wallCount += GetType(blocks[x, y]);
+                    wallCount += GetBlockType(blocks[x, y]);
                 }
             }
         }
@@ -286,7 +289,7 @@ public abstract class Chunk
                     else
                     {
                         int rando = UnityEngine.Random.Range(0, 100);
-                        Vector3 worldPos = GetWorldPos(x, y, -1);
+                        Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
                         if (rando > enemyChance && manager.spawnEnemies && GetSurroundingWalls(x,y,2)==0 && numEnemies > 0)
@@ -325,7 +328,7 @@ public abstract class Chunk
             }
         }
         GameObject enemy = GameObject.Instantiate(biomeScripts[biomes[x, y]].enemies[maxIndex], enemyParent) as GameObject;
-        enemy.transform.position = GetWorldPos(x, y, -1);
+        enemy.transform.position = GetTileWorldPos(x, y, -1);
         enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
         enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, enemyParent.position.z);
         enemies.Add(enemy.GetHashCode(), enemy);
@@ -393,11 +396,11 @@ public abstract class Chunk
     /// <summary>
     /// Places the tiles related to the block array in the tilemap
     /// </summary>
-    protected void DrawMap()
+    protected void DrawTileMap()
     {
         if (map == null)
         {
-            GenerateMaps();
+            CreateTileMaps();
         }
         for (int x = 0; x < width; x++)
         {
@@ -406,9 +409,9 @@ public abstract class Chunk
                 Vector3Int pos = new Vector3Int(x, y, mapz);
                 Vector3Int floorPos = pos;
                 floorPos.z = floorz;
-                SetTile(pos, blocks[x, y]);
+                SetTileMapTile(pos, blocks[x, y]);
                 if (blocks[x,y] == 127)
-                    SetTile(floorPos, floor[x,y]);
+                    SetTileMapTile(floorPos, floor[x,y]);
             }
         }
     }
@@ -417,7 +420,7 @@ public abstract class Chunk
     /// </summary>
     /// <param name="tilePos">Chunk pos of the tile</param>
     /// <param name="index">Index of the new block</param>
-    protected void SetTile(Vector3Int tilePos, byte index)
+    protected void SetTileMapTile(Vector3Int tilePos, byte index)
     {
         if (index == 127)
         {
@@ -439,7 +442,7 @@ public abstract class Chunk
     /// <summary>
     /// Generates the tilemap
     /// </summary>
-    protected void GenerateMaps()
+    protected void CreateTileMaps()
     {
         GameObject newMap = GameObject.Instantiate(tilemap, grid);
         newMap.transform.position = new Vector3(chunkPos.x * width, chunkPos.y * height,mapz);
@@ -450,7 +453,7 @@ public abstract class Chunk
     /// </summary>
     /// <param name="tile">ID of the block</param>
     /// <returns></returns>
-    protected byte GetType(byte tile)
+    protected byte GetBlockType(byte tile)
     {
         if (tile == 127)
             return 0;
@@ -465,7 +468,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <returns></returns>
-    public byte GetBlock(int x, int y)
+    public byte GetBlockID(int x, int y)
     {
         return blocks[x, y];
     }
@@ -475,7 +478,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <returns></returns>
-    public byte GetBiome(int x, int y)
+    public byte GetTileBiome(int x, int y)
     {
         return biomes[x, y];
     }
@@ -497,7 +500,7 @@ public abstract class Chunk
         {
             map.SetTile(new Vector3Int(x, y, mapz), manager.GetBlock(block).tile);
             if (manager.GetBlock(block).solid)
-                UpdateCollider(x, y,Tile.ColliderType.Grid);
+                UpdateTileCollider(x, y,Tile.ColliderType.Grid);
             map.SetTile(new Vector3Int(x, y, floorz), null);
         }
         if (changes.ContainsKey(new Vector2Int(x, y)))
@@ -547,7 +550,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <param name="newTile">Tile with new color scheme</param>
-    public void UpdateColor(int x, int y, Tile newTile)
+    public void UpdateTileColor(int x, int y, Tile newTile)
     {
         Tile t = map.GetTile<Tile>(new Vector3Int(x, y, mapz));
         if (t == null)
@@ -572,7 +575,7 @@ public abstract class Chunk
     /// <param name="x">Chunk tile position x</param>
     /// <param name="y">Chunk tile position y</param>
     /// <param name="tileCollider">Type of tilecollider</param>
-    public void UpdateCollider(int x, int y, Tile.ColliderType tileCollider)
+    public void UpdateTileCollider(int x, int y, Tile.ColliderType tileCollider)
     {
         map.GetTile<Tile>(new Vector3Int(x, y, mapz)).colliderType = tileCollider;
     }
@@ -585,7 +588,7 @@ public abstract class Chunk
     {
         if (map == null)
         {
-            GenerateMaps();
+            CreateTileMaps();
         }
         if (blocks[x, y] == 127)
             return;
@@ -607,7 +610,7 @@ public abstract class Chunk
     /// <param name="y">Chunk relative y</param>
     /// <param name="z">Chunk relative z</param>
     /// <returns></returns>
-    protected Vector3 GetWorldPos(int x, int y, int z)
+    protected Vector3 GetTileWorldPos(int x, int y, int z)
     {
         Vector3 worldPos = Vector3.zero;
         if (chunkPos.x < 0)
@@ -625,46 +628,16 @@ public abstract class Chunk
     /// Called to kill enemy and open up spawn spot
     /// </summary>
     /// <param name="enemy">Gameobject for enemy</param>
-    public void KillEnemy(GameObject enemy)
+    public void DestroyEnemy(GameObject enemy)
     {
         enemies.Remove(enemy.GetHashCode());
         GameObject.Destroy(enemy);
     }
     /// <summary>
-    /// returns string array containing wall id, floor id, and biome id for each position in chunk
-    /// </summary>
-    /// <returns></returns>
-    public string[] getChunkMap()
-    {
-        string[] chunkString = new string[3];
-        chunkString[0] = chunkPos.x + "," + chunkPos.y + "," + biomeId + "\n";
-        chunkString[1] = chunkPos.x + "," + chunkPos.y + "," + biomeId + "\n";
-        chunkString[2] = chunkPos.x + "," + chunkPos.y + "," + biomeId + "\n";
-        for (int i = 0; i < width; i++)
-        {
-            for (int j = 0; j < height; j++)
-            {
-                chunkString[0] += blocks[i, j];
-                chunkString[1] += floor[i, j];
-                chunkString[2] += biomes[i, j];
-                if (j != height-1)
-                {
-                    chunkString[0] += ",";
-                    chunkString[1] += ",";
-                    chunkString[2] += ",";
-                }    
-            }
-            chunkString[0] += "\n";
-            chunkString[1] += "\n";
-            chunkString[2] += "\n";
-        }
-        return chunkString;
-    }
-    /// <summary>
     /// returns array of all enemies' information
     /// </summary>
     /// <returns></returns>
-    public string[] getEnemies()
+    public string[] GetEnemies()
     {
         string[] enemyString = new string[enemies.Count];
         for (int i = 0; i < enemyString.Length; i++)
@@ -673,7 +646,10 @@ public abstract class Chunk
         }
         return enemyString;
     }
-
+    /// <summary>
+    /// Returns string array of map changes
+    /// </summary>
+    /// <returns></returns>
     public string[] GetChanges()
     {
         string[] blocksChanged = new string[changes.Count];
@@ -685,10 +661,18 @@ public abstract class Chunk
         }
         return blocksChanged;
     }
+    /// <summary>
+    /// Adds block change to list
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="id"></param>
     public void AddChange(Vector2Int pos, byte id)
     {
         changes.Add(pos, id);
     }
+    /// <summary>
+    /// Change block in array to changed versions
+    /// </summary>
     public void AddChangedBlocks()
     {
         foreach (Vector2Int pos in changes.Keys)
