@@ -5,35 +5,48 @@ using UnityEngine;
 [System.Serializable]
 public class InventorySave
 {
-    public byte[,] inventory = new byte[5, 7];
-    public byte[,] stackSize = new byte[5, 7];
-    public byte[,] durability = new byte[5, 7];
-    public int[,] chosenItems = new int[7, 2];
-    public int playerMoney;
-    public int currentChoice;
-    public InventorySave(Inventory inv)
+    [Tooltip("Array of bytes representing inventory")]
+    private byte[,] inventory = new byte[5, 7];
+    [Tooltip("Array of bytes representing stack size of inventory slots")]
+    private byte[,] stackSize = new byte[5, 7];
+    [Tooltip("Array of bytes representing durability of inventory slots")]
+    private byte[,] durability = new byte[5, 7];
+    [Tooltip("Array of integers representing chosen item positions")]
+    private int[,] chosenItems = new int[7, 2];
+    [Tooltip("Player money")]
+    private int playerMoney;
+    [Tooltip("Current chosen item")]
+    private int currentChoice;
+    /// <summary>
+    /// Saves inventory information
+    /// </summary>
+    /// <param name="inv"></param>
+    public InventorySave()
     {
-        UpdateInventory(inv.GetInventory());
+        UpdateInventory(Inventory.Instance.GetInventory());
         for (int i = 0; i < 7; i++)
         {
-            chosenItems[i, 0] = inv.chosenItems[i].x;
-            chosenItems[i, 1] = inv.chosenItems[i].y;
+            chosenItems[i, 0] = Inventory.Instance.chosenItems[i].x;
+            chosenItems[i, 1] = Inventory.Instance.chosenItems[i].y;
         }
-        currentChoice = inv.itemRotator.current;
-        playerMoney = inv.GetMoney();
+        currentChoice = Inventory.Instance.itemRotator.current;
+        playerMoney = Inventory.Instance.GetMoney();
     }
-
+    /// <summary>
+    /// Update inventory save with item slots
+    /// </summary>
+    /// <param name="items"></param>
     private void UpdateInventory(ItemSlot[,] items)
     {
         for (int i = 0; i < 5; i++)
         {
             for (int j = 0; j < 7; j++)
             {
-                if (!items[i, j].isEmpty())
+                if (!items[i, j].IsEmpty())
                 {
-                    inventory[i, j] = items[i, j].getItemId();
-                    stackSize[i, j] = items[i, j].getCurrentCount();
-                    durability[i, j] = items[i, j].getDurability();
+                    inventory[i, j] = items[i, j].GetItemID();
+                    stackSize[i, j] = items[i, j].GetCount();
+                    durability[i, j] = items[i, j].GetDurability();
                 }
                 else
                 {
@@ -42,26 +55,50 @@ public class InventorySave
             }
         }
     }
+    /// <summary>
+    /// Returns array of items
+    /// </summary>
+    /// <returns></returns>
     public byte[,] GetItems()
     {
         return inventory;
     }
+    /// <summary>
+    /// Returns array of stack sizes
+    /// </summary>
+    /// <returns></returns>
     public byte[,] GetStackSizes()
     {
         return stackSize;
     }
+    /// <summary>
+    /// Returns array of durabilities
+    /// </summary>
+    /// <returns></returns>
     public byte[,] GetDurabilities()
     {
         return durability;
     }
+    /// <summary>
+    /// Returns array of chosen item positions
+    /// </summary>
+    /// <returns></returns>
     public int[,] GetChosenItems()
     {
         return chosenItems;
     }
+    /// <summary>
+    /// Returns player money
+    /// </summary>
+    /// <returns></returns>
     public int GetMoney()
     {
         return playerMoney;
     }
+    /// <summary>
+    /// Returns current chosen item
+    /// </summary>
+    /// <returns></returns>
     public int GetCurrentChoice()
     {
         return currentChoice;

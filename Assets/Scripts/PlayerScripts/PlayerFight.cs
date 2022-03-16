@@ -6,14 +6,20 @@ using UnityEngine.UI;
 
 public class PlayerFight : MonoBehaviour
 {
-    PlayerControls controls;
-    GameManager manager;
-    ItemSlot invItem;
+    [Tooltip("Pplayer controls")]
+    private PlayerControls controls;
+    [Tooltip("Chosen item")]
+    private ItemSlot invItem;
+    [Tooltip("Player health")] [HideInInspector]
     public float health;
-    public float maxHealth = 100;
-    public Slider healthSlider;
-    public LayerMask enemy;
-    public float reach;
+    [Tooltip("Max player health")]
+    [SerializeField] private float maxHealth = 100;
+    [Tooltip("Health slider")]
+    [SerializeField] private Slider healthSlider;
+    [Tooltip("Enemy layer")]
+    [SerializeField] private LayerMask enemy;
+    [Tooltip("Player reach")]
+    [SerializeField] private float reach;
     // Start is called before the first frame update
     void Start()
     {
@@ -23,7 +29,6 @@ public class PlayerFight : MonoBehaviour
         healthSlider.minValue = 0;
         healthSlider.value = health;
         controls = new PlayerControls();
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         controls.Interact.Press.canceled += BaseAttack;
         controls.Interact.Press.Enable();
         controls.Fight.AdvanceAttack.canceled += AdvancedAttack;
@@ -48,12 +53,12 @@ public class PlayerFight : MonoBehaviour
     /// <param name="ctx"></param>
     void BaseAttack(CallbackContext ctx)
     {
-        if (manager.fighting && !manager.paused)
+        if (GameManager.Instance.fighting && !GameManager.Instance.paused)
         {
-            invItem.addExisting(manager.currentItem);
-            if (invItem.fighting())
+            invItem.AddExisting(GameManager.Instance.currentItem);
+            if (invItem.IsWeapon())
             {
-                invItem.getWeaponScript().BaseAttack(gameObject.transform);
+                invItem.GetWeaponScript().BaseAttack(gameObject.transform);
             }
         }
     }
@@ -63,12 +68,12 @@ public class PlayerFight : MonoBehaviour
     /// <param name="ctx"></param>
     void AdvancedAttack(CallbackContext ctx)
     {
-        if (manager.fighting && !manager.paused)
+        if (GameManager.Instance.fighting && !GameManager.Instance.paused)
         {
-            invItem.addExisting(manager.currentItem);
-            if (invItem.fighting())
+            invItem.AddExisting(GameManager.Instance.currentItem);
+            if (invItem.IsWeapon())
             {
-                invItem.getWeaponScript().AdvancedAttack(gameObject.transform);
+                invItem.GetWeaponScript().AdvancedAttack(gameObject.transform);
             }
         }
     }        

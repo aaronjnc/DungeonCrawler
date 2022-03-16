@@ -6,24 +6,21 @@ using UnityEngine;
 /// </summary>
 public class Stall : MonoBehaviour
 {
-    //refernce to manager script
-    GameManager manager;
     //type of stall
     public enum StallType
     {
         Blacksmith,
         Wizard,
     }
-    //the type of stall this stall is
+    [Tooltip("Stall type")]
     public StallType stallType;
-    //list of items in this stall
+    [Tooltip("Items in stall")]
     public List<ItemSlot> stallItems = new List<ItemSlot>();
     /// <summary>
     /// call methods based on type of stall upon awake
     /// </summary>
     private void Awake()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
         switch (stallType)
         {
             case StallType.Blacksmith:
@@ -37,7 +34,7 @@ public class Stall : MonoBehaviour
     private void AwakeBlacksmith()
     {
         List<InventoryItem> items = new List<InventoryItem>();
-        foreach (InventoryItem item in manager.GetItemScripts())
+        foreach (InventoryItem item in GameManager.Instance.GetItemScripts())
         {
             if (item.itemType == InventoryItem.ItemType.Consumable)
                 continue;

@@ -5,7 +5,6 @@ using UnityEngine.Tilemaps;
 
 public class Fireball : MonoBehaviour
 {
-    GameManager manager;
     public float speed;
     Vector3 dir;
     public LayerMask tiles;
@@ -16,8 +15,7 @@ public class Fireball : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        mapz = manager.mapz;
+        mapz = GameManager.Instance.mapz;
         dir = transform.up;
     }
     // Update is called once per frame

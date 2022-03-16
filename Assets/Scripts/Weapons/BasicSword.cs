@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class BasicSword : WeaponInterface
 {
+    [Tooltip("Reach of basic sword")]
     public float reach;
+    [Tooltip("Enemy layer")]
     public LayerMask enemy;
+    [Tooltip("Sword has hold effect")]
     public bool hasHoldEffect;
+    [Tooltip("Swing angle")]
     public float swingAngle;
+    [Tooltip("Damage of base attack")]
     public float baseDamage;
+    [Tooltip("Damage of advanced attack")]
     public float advancedDamage;
     public override bool HasHoldEffect()
     {

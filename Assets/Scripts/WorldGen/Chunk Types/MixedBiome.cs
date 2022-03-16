@@ -15,7 +15,7 @@ public class MixedBiome : Chunk
     public override void GenerateChunk()
     {
         FillBiomeMap();
-        GenerateMaps();
+        CreateTileMaps();
         RandomFillMap();
         for (int i = 0; i < smooths; i++)
         {
@@ -28,29 +28,29 @@ public class MixedBiome : Chunk
         DetermineBlock();
         SpecialBlockGeneration();
         AddChangedBlocks();
-        DrawMap();
+        DrawTileMap();
         generated = true;
     }
 
     protected override void FillBiomeMap()
     {
         byte[] surroundingBiomes = new byte[4];
-        if (!ChunkGen.currentWorld.ChunkCreated(chunkPos + new Vector2Int(0, 1)))
+        if (!ChunkGen.Instance.ChunkCreated(chunkPos + new Vector2Int(0, 1)))
         {
-            ChunkGen.currentWorld.CreateChunk(chunkPos + new Vector2Int(0, 1));
+            ChunkGen.Instance.CreateChunk(chunkPos + new Vector2Int(0, 1));
         }
-        surroundingBiomes[0] = ChunkGen.currentWorld.GetChunk(chunkPos + new Vector2Int(0, 1)).biomeId;
-        if (!ChunkGen.currentWorld.ChunkCreated(chunkPos + new Vector2Int(1, 0)))
+        surroundingBiomes[0] = ChunkGen.Instance.GetChunk(chunkPos + new Vector2Int(0, 1)).biomeId;
+        if (!ChunkGen.Instance.ChunkCreated(chunkPos + new Vector2Int(1, 0)))
         {
-            ChunkGen.currentWorld.CreateChunk(chunkPos + new Vector2Int(1, 0));
+            ChunkGen.Instance.CreateChunk(chunkPos + new Vector2Int(1, 0));
         }
-        surroundingBiomes[1] = ChunkGen.currentWorld.GetChunk(chunkPos + new Vector2Int(1, 0)).biomeId;
-        if (!ChunkGen.currentWorld.ChunkCreated(chunkPos + new Vector2Int(0, -1)))
-            ChunkGen.currentWorld.CreateChunk(chunkPos + new Vector2Int(0, -1));
-        surroundingBiomes[2] = ChunkGen.currentWorld.GetChunk(chunkPos + new Vector2Int(0, -1)).biomeId;
-        if (!ChunkGen.currentWorld.ChunkCreated(chunkPos + new Vector2Int(-1, 0)))
-            ChunkGen.currentWorld.CreateChunk(chunkPos + new Vector2Int(-1, 0));
-        surroundingBiomes[3] = ChunkGen.currentWorld.GetChunk(chunkPos + new Vector2Int(-1, 0)).biomeId;
+        surroundingBiomes[1] = ChunkGen.Instance.GetChunk(chunkPos + new Vector2Int(1, 0)).biomeId;
+        if (!ChunkGen.Instance.ChunkCreated(chunkPos + new Vector2Int(0, -1)))
+            ChunkGen.Instance.CreateChunk(chunkPos + new Vector2Int(0, -1));
+        surroundingBiomes[2] = ChunkGen.Instance.GetChunk(chunkPos + new Vector2Int(0, -1)).biomeId;
+        if (!ChunkGen.Instance.ChunkCreated(chunkPos + new Vector2Int(-1, 0)))
+            ChunkGen.Instance.CreateChunk(chunkPos + new Vector2Int(-1, 0));
+        surroundingBiomes[3] = ChunkGen.Instance.GetChunk(chunkPos + new Vector2Int(-1, 0)).biomeId;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -155,10 +155,10 @@ public class MixedBiome : Chunk
                         relPos += new Vector2Int(0, 1);
                         newgridY = 0;
                     }
-                    if (ChunkGen.currentWorld.ChunkGenerated(relPos))
+                    if (ChunkGen.Instance.ChunkGenerated(relPos))
                     {
-                        Chunk adjacentChunk = ChunkGen.currentWorld.GetChunk(relPos);
-                        biomeCount[adjacentChunk.GetBiome(newgridX, newgridY)] += 1;
+                        Chunk adjacentChunk = ChunkGen.Instance.GetChunk(relPos);
+                        biomeCount[adjacentChunk.GetTileBiome(newgridX, newgridY)] += 1;
                     }
                 }
                 else if (x != gridX || y != gridY)

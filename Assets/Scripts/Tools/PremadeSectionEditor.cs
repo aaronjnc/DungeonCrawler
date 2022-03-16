@@ -29,6 +29,11 @@ public class PremadeSectionEditor : Editor
             PrefabUtility.SaveAsPrefabAsset(assetRoot, assetPath);
         }
     }
+    /// <summary>
+    /// Generate text files for tilemaps
+    /// </summary>
+    /// <param name="section"></param>
+    /// <param name="contents"></param>
     private void GenerateMaps(PremadeSection section, GameObject contents)
     {
         string floorPath = "Assets/Resources/PremadeMaps/" + contents.name + "floor.txt";

@@ -5,28 +5,36 @@ using UnityEngine.Tilemaps;
 
 public class Blocks : MonoBehaviour
 {
+    [Tooltip("Tile used by block")]
     public Tile tile;
-    public bool spawnable;
+    [Tooltip("Spawn weight")]
     public float weight;
+    [Tooltip("Spawn scale")]
     public float scale;
+    [Tooltip("Block is solid")]
     public bool solid;
-    public bool onlyone;
+    [Tooltip("Block is breakable")]
     public bool breakable;
-    public int biome;
+    [Tooltip("Block has custom spawning procedure")]
     public bool custom;
-    public bool prefab;
+    [Tooltip("Index representing block")]
     public byte index;
+    [Tooltip("Max blocks of this type per chunk")]
     public int maxperchunk;
+    [Tooltip("Block is interactable")]
     public bool interactable;
+    [Tooltip("Durability of block")]
     public int durability;
+    [Tooltip("Items this block can drop")]
     public List<InventoryItem> drops = new List<InventoryItem>();
+    [Tooltip("Chance of item drops")]
     public List<float> chances = new List<float>();
-    [HideInInspector] public string blockName;
     public enum Type
     {
         Wall,
         Empty,
         Floor,
     }
+    [Tooltip("Block type")]
     public Type blockType;
 }

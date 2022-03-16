@@ -2,55 +2,77 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityEngine.AI;
 using System;
 
-public class ChunkGen : MonoBehaviour
+public class ChunkGen : Singleton<ChunkGen>
 {
-    public static ChunkGen currentWorld;
-    public GameManager manager;
+    [Tooltip("Tilemap prefab")]
     public GameObject map;
-    public Transform grid;
-    [HideInInspector]
-    public int mapz;
-    [HideInInspector]
-    public int floorz;
-    Vector3Int pos = Vector3Int.zero;
-    Vector3Int previousPos = Vector3Int.zero;
-    public Vector2Int currentChunk = Vector2Int.zero;
-    int currentHash;
-    Hashtable chunks;
+    [Tooltip("Grid used for tilemaps")]
+    [HideInInspector] public Transform grid;
+    [Tooltip("Wall z position")]
+    [HideInInspector] public int mapz;
+    [Tooltip("Floor z position")]
+    [HideInInspector] public int floorz;
+    [Tooltip("Player position")]
+    private Vector3Int pos = Vector3Int.zero;
+    [Tooltip("Previous player position")]
+    private Vector3Int previousPos = Vector3Int.zero;
+    [Tooltip("Player chunk")]
+    [HideInInspector] private Vector2Int currentChunk = Vector2Int.zero;
+    [Tooltip("Hashtable containg all created chunks")]
+    private Hashtable chunks;
+    [Tooltip("Array of biome scripts")]
     public Biomes[] biomes;
-    public FreePlayerMove playerMovement;
+    [Tooltip("Player movement script")]
+    [HideInInspector] public FreePlayerMove playerMovement;
+    [Tooltip("Width of chunk")]
     public int chunkWidth;
+    [Tooltip("Height of chunk")]
     public int chunkHeight;
+    [Tooltip("World seed")]
     public int seed;
-    public bool randomSeed;
+    [Tooltip("Generate a random world seed")]
+    [SerializeField] private bool randomSeed;
+    [Tooltip("Biome seed")]
     public int biomeseed;
-    public bool randomBiomeSeed;
-    [Range(0, 100)]
-    public int randomFillPercent;
-    [Range(0, 100)]
-    public int randomBiomePercent;
+    [Tooltip("Generate a random biome seed")]
+    [SerializeField] public bool randomBiomeSeed;
+    [Tooltip("Wall fill percent")]
+    [Range(0, 100)] public int randomFillPercent;
+    [Tooltip("Number of wall smooths to perform")]
     public int smooths;
+    [Tooltip("Number of biome smooths to perform")]
     public int biomesmooths;
+    [Tooltip("Enemy spawn chance")]
     public float enemyChance;
+    [Tooltip("Maximum number of enemeis")]
     public int maxenemies;
-    public Transform enemyParent;
+    [Tooltip("Enemy parent transform")]
+    [HideInInspector] public Transform enemyParent;
+    [Tooltip("Chance of special tile")]
     public int specialTileChance;
+    public void Awake()
+    {
+        base.Awake();
+        this.enabled = false;
+        chunks = new Hashtable();
+    }
+    /// <summary>
+    /// Sets up world
+    /// </summary>
     public void StartUp()
     {
-        currentWorld = this;
         grid = GameObject.Find("Grid").transform;
         playerMovement = GameObject.Find("Player").GetComponent<FreePlayerMove>();
         enemyParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
         chunks = new Hashtable();
-        if (manager.loadFromFile)
+        if (GameManager.Instance.loadFromFile)
         {
-            loadPreviousWorld();
-            foreach (PremadeSection sections in manager.sections)
+            LoadFromFile();
+            foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
                 {
@@ -66,7 +88,7 @@ public class ChunkGen : MonoBehaviour
                 seed = UnityEngine.Random.Range(0, int.MaxValue);
             if (randomBiomeSeed)
                 biomeseed = UnityEngine.Random.Range(0, 1000000);
-            foreach (PremadeSection sections in manager.sections)
+            foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
                 {
@@ -80,15 +102,14 @@ public class ChunkGen : MonoBehaviour
                 for (int y = -1; y <= 0; y++)
                 {
                     Vector2Int chunkPos = new Vector2Int(x, y);
-                    GenerateNewChunk(chunkPos);
+                    GenerateChunk(chunkPos);
                 }
             }
             currentChunk = new Vector2Int(0, 0);
-            currentHash = currentChunk.ToString().GetHashCode();
-            if (manager.testingmode)
+            if (GameManager.Instance.testingmode)
             {
                 GetComponent<WorldCreationTesting>().enabled = true;
-                GetComponent<WorldCreationTesting>().size = manager.testingsize;
+                GetComponent<WorldCreationTesting>().size = GameManager.Instance.testingsize;
             }
         }
     }
@@ -96,17 +117,13 @@ public class ChunkGen : MonoBehaviour
     {
         if (playerMovement.dir != Vector2.zero)
         {
-            pos = manager.pos;
+            pos = FreePlayerMove.Instance.pos;
             if (pos != previousPos)
             {
-                currentChunk = manager.currentChunk;
-                if (OutsideChunk(pos))
-                {
-                    currentHash = currentChunk.ToString().GetHashCode();
-                }
+                currentChunk = FreePlayerMove.Instance.currentChunk;
                 if (!WithinBounds())
                 {
-                    GenerateNewChunks();
+                    GenerateSurroundingChunks();
                 }
                 previousPos = pos;
             }
@@ -125,9 +142,10 @@ public class ChunkGen : MonoBehaviour
     /// <summary>
     /// Generates new chunks in different directions
     /// </summary>
-    public void GenerateNewChunks()
+    public void GenerateSurroundingChunks()
     {
-        pos = manager.pos;
+        pos = FreePlayerMove.Instance.pos;
+        currentChunk = FreePlayerMove.Instance.currentChunk;
         Vector2Int relGen;
         int relx = 0;
         int rely = 0;
@@ -140,29 +158,29 @@ public class ChunkGen : MonoBehaviour
         else if (pos.y <= 10)
             rely = -1;
         relGen = new Vector2Int(0, 0);
-        GenDirections(relGen);
+        GenerateDirections(relGen);
         relGen = new Vector2Int(0, rely);
-        GenDirections(relGen);
+        GenerateDirections(relGen);
         relGen = new Vector2Int(relx, 0);
-        GenDirections(relGen);
+        GenerateDirections(relGen);
         relGen = new Vector2Int(relx, rely);
-        GenDirections(relGen);
+        GenerateDirections(relGen);
     }
     /// <summary>
     /// Determines if adjacent chunk is already generated
     /// </summary>
     /// <param name="relGen">The relative direction of new chunk given current</param>
-    public void GenDirections(Vector2Int relGen)
+    public void GenerateDirections(Vector2Int relGen)
     {
         Vector2Int chunkPos = relGen + currentChunk;
         if (!ChunkGenerated(chunkPos))
-            GenerateNewChunk(chunkPos);
+            GenerateChunk(chunkPos);
     }
     /// <summary>
     /// Generates map of chunk at given chunk pos
     /// </summary>
     /// <param name="chunkPos">Chunk position</param>
-    public void GenerateNewChunk(Vector2Int chunkPos)
+    public void GenerateChunk(Vector2Int chunkPos)
     {
         if (!ChunkCreated(chunkPos))
         {
@@ -309,7 +327,7 @@ public class ChunkGen : MonoBehaviour
         if (ChunkGenerated(chunkPos))
         {
             Vector2Int chunkTilePos = GetChunkTilePos(tilePos);
-            return GetChunk(chunkPos).GetBlock(chunkTilePos.x, chunkTilePos.y);
+            return GetChunk(chunkPos).GetBlockID(chunkTilePos.x, chunkTilePos.y);
         }
         return 0;
     }
@@ -327,21 +345,12 @@ public class ChunkGen : MonoBehaviour
         }
     }
     /// <summary>
-    /// Returns true if player has gone outside of current chunk
-    /// </summary>
-    /// <param name="playerPos">World position</param>
-    /// <returns></returns>
-    public bool OutsideChunk(Vector3 playerPos)
-    {
-        return (playerPos.x < currentChunk.x * chunkWidth || playerPos.x > currentChunk.x * chunkWidth + chunkWidth || playerPos.y < currentChunk.y * chunkHeight || playerPos.y > currentChunk.y * chunkHeight + chunkHeight);
-    }
-    /// <summary>
     /// Unloads chunk at given position
     /// </summary>
     /// <param name="chunkPos">Chunk position</param>
     public void UnloadChunk(Vector3 chunkPos)
     {
-        if (!manager.testingmode)
+        if (!GameManager.Instance.testingmode)
         {
             Vector2Int newChunkPos = new Vector2Int((int)chunkPos.x / chunkWidth, (int)chunkPos.y / chunkHeight);
             if (newChunkPos != currentChunk)
@@ -362,11 +371,11 @@ public class ChunkGen : MonoBehaviour
     /// <param name="tilePos">Chunk tile position</param>
     /// <param name="newTile">Tile with updated colors</param>
     /// <param name="chunkPos">Chunk position</param>
-    public void UpdateColor(Vector2Int tilePos, Tile newTile, Vector2Int chunkPos)
+    public void UpdateTileColor(Vector2Int tilePos, Tile newTile, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
         {
-            GetChunk(chunkPos).UpdateColor(tilePos.x, tilePos.y, newTile);
+            GetChunk(chunkPos).UpdateTileColor(tilePos.x, tilePos.y, newTile);
         }
     }
     /// <summary>
@@ -389,11 +398,11 @@ public class ChunkGen : MonoBehaviour
     /// <param name="tilePos">Chunk tile position</param>
     /// <param name="tileCollider">New tile collider</param>
     /// <param name="chunkPos">Chunk position</param>
-    public void UpdateCollider(Vector3Int tilePos, Tile.ColliderType tileCollider, Vector2Int chunkPos)
+    public void UpdateTileCollider(Vector3Int tilePos, Tile.ColliderType tileCollider, Vector2Int chunkPos)
     {
         if (ChunkGenerated(chunkPos))
         {
-            GetChunk(chunkPos).UpdateCollider(tilePos.x, tilePos.y,tileCollider);
+            GetChunk(chunkPos).UpdateTileCollider(tilePos.x, tilePos.y,tileCollider);
         }
     }
     /// <summary>
@@ -407,26 +416,11 @@ public class ChunkGen : MonoBehaviour
         PresetMap(startPos, section.floorMap, 1);
     }
     /// <summary>
-    /// adds preset sections to map
+    /// Adds preset sections to map
     /// </summary>
-    /// <param name="startPos">start pos of preset item</param>
-    /// <param name="textmap">text asset representing preset map</param>
-    /// <param name="z">z position to add map at</param>
-    void PresetMap(Vector2Int startPos, byte[,] map, int z)
-    {
-        for (int x = 0; x < Mathf.Sqrt(map.Length); x++)
-        {
-            for (int y = 0; y < Mathf.Sqrt(map.Length); y++)
-            {
-                Vector2Int newPos = startPos + new Vector2Int(x, y);
-                Vector2Int chunkPos = GetChunkPos(newPos);
-                Vector2Int chunkTilePos = GetChunkTilePos(newPos);
-                if (!ChunkCreated(chunkPos))
-                    CreateChunk(chunkPos);
-                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), map[x,y]);
-            }
-        }
-    }
+    /// <param name="startPos">Start pos to add object</param>
+    /// <param name="map">TextAsset of map</param>
+    /// <param name="z">Z position of map</param>
     void PresetMap(Vector2Int startPos, TextAsset map, int z)
     {
         string textmap = map.text;
@@ -447,43 +441,17 @@ public class ChunkGen : MonoBehaviour
         }
     }
     /// <summary>
-    /// returns array holding world map information
+    /// Return hashtable of chunks
     /// </summary>
     /// <returns></returns>
-    public string[][] getWorldMap()
-    {
-        string[][] wallStrings = new string[chunks.Keys.Count][];
-        int i = 0;
-        foreach(object key in chunks.Keys)
-        {
-            wallStrings[i] = ((Chunk)chunks[key]).getChunkMap();
-            i++;
-        }
-        return wallStrings;
-    }
     public Hashtable GetChunks()
     {
         return chunks;
     }
     /// <summary>
-    /// returns array holding enemy information
-    /// </summary>
-    /// <returns></returns>
-    public string[][] getEnemies()
-    {
-        string[][] enemyStrings = new string[chunks.Keys.Count][];
-        int i = 0;
-        foreach(object key in chunks.Keys)
-        {
-            enemyStrings[i] = ((Chunk)chunks[key]).getEnemies();
-            i++;
-        }
-        return enemyStrings;
-    }
-    /// <summary>
     /// loads world from file
     /// </summary>
-    void loadPreviousWorld()
+    void LoadFromFile()
     {
         WorldInfo w = GameInformation.Instance.LoadGameInfo();
         List<ChunkSave> cs = GameInformation.Instance.LoadWorld();
@@ -506,9 +474,12 @@ public class ChunkGen : MonoBehaviour
             }
         }
     }
-
+    /// <summary>
+    /// Clear the chunks hashtable when script is disabled
+    /// </summary>
     private void OnDisable()
     {
-        chunks.Clear();
+        if (chunks != null)
+            chunks.Clear();
     }
 }
