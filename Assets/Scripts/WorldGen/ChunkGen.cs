@@ -483,18 +483,8 @@ public class ChunkGen : Singleton<ChunkGen>
         foreach (ChunkSave c in cs)
         {
             Vector2Int chunkPos = c.GetChunkPos();
-            string[] changes = c.GetChanges();
             CreateChunk(chunkPos);
-            for (int i = 0; i < changes.Length; i++)
-            {
-                string[] split = changes[i].Split('|');
-                byte id = (byte)Int32.Parse(split[1]);
-                string[] posSplit = split[0].Split(' ');
-                int posX = Int32.Parse(posSplit[0]);
-                int posY = Int32.Parse(posSplit[1]);
-                Vector2Int tilePos = new Vector2Int(posX, posY);
-                GetChunk(chunkPos).AddChange(tilePos, id);
-            }
+            GetChunk(chunkPos).LoadFromFile(c);
         }
     }
     /// <summary>
