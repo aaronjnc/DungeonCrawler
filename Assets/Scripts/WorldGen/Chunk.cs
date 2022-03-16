@@ -45,6 +45,8 @@ public abstract class Chunk
     public Vector2Int chunkPos;
     [Tooltip("List of preset tile positions")]
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
+    [Tooltip("Dictionary of preset enemies and their positon")]
+    protected Dictionary<Vector2Int, byte> presetEnemies = new Dictionary<Vector2Int, byte>();
     [Tooltip("List of enemies in chunk")]
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     [Tooltip("List of interactables in chunk")]
@@ -77,13 +79,22 @@ public abstract class Chunk
     /// </summary>
     /// <param name="pos">Chunk position of the tile</param>
     /// <param name="tile">ID of the tile</param>
-    public void AddPreset(Vector3Int pos, byte tile)
+    public void AddPresetTile(Vector3Int pos, byte tile)
     {
         if (pos.z == 0)
             blocks[pos.x, pos.y] = tile;
         else
             floor[pos.x, pos.y] = tile;
         presetTiles.Add(pos);
+    }
+    /// <summary>
+    /// Adds enemies to list of preset
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="enemy"></param>
+    public void AddPresetEnemy(Vector2Int pos, byte enemy)
+    {
+        presetEnemies.Add(pos, enemy);
     }
     /// <summary>
     /// Method used to call other methods and generate the chunk
@@ -321,6 +332,13 @@ public abstract class Chunk
                             Debug.Log(x + " " + y);
                     }
                 }
+                else
+                {
+                    if (presetEnemies.ContainsKey(new Vector2Int(x, y)))
+                    {
+                        GenerateEnemy(x, y, presetEnemies[new Vector2Int(x, y)]);
+                    }
+                }
             }
         }
     }
@@ -333,18 +351,29 @@ public abstract class Chunk
     {
         blocks[x, y] = 127;
         numEnemies--;
-        int maxIndex = 0;
+        byte maxByte = 0;
         float maxIndexWeight = 0;
         for (int i = 0; i < biomeScripts[biomes[x, y]].enemies.Count; i++)
         {
-            float weight = Noise.Get2DPerlin(new Vector2Int(x, y), seed, biomeScripts[biomes[x, y]].enemies[i].GetComponent<EnemyInfo>().weight);
+            EnemyInfo info = biomeScripts[biomes[x, y]].enemies[i].GetComponent<EnemyInfo>();
+            float weight = Noise.Get2DPerlin(new Vector2Int(x, y), seed, info.weight);
             if (weight > maxIndexWeight)
             {
-                maxIndex = (byte)i;
+                maxByte = (byte)info.id;
                 maxIndexWeight = weight;
             }
         }
-        GameObject enemy = GameObject.Instantiate(biomeScripts[biomes[x, y]].enemies[maxIndex], enemyParent) as GameObject;
+        GenerateEnemy(x, y, maxByte);
+    }
+    /// <summary>
+    /// Generates the enemy GameObject at given x and y coordinates and with given enemy ID
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="enemyID"></param>
+    protected void GenerateEnemy(int x, int y, byte enemyID)
+    {
+        GameObject enemy = GameObject.Instantiate(GameManager.Instance.GetEnemyObject(enemyID), enemyParent) as GameObject;
         enemy.transform.position = GetTileWorldPos(x, y, -1);
         enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
         enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, enemyParent.position.z);

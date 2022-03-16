@@ -347,7 +347,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf92bef93bb9d194680a4691476e3b1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
   maxHealth: 50
   slider: {fileID: 3911207121298609842}
   firedamage: 2
@@ -355,6 +354,7 @@ MonoBehaviour:
   firechance: 0.1
   weight: 1
   scale: 1.1
+  id: 2
   chunk: {x: 0, y: 0}
 --- !u!114 &8431762998876700618
 MonoBehaviour:

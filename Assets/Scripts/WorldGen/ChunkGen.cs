@@ -414,6 +414,7 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         PresetMap(startPos, section.wallMap, 0);
         PresetMap(startPos, section.floorMap, 1);
+        PresetEnemies(startPos, section.enemies);
     }
     /// <summary>
     /// Adds preset sections to map
@@ -436,8 +437,30 @@ public class ChunkGen : Singleton<ChunkGen>
                 Vector2Int chunkTilePos = GetChunkTilePos(newPos);
                 if (!ChunkCreated(chunkPos))
                     CreateChunk(chunkPos);
-                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), blockID);
+                GetChunk(chunkPos).AddPresetTile(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), blockID);
             }
+        }
+    }
+    /// <summary>
+    /// Adds preset enemies to map
+    /// </summary>
+    /// <param name="startPos">Start pos to add object</param>
+    /// <param name="map">TextAsset containing enemies</param>
+    void PresetEnemies(Vector2Int startPos, TextAsset map)
+    {
+        string text = map.text;
+        string[] lines = text.Split('\n');
+        for (int i = 0; i < lines.Length - 1; i++)
+        {
+            string[] lineData = lines[i].Split('|');
+            byte enemy = Convert.ToByte(lineData[1]);
+            string[] pos = lineData[0].Split(' ');
+            Vector2Int newPos = startPos + new Vector2Int(Int32.Parse(pos[0]), Int32.Parse(pos[1]));
+            Vector2Int chunkPos = GetChunkPos(newPos);
+            Vector2Int chunkTilePos = GetChunkTilePos(newPos);
+            if (!ChunkCreated(chunkPos))
+                CreateChunk(chunkPos);
+            GetChunk(chunkPos).AddPresetEnemy(chunkTilePos, enemy);
         }
     }
     /// <summary>

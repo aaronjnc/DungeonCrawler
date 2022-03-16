@@ -8,7 +8,7 @@ public class PremadeSection : MonoBehaviour
     [Tooltip("Wall map text asset")]
     public TextAsset wallMap;
     [Tooltip("Enemies in premade section")]
-    public Dictionary<Vector2Int, byte> enemies = new Dictionary<Vector2Int, byte>();
+    public TextAsset enemies;
     [Tooltip("Create section at start of game")]
     public bool CreateAtStart;
     [Tooltip("Number of sections in world")]
