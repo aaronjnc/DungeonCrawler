@@ -76,25 +76,23 @@ public class ChunkGen : Singleton<ChunkGen>
             {
                 if (sections.CreateAtStart)
                 {
-                    int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
-                    int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
-                    PresetTiles(new Vector2Int(startX, startY), sections);
+                    PresetChunk(sections);
                 }
             }
         }
         else
         {
+            UnityEngine.Random.InitState((int)System.DateTime.Now.Ticks);
             if (randomSeed)
                 seed = UnityEngine.Random.Range(0, int.MaxValue);
             if (randomBiomeSeed)
                 biomeseed = UnityEngine.Random.Range(0, 1000000);
+            UnityEngine.Random.InitState(seed);
             foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
                 {
-                    int startX = UnityEngine.Random.Range(sections.minStart.x, sections.maxStart.y);
-                    int startY = UnityEngine.Random.Range(sections.minStart.y, sections.maxStart.y);
-                    PresetTiles(new Vector2Int(startX, startY), sections);
+                    PresetChunk(sections);
                 }
             }
             for (int x = -1; x <= 0; x++)
@@ -200,16 +198,15 @@ public class ChunkGen : Singleton<ChunkGen>
     /// <returns></returns>
     private int DetermineBiome(Vector2Int chunkPos)
     {
-        float lowest = 100;
+        float highest = 0;
         int index = 0;
-        UnityEngine.Random.InitState(seed);
-        float randomNum = UnityEngine.Random.Range(0, 100f);
         foreach (Biomes biomeScript in biomes)
         {
-            if (biomeScript.chance >= randomNum / 100 && biomeScript.chance < lowest)
+            float val = Noise.Get2DPerlinChunk(chunkPos, biomeseed, biomeScript.scale);
+            if (val > highest)
             {
                 index = biomeScript.biomeID;
-                lowest = biomeScript.chance;
+                highest = val;
             }
         }
         return index;
@@ -410,11 +407,14 @@ public class ChunkGen : Singleton<ChunkGen>
     /// </summary>
     /// <param name="startPos">start position of section</param>
     /// <param name="section">script holding preset section information</param>
-    void PresetTiles(Vector2Int startPos, PremadeSection section)
+    void PresetChunk(PremadeSection section)
     {
-        PresetMap(startPos, section.wallMap, 0);
-        PresetMap(startPos, section.floorMap, 1);
-        PresetEnemies(startPos, section.enemies);
+        Vector2Int startPos = Vector2Int.zero;
+        startPos.x = UnityEngine.Random.Range(section.minStart.x, section.maxStart.x);
+        startPos.y = UnityEngine.Random.Range(section.minStart.y, section.maxStart.y);
+        PresetTiles(startPos, section.wallMap, 0, section.entireChunk);
+        PresetTiles(startPos, section.floorMap, 1, section.entireChunk);
+        PresetEnemies(startPos, section.enemies, section.entireChunk);
     }
     /// <summary>
     /// Adds preset sections to map
@@ -422,7 +422,7 @@ public class ChunkGen : Singleton<ChunkGen>
     /// <param name="startPos">Start pos to add object</param>
     /// <param name="map">TextAsset of map</param>
     /// <param name="z">Z position of map</param>
-    void PresetMap(Vector2Int startPos, TextAsset map, int z)
+    void PresetTiles(Vector2Int startPos, TextAsset map, int z, bool entireChunk)
     {
         string textmap = map.text;
         string[] lines = textmap.Split('\n');
@@ -432,9 +432,19 @@ public class ChunkGen : Singleton<ChunkGen>
             for (int col = 0; col < bytes.Length; col++)
             {
                 byte blockID = Convert.ToByte(bytes[col]);
-                Vector2Int newPos = startPos + new Vector2Int(col, row);
-                Vector2Int chunkPos = GetChunkPos(newPos);
-                Vector2Int chunkTilePos = GetChunkTilePos(newPos);
+                Vector2Int chunkPos;
+                Vector2Int chunkTilePos;
+                if (!entireChunk)
+                {
+                    Vector2Int newPos = startPos + new Vector2Int(col, row);
+                    chunkPos = GetChunkPos(newPos);
+                    chunkTilePos = GetChunkTilePos(newPos);
+                }
+                else
+                {
+                    chunkPos = startPos;
+                    chunkTilePos = new Vector2Int(col, row);
+                }
                 if (!ChunkCreated(chunkPos))
                     CreateChunk(chunkPos);
                 GetChunk(chunkPos).AddPresetTile(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), blockID);
@@ -446,7 +456,7 @@ public class ChunkGen : Singleton<ChunkGen>
     /// </summary>
     /// <param name="startPos">Start pos to add object</param>
     /// <param name="map">TextAsset containing enemies</param>
-    void PresetEnemies(Vector2Int startPos, TextAsset map)
+    void PresetEnemies(Vector2Int startPos, TextAsset map, bool entireChunk)
     {
         string text = map.text;
         string[] lines = text.Split('\n');
@@ -455,9 +465,19 @@ public class ChunkGen : Singleton<ChunkGen>
             string[] lineData = lines[i].Split('|');
             byte enemy = Convert.ToByte(lineData[1]);
             string[] pos = lineData[0].Split(' ');
-            Vector2Int newPos = startPos + new Vector2Int(Int32.Parse(pos[0]), Int32.Parse(pos[1]));
-            Vector2Int chunkPos = GetChunkPos(newPos);
-            Vector2Int chunkTilePos = GetChunkTilePos(newPos);
+            Vector2Int chunkPos;
+            Vector2Int chunkTilePos;
+            if (!entireChunk)
+            {
+                Vector2Int newPos = startPos + new Vector2Int(Int32.Parse(pos[0]), Int32.Parse(pos[1]));
+                chunkPos = GetChunkPos(newPos);
+                chunkTilePos = GetChunkTilePos(newPos);
+            }
+            else
+            {
+                chunkPos = startPos;
+                chunkTilePos = new Vector2Int(Int32.Parse(pos[0]), Int32.Parse(pos[1]));
+            }
             if (!ChunkCreated(chunkPos))
                 CreateChunk(chunkPos);
             GetChunk(chunkPos).AddPresetEnemy(chunkTilePos, enemy);

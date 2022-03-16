@@ -56,7 +56,7 @@ MonoBehaviour:
   floorBlocks:
   - {fileID: 7305457819448165391, guid: 12921bcf12c74a44db4e0b5a92a08e29, type: 3}
   - {fileID: 3007942367248793798, guid: e6fbc9ffc1613f74b8e6928192331d23, type: 3}
-  scale: 1.1
+  scale: 1.6
   weight: 0.68
   specialBlocks:
   - {fileID: 5242018764825017894, guid: 7db953448bdfe2743bc2da0a3389be51, type: 3}

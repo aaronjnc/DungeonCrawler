@@ -15,4 +15,15 @@ public class Noise : MonoBehaviour
     {
         return Mathf.PerlinNoise((position.x + .1f) / ChunkGen.Instance.chunkWidth * scale + offset, (position.y + .1f) / ChunkGen.Instance.chunkHeight * scale + offset);
     }
+    /// <summary>
+    /// Generate perlin noise for biome generation
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="offset"></param>
+    /// <param name="scale"></param>
+    /// <returns></returns>
+    public static float Get2DPerlinChunk(Vector2Int position, float offset, float scale)
+    {
+        return Mathf.PerlinNoise((position.x + .1f) * scale + offset, (position.y + .1f) * scale + offset);
+    }
 }
