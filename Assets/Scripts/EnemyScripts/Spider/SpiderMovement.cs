@@ -24,7 +24,7 @@ public class SpiderMovement : EnemyMovement
         if (attacking)
         {
             nextPoint = new Vector2(attack.lastLocation.x, attack.lastLocation.y);
-            getEndRotation();
+            GetEndRotation();
             moving = true;
         }
         if (!moving && !waiting)
@@ -44,7 +44,7 @@ public class SpiderMovement : EnemyMovement
                 if (attacking && Mathf.Abs(Vector2.Distance(pos, nextPoint)) < attack.reach)
                 {
                     moving = false;
-                    attack.attack();
+                    attack.Attack();
                 }
                 else
                 {
@@ -55,7 +55,7 @@ public class SpiderMovement : EnemyMovement
                 {
                     waiting = true;
                     moving = false;
-                    StartCoroutine(wait());
+                    StartCoroutine(Wait());
                 }
             }
         }
@@ -64,7 +64,7 @@ public class SpiderMovement : EnemyMovement
     /// wait at end of patrol point
     /// </summary>
     /// <returns></returns>
-    IEnumerator wait()
+    IEnumerator Wait()
     {
         yield return new WaitForSeconds(waitTime);
         waiting = false;

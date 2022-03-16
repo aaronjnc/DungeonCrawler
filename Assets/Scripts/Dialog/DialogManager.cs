@@ -6,40 +6,55 @@ using static UnityEngine.InputSystem.InputAction;
 
 public class DialogManager : MonoBehaviour
 {
-    //controls reference
-    PlayerControls controls;
-    //reference to dialog asset script associated with this manager
-    DialogAsset asset;
-    //textbox to display text
-    Text textbox;
-    //name box to display name
-    public Text namebox;
-    // boolean to determine if player is speaking
-    bool player = false;
-    //lines to display
-    List<string> lines = new List<string>();
-    //selected line
-    int selectedLine = 0;
+    [Tooltip("Player controls")]
+    private PlayerControls controls;
+    [Tooltip("Dialog asset")]
+    private DialogAsset asset;
+    [Tooltip("Dialog text box")]
+    private Text textbox;
+    [Tooltip("Dialog name box")]
+    [SerializeField] private Text namebox;
+    [Tooltip("Player is speaking")]
+    private bool player = false;
+    [Tooltip("Current lines")]
+    private List<string> lines = new List<string>();
+    [Tooltip("Line currently highlighted")]
+    private int selectedLine = 0;
+    [Tooltip("Dialog manager created")]
+    private bool started = false;
     /// <summary>
     /// sets ups controls and updates lines with retrieved asset
     /// </summary>
     private void Start()
     {
         controls = new PlayerControls();
-        controls.Dialog.ChangeOption.performed += changeLineChoice;
+        controls.Dialog.ChangeOption.performed += ChangeLineChoice;
         controls.Dialog.ChangeOption.Enable();
-        controls.Dialog.ChooseLine.performed += updateLines;
+        controls.Dialog.ChooseLine.canceled += UpdateLines;
         controls.Dialog.ChooseLine.Enable();
         textbox = GetComponent<Text>();
         asset = GetComponent<DialogAsset>();
-        updateLines();
+        UpdateLines();
+        started = true;
+    }
+    /// <summary>
+    /// Sets up the textbox when enabled
+    /// </summary>
+    private void OnEnable()
+    {
+        if (started)
+        {
+            selectedLine = 0;
+            player = false;
+            UpdateLines();
+        }
     }
     /// <summary>
     /// updates textbox text with lines list
     /// </summary>
-    void updateLines()
+    void UpdateLines()
     {
-        lines = asset.getLineOptions();
+        lines = asset.GetLineOptions();
         if (lines[0][1] == 'P')
         {
             namebox.text = "Player";
@@ -49,13 +64,13 @@ public class DialogManager : MonoBehaviour
         {
             namebox.text = asset.npcName;
         }
-        trimLines();
-        setUpTextbox();
+        TrimLines();
+        SetupTextbox();
     }
     /// <summary>
     /// sets up textbox with given lines, and highlights chosen line
     /// </summary>
-    void setUpTextbox()
+    void SetupTextbox()
     {
         textbox.text = "";
         for (int i = 0; i < lines.Count; i++)
@@ -86,7 +101,7 @@ public class DialogManager : MonoBehaviour
     /// updates line choice and highlights new line when key is pressed
     /// </summary>
     /// <param name="ctx"></param>
-    private void changeLineChoice(CallbackContext ctx)
+    private void ChangeLineChoice(CallbackContext ctx)
     {
         selectedLine -= (int)ctx.ReadValue<float>();
         if (selectedLine < 0)
@@ -97,23 +112,20 @@ public class DialogManager : MonoBehaviour
         {
             selectedLine = 0;
         }
-        setUpTextbox();
+        SetupTextbox();
     }
     /// <summary>
     /// updates lines when line is chosen
     /// </summary>
     /// <param name="ctx"></param>
-    void updateLines(CallbackContext ctx)
+    void UpdateLines(CallbackContext ctx)
     {
-        asset.chooseLine(selectedLine);
-        selectedLine = 0;
-        player = false;
-        updateLines();
+        asset.ChooseLine(selectedLine);
     }
     /// <summary>
     /// removes brackets at end of strings
     /// </summary>
-    void trimLines()
+    void TrimLines()
     {
         for (int i = 0; i < lines.Count; i++)
         {

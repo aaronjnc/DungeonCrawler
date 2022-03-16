@@ -3,12 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 public class PremadeSection : MonoBehaviour
 {
+    [Tooltip("Floor map text asset")]
     public TextAsset floorMap;
+    [Tooltip("Wall map text asset")]
     public TextAsset wallMap;
-    public Dictionary<Vector2Int, byte> enemies = new Dictionary<Vector2Int, byte>();
+    [Tooltip("Enemies in premade section")]
+    public TextAsset enemies;
+    [Tooltip("Create section at start of game")]
     public bool CreateAtStart;
+    [Tooltip("Number of sections in world")]
     public int worldCount;
+    [Tooltip("Minimum start position")]
     public Vector2Int minStart;
+    [Tooltip("Maximum start position")]
     public Vector2Int maxStart;
-    public bool generated;
+    [Tooltip("Premade section is entire chunk")]
+    public bool entireChunk;
+    [Tooltip("Biome of section")]
+    [HideInInspector] public int biome;
 }

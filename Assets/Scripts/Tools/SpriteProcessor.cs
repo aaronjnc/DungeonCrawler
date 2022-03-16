@@ -5,6 +5,9 @@ using UnityEditor;
 
 public class SpriteProcessor : AssetPostprocessor
 {
+    /// <summary>
+    /// Sets sprite properties to be correct size and filter mode
+    /// </summary>
     void OnPreprocessTexture()
     {
         TextureImporter textureImporter = (TextureImporter)assetImporter;

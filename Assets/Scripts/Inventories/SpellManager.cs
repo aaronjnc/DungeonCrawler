@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public class SpellManager : MonoBehaviour
 {
+    //chosen spells
     public Image[] chosenImages;
+    //magic script
     public Magic magicScript;
     // Start is called before the first frame update
     void Start()
