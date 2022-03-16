@@ -95,4 +95,12 @@ public class EnemyInfo : MonoBehaviour
         enemy += gameObject.transform.rotation + "\n";
         return enemy;
     }
+    /// <summary>
+    /// Returns enemy health
+    /// </summary>
+    /// <returns></returns>
+    public float GetHealth()
+    {
+        return health;
+    }
 }

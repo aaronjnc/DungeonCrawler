@@ -23,8 +23,10 @@ public class PremadeSectionEditor : Editor
             GameObject assetRoot = section.gameObject;
             if (assetRoot.name.Contains("Prefab"))
                 return;
-            GenerateMaps(section, assetRoot);
-            GenerateEnemies(section, assetRoot);
+            string dir = Path.Combine("Assets/Resources/PremadeMaps", assetRoot.name);
+            Directory.CreateDirectory(dir);
+            GenerateMaps(section, assetRoot, dir);
+            GenerateEnemies(section, assetRoot, dir);
             string assetPath = "Assets/Resources/PremadeSections/" + assetRoot.name + ".prefab";
             PrefabUtility.SaveAsPrefabAsset(assetRoot, assetPath);
         }
@@ -34,10 +36,10 @@ public class PremadeSectionEditor : Editor
     /// </summary>
     /// <param name="section"></param>
     /// <param name="contents"></param>
-    private void GenerateMaps(PremadeSection section, GameObject contents)
+    private void GenerateMaps(PremadeSection section, GameObject contents, string dir)
     {
-        string floorPath = "Assets/Resources/PremadeMaps/" + contents.name + "floor.txt";
-        string wallPath = "Assets/Resources/PremadeMaps/" + contents.name + "wall.txt";
+        string floorPath = Path.Combine(dir, contents.name + "floor.txt");
+        string wallPath = Path.Combine(dir, contents.name + "wall.txt");
         Tilemap[] maps = contents.GetComponentsInChildren<Tilemap>();
         File.WriteAllText(floorPath, "");
         File.WriteAllText(wallPath, "");
@@ -61,8 +63,6 @@ public class PremadeSectionEditor : Editor
                     string wallName = maps[1].GetTile(new Vector3Int(x, y, 0)).name;
                     wallId = ResourceInformation.GetBlockId(wallName);
                 }
-                //section.floorMap[x - xMin, y - yMin] = floorId;
-                //section.wallMap[x - xMin, y - yMin] = wallId;
                 floorWriter.Write(floorId);
                 wallWriter.Write(wallId);
                 if (x != maps[0].cellBounds.xMax - 1)
@@ -81,15 +81,24 @@ public class PremadeSectionEditor : Editor
         floorWriter.Close();
         AssetDatabase.ImportAsset(floorPath);
         AssetDatabase.ImportAsset(wallPath);
-        section.floorMap = Resources.Load("PremadeMaps/" + contents.name + "floor") as TextAsset;
-        section.wallMap = Resources.Load("PremadeMaps/" + contents.name + "wall") as TextAsset;
+        section.floorMap = Resources.Load("PremadeMaps/" + contents.name + "/" + contents.name + "floor") as TextAsset;
+        section.wallMap = Resources.Load("PremadeMaps/" + contents.name + "/" + contents.name + "wall") as TextAsset;
     }
-    private void GenerateEnemies(PremadeSection section, GameObject contents)
+    private void GenerateEnemies(PremadeSection section, GameObject contents, string dir)
     {
+        string enemyPath = Path.Combine(dir, contents.name + "enemy.txt");
+        File.WriteAllText(enemyPath, "");
+        StreamWriter sw = new StreamWriter(enemyPath, true);
+        Tilemap tilemap = contents.GetComponentInChildren<Tilemap>();
+        Vector2Int bottomLeft = new Vector2Int(tilemap.cellBounds.x, tilemap.cellBounds.y);
         foreach (EnemyInfo enemy in contents.GetComponentsInChildren<EnemyInfo>())
         {
             Vector2Int pos = new Vector2Int((int)enemy.gameObject.transform.position.x, (int)enemy.gameObject.transform.position.y);
-            section.enemies.Add(pos, enemy.id);
+            Vector2Int realPos = pos - bottomLeft;
+            sw.WriteLine(realPos.x + " " + realPos.y + "|" + enemy.id);
         }
+        sw.Close();
+        AssetDatabase.ImportAsset(enemyPath);
+        section.enemies = Resources.Load("PremadeMaps/" + contents.name + "/" + contents.name + "enemy") as TextAsset;
     }
 }

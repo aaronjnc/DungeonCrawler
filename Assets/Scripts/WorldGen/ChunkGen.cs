@@ -414,6 +414,7 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         PresetMap(startPos, section.wallMap, 0);
         PresetMap(startPos, section.floorMap, 1);
+        PresetEnemies(startPos, section.enemies);
     }
     /// <summary>
     /// Adds preset sections to map
@@ -436,8 +437,30 @@ public class ChunkGen : Singleton<ChunkGen>
                 Vector2Int chunkTilePos = GetChunkTilePos(newPos);
                 if (!ChunkCreated(chunkPos))
                     CreateChunk(chunkPos);
-                GetChunk(chunkPos).AddPreset(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), blockID);
+                GetChunk(chunkPos).AddPresetTile(new Vector3Int(chunkTilePos.x, chunkTilePos.y, z), blockID);
             }
+        }
+    }
+    /// <summary>
+    /// Adds preset enemies to map
+    /// </summary>
+    /// <param name="startPos">Start pos to add object</param>
+    /// <param name="map">TextAsset containing enemies</param>
+    void PresetEnemies(Vector2Int startPos, TextAsset map)
+    {
+        string text = map.text;
+        string[] lines = text.Split('\n');
+        for (int i = 0; i < lines.Length - 1; i++)
+        {
+            string[] lineData = lines[i].Split('|');
+            byte enemy = Convert.ToByte(lineData[1]);
+            string[] pos = lineData[0].Split(' ');
+            Vector2Int newPos = startPos + new Vector2Int(Int32.Parse(pos[0]), Int32.Parse(pos[1]));
+            Vector2Int chunkPos = GetChunkPos(newPos);
+            Vector2Int chunkTilePos = GetChunkTilePos(newPos);
+            if (!ChunkCreated(chunkPos))
+                CreateChunk(chunkPos);
+            GetChunk(chunkPos).AddPresetEnemy(chunkTilePos, enemy);
         }
     }
     /// <summary>
@@ -460,18 +483,8 @@ public class ChunkGen : Singleton<ChunkGen>
         foreach (ChunkSave c in cs)
         {
             Vector2Int chunkPos = c.GetChunkPos();
-            string[] changes = c.GetChanges();
             CreateChunk(chunkPos);
-            for (int i = 0; i < changes.Length; i++)
-            {
-                string[] split = changes[i].Split('|');
-                byte id = (byte)Int32.Parse(split[1]);
-                string[] posSplit = split[0].Split(' ');
-                int posX = Int32.Parse(posSplit[0]);
-                int posY = Int32.Parse(posSplit[1]);
-                Vector2Int tilePos = new Vector2Int(posX, posY);
-                GetChunk(chunkPos).AddChange(tilePos, id);
-            }
+            GetChunk(chunkPos).LoadFromFile(c);
         }
     }
     /// <summary>

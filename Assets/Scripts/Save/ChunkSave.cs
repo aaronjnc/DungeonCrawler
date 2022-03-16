@@ -11,6 +11,8 @@ public class ChunkSave
     private int chunkY;
     [Tooltip("String array of changed blocks")]
     private string[] changed;
+    private EnemySave[] enemyInfo;
+    
     /// <summary>
     /// Saves chunk data
     /// </summary>
@@ -20,6 +22,13 @@ public class ChunkSave
         chunkX = chunk.chunkPos.x;
         chunkY = chunk.chunkPos.y;
         changed = chunk.GetChanges();
+        int i = 0;
+        enemyInfo = new EnemySave[chunk.GetEnemies().Count];
+        foreach (GameObject enemy in chunk.GetEnemies())
+        {
+            enemyInfo[i] = new EnemySave(enemy);
+            i++;
+        }
     }
     /// <summary>
     /// Returns position of chunk
@@ -36,5 +45,9 @@ public class ChunkSave
     public string[] GetChanges()
     {
         return changed;
+    }
+    public EnemySave[] GetEnemies()
+    {
+        return enemyInfo;
     }
 }

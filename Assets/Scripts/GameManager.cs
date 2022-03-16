@@ -39,6 +39,7 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public bool paused = false;
     [Tooltip("All premade sections")]
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    private Dictionary<byte, GameObject> enemies = new Dictionary<byte, GameObject>();
     [Tooltip("String of full text file for dialog")]
     [HideInInspector] public string fullText;
     [Tooltip("Load world from file")]
@@ -88,6 +89,10 @@ public class GameManager : Singleton<GameManager>
         foreach(GameObject item in Resources.LoadAll("PremadeSections"))
         {
             sections.Add(item.GetComponent<PremadeSection>());
+        }
+        foreach(GameObject enemy in Resources.LoadAll("Enemies"))
+        {
+            enemies.Add(enemy.GetComponent<EnemyInfo>().id, enemy);
         }
     }
     /// <summary>
@@ -291,5 +296,14 @@ public class GameManager : Singleton<GameManager>
     public int GetMoney()
     {
         return playerMoney;
+    }
+    /// <summary>
+    /// Returns enemy prefab gameobjects
+    /// </summary>
+    /// <param name="enemyID"></param>
+    /// <returns></returns>
+    public GameObject GetEnemyObject(byte enemyID)
+    {
+        return enemies[enemyID];
     }
 }

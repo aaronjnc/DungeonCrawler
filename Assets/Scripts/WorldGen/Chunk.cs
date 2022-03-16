@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using UnityEngine.AI;
 using System;
+using static System.Collections.Generic.Dictionary<int, UnityEngine.GameObject>;
 
 public abstract class Chunk
 {
@@ -45,6 +46,8 @@ public abstract class Chunk
     public Vector2Int chunkPos;
     [Tooltip("List of preset tile positions")]
     protected List<Vector3Int> presetTiles = new List<Vector3Int>();
+    [Tooltip("Dictionary of preset enemies and their positon")]
+    protected Dictionary<Vector2Int, byte> presetEnemies = new Dictionary<Vector2Int, byte>();
     [Tooltip("List of enemies in chunk")]
     protected Dictionary<int, GameObject> enemies = new Dictionary<int, GameObject>();
     [Tooltip("List of interactables in chunk")]
@@ -77,13 +80,22 @@ public abstract class Chunk
     /// </summary>
     /// <param name="pos">Chunk position of the tile</param>
     /// <param name="tile">ID of the tile</param>
-    public void AddPreset(Vector3Int pos, byte tile)
+    public void AddPresetTile(Vector3Int pos, byte tile)
     {
         if (pos.z == 0)
             blocks[pos.x, pos.y] = tile;
         else
             floor[pos.x, pos.y] = tile;
         presetTiles.Add(pos);
+    }
+    /// <summary>
+    /// Adds enemies to list of preset
+    /// </summary>
+    /// <param name="pos"></param>
+    /// <param name="enemy"></param>
+    public void AddPresetEnemy(Vector2Int pos, byte enemy)
+    {
+        presetEnemies.Add(pos, enemy);
     }
     /// <summary>
     /// Method used to call other methods and generate the chunk
@@ -317,8 +329,13 @@ public abstract class Chunk
                         {
                             DetermineEmptyType(x, y);
                         }
-                        if (blocks[x, y] == 0)
-                            Debug.Log(x + " " + y);
+                    }
+                }
+                else
+                {
+                    if (presetEnemies.ContainsKey(new Vector2Int(x, y)))
+                    {
+                        GenerateEnemy(x, y, presetEnemies[new Vector2Int(x, y)]);
                     }
                 }
             }
@@ -332,23 +349,37 @@ public abstract class Chunk
     protected void SpawnEnemy(int x, int y)
     {
         blocks[x, y] = 127;
+        if (GameManager.Instance.loadFromFile)
+            return;
         numEnemies--;
-        int maxIndex = 0;
+        byte maxByte = 0;
         float maxIndexWeight = 0;
         for (int i = 0; i < biomeScripts[biomes[x, y]].enemies.Count; i++)
         {
-            float weight = Noise.Get2DPerlin(new Vector2Int(x, y), seed, biomeScripts[biomes[x, y]].enemies[i].GetComponent<EnemyInfo>().weight);
+            EnemyInfo info = biomeScripts[biomes[x, y]].enemies[i].GetComponent<EnemyInfo>();
+            float weight = Noise.Get2DPerlin(new Vector2Int(x, y), seed, info.weight);
             if (weight > maxIndexWeight)
             {
-                maxIndex = (byte)i;
+                maxByte = (byte)info.id;
                 maxIndexWeight = weight;
             }
         }
-        GameObject enemy = GameObject.Instantiate(biomeScripts[biomes[x, y]].enemies[maxIndex], enemyParent) as GameObject;
+        GenerateEnemy(x, y, maxByte);
+    }
+    /// <summary>
+    /// Generates the enemy GameObject at given x and y coordinates and with given enemy ID
+    /// </summary>
+    /// <param name="x"></param>
+    /// <param name="y"></param>
+    /// <param name="enemyID"></param>
+    protected GameObject GenerateEnemy(int x, int y, byte enemyID)
+    {
+        GameObject enemy = GameObject.Instantiate(GameManager.Instance.GetEnemyObject(enemyID), enemyParent) as GameObject;
         enemy.transform.position = GetTileWorldPos(x, y, -1);
         enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
         enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, enemyParent.position.z);
         enemies.Add(enemy.GetHashCode(), enemy);
+        return enemy;
     }
     /// <summary>
     /// Determines empty tile type at given location
@@ -551,6 +582,7 @@ public abstract class Chunk
     /// </summary>
     public void LoadChunk()
     {
+        changed = true;
         map.GetComponent<TilemapRenderer>().enabled = true;
         foreach(GameObject enemy in enemies.Values)
         {
@@ -651,17 +683,12 @@ public abstract class Chunk
         GameObject.Destroy(enemy);
     }
     /// <summary>
-    /// returns array of all enemies' information
+    /// returns list of all enemies
     /// </summary>
     /// <returns></returns>
-    public string[] GetEnemies()
+    public ValueCollection GetEnemies()
     {
-        string[] enemyString = new string[enemies.Count];
-        for (int i = 0; i < enemyString.Length; i++)
-        {
-            enemyString[i] = enemies[i].GetComponent<EnemyInfo>().ToString();
-        }
-        return enemyString;
+        return enemies.Values;
     }
     /// <summary>
     /// Returns string array of map changes
@@ -683,7 +710,7 @@ public abstract class Chunk
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="id"></param>
-    public void AddChange(Vector2Int pos, byte id)
+    private void AddChange(Vector2Int pos, byte id)
     {
         changes.Add(pos, id);
     }
@@ -695,6 +722,34 @@ public abstract class Chunk
         foreach (Vector2Int pos in changes.Keys)
         {
             blocks[pos.x, pos.y] = changes[pos];
+        }
+    }
+    /// <summary>
+    /// Load chunk contents from chunk save script
+    /// </summary>
+    /// <param name="c"></param>
+    public void LoadFromFile(ChunkSave c)
+    {
+        string[] changes = c.GetChanges();
+        for (int i = 0; i < changes.Length; i++)
+        {
+            string[] split = changes[i].Split('|');
+            byte id = (byte)Int32.Parse(split[1]);
+            string[] posSplit = split[0].Split(' ');
+            int posX = Int32.Parse(posSplit[0]);
+            int posY = Int32.Parse(posSplit[1]);
+            Vector2Int tilePos = new Vector2Int(posX, posY);
+            AddChange(tilePos, id);
+        }
+        EnemySave[] enemy = c.GetEnemies();
+        for (int i = 0; i < enemy.Length; i++)
+        {
+            Vector3 enemyPos = enemy[i].GetPosition();
+            Vector2Int localPos = ChunkGen.Instance.GetChunkTilePos(new Vector2Int((int)enemyPos.x, (int)enemyPos.y));
+            GameObject enemyObj = GenerateEnemy(localPos.x, localPos.y, enemy[i].GetID());
+            EnemyInfo enemyInfo = enemyObj.GetComponent<EnemyInfo>();
+            enemyInfo.ReduceHealth(enemyInfo.GetHealth() - enemy[i].GetHealth());
+            enemyObj.transform.eulerAngles = enemy[i].GetRotation();
         }
     }
 }
