@@ -58,6 +58,8 @@ public abstract class Chunk
     protected System.Random random;
     [Tooltip("Chunk has been changed")]
     public bool changed = false;
+    [Tooltip("Used for chunks that are entirely pregenerated")]
+    public bool specialChunk = false;
     protected abstract void FillBiomeMap();
     /// <summary>
     /// Initializes chunk script at given chunk position
@@ -134,6 +136,8 @@ public abstract class Chunk
     /// <param name="gridY">Y position of the tile</param>
     protected void SmoothEdgeBlocks(int gridX, int gridY)
     {
+        if (specialChunk)
+            return;
         Vector2Int relPos = chunkPos;
         int newgridx = gridX;
         int newgridY = gridY;
@@ -171,6 +175,8 @@ public abstract class Chunk
     /// <param name="i">The iteration number</param>
     protected void SmoothMap(int i)
     {
+        if (specialChunk)
+            return;
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -407,6 +413,8 @@ public abstract class Chunk
     /// </summary>
     protected void SpecialBlockGeneration()
     {
+        if (specialChunk)
+            return;
         float heighestWeight = 0;
         int heighestX = 0;
         int heighestY = 0;
