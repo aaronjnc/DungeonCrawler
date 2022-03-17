@@ -412,6 +412,12 @@ public class ChunkGen : Singleton<ChunkGen>
         Vector2Int startPos = Vector2Int.zero;
         startPos.x = UnityEngine.Random.Range(section.minStart.x, section.maxStart.x);
         startPos.y = UnityEngine.Random.Range(section.minStart.y, section.maxStart.y);
+        if (section.entireChunk)
+        {
+            int hash = startPos.ToString().GetHashCode();
+            GenerateBiome(startPos, hash, section.biome);
+            GetChunk(startPos).specialChunk = true;
+        }
         PresetTiles(startPos, section.wallMap, 0, section.entireChunk);
         PresetTiles(startPos, section.floorMap, 1, section.entireChunk);
         PresetEnemies(startPos, section.enemies, section.entireChunk);
@@ -426,24 +432,24 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         string textmap = map.text;
         string[] lines = textmap.Split('\n');
-        for (int row = 0; row < lines.Length; row++)
+        for (int col = 0; col < lines.Length; col++)
         {
-            string[] bytes = lines[row].Split('|');
-            for (int col = 0; col < bytes.Length; col++)
+            string[] bytes = lines[col].Split('|');
+            for (int row = 0; row < bytes.Length; row++)
             {
-                byte blockID = Convert.ToByte(bytes[col]);
+                byte blockID = Convert.ToByte(bytes[row]);
                 Vector2Int chunkPos;
                 Vector2Int chunkTilePos;
                 if (!entireChunk)
                 {
-                    Vector2Int newPos = startPos + new Vector2Int(col, row);
+                    Vector2Int newPos = startPos + new Vector2Int(lines.Length - col - 1, bytes.Length - row - 1);
                     chunkPos = GetChunkPos(newPos);
                     chunkTilePos = GetChunkTilePos(newPos);
                 }
                 else
                 {
                     chunkPos = startPos;
-                    chunkTilePos = new Vector2Int(col, row);
+                    chunkTilePos = new Vector2Int(lines.Length - col - 1, bytes.Length - row - 1);
                 }
                 if (!ChunkCreated(chunkPos))
                     CreateChunk(chunkPos);

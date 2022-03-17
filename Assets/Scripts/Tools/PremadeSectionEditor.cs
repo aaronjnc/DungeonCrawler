@@ -6,6 +6,7 @@ using UnityEngine.Tilemaps;
 using UnityEditor.SceneManagement;
 using UnityEditor.Experimental.SceneManagement;
 using System.IO;
+using System.Text.RegularExpressions;
 
 [CustomEditor(typeof(PremadeSection))]
 public class PremadeSectionEditor : Editor
@@ -47,11 +48,18 @@ public class PremadeSectionEditor : Editor
         StreamWriter wallWriter = new StreamWriter(wallPath, true);
         int xMin = maps[0].cellBounds.xMin;
         int yMin = maps[0].cellBounds.yMin;
-        for (int y = maps[0].cellBounds.yMax - 1; y >= yMin; y--)
+        string floorMap = "";
+        string wallMap = "";
+        for (int x = maps[0].cellBounds.xMax - 1; x >= xMin; x--)
         {
-            for (int x = xMin; x < maps[0].cellBounds.xMax; x++)
+            string floorLine = "";
+            string wallLine = "";
+            for (int y = maps[0].cellBounds.yMax - 1; y >= yMin; y--)
             {
-                string floorName = maps[0].GetTile(new Vector3Int(x, y, 0)).name;
+                TileBase t = maps[0].GetTile(new Vector3Int(x, y, 0));
+                if (t == null)
+                    continue;
+                string floorName = t.name;
                 byte floorId = ResourceInformation.GetBlockId(floorName);
                 byte wallId;
                 if (maps[1].GetTile(new Vector3Int(x, y, 0)) == null)
@@ -63,20 +71,21 @@ public class PremadeSectionEditor : Editor
                     string wallName = maps[1].GetTile(new Vector3Int(x, y, 0)).name;
                     wallId = ResourceInformation.GetBlockId(wallName);
                 }
-                floorWriter.Write(floorId);
-                wallWriter.Write(wallId);
-                if (x != maps[0].cellBounds.xMax - 1)
+                if (!floorLine.Equals(""))
                 {
-                    floorWriter.Write("|");
-                    wallWriter.Write("|");
+                    floorLine += "|";
+                    wallLine += "|";
                 }
+                floorLine += floorId;
+                wallLine += wallId;
             }
-            if (y != yMin)
-            {
-                floorWriter.Write("\n");
-                wallWriter.Write("\n");
-            }     
+            floorMap += floorLine + "\n";
+            wallMap += wallLine + "\n";
         }
+        floorMap = Regex.Replace(floorMap, @"^\s*$\n|\r", string.Empty, RegexOptions.Multiline).TrimEnd();
+        wallMap = Regex.Replace(wallMap, @"^\s*$\n|\r", string.Empty, RegexOptions.Multiline).TrimEnd();
+        wallWriter.Write(wallMap);
+        floorWriter.Write(floorMap);
         wallWriter.Close();
         floorWriter.Close();
         AssetDatabase.ImportAsset(floorPath);
