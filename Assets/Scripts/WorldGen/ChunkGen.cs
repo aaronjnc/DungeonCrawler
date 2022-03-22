@@ -20,8 +20,8 @@ public class ChunkGen : Singleton<ChunkGen>
     private Vector3Int previousPos = Vector3Int.zero;
     [Tooltip("Player chunk")]
     [HideInInspector] private Vector2Int currentChunk = Vector2Int.zero;
-    [Tooltip("Hashtable containg all created chunks")]
-    private Hashtable chunks;
+    [Tooltip("Dictionary containg all created chunks")]
+    private Dictionary<Vector2Int, Chunk> chunks;
     [Tooltip("Array of biome scripts")]
     public Biomes[] biomes;
     [Tooltip("Player movement script")]
@@ -56,7 +56,7 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         base.Awake();
         this.enabled = false;
-        chunks = new Hashtable();
+        chunks = new Dictionary<Vector2Int, Chunk>();
     }
     /// <summary>
     /// Sets up world
@@ -68,7 +68,7 @@ public class ChunkGen : Singleton<ChunkGen>
         enemyParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
-        chunks = new Hashtable();
+        chunks = new Dictionary<Vector2Int, Chunk>();
         if (GameManager.Instance.loadFromFile)
         {
             LoadFromFile();
@@ -182,9 +182,8 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         if (!ChunkCreated(chunkPos))
         {
-            int hash = chunkPos.ToString().GetHashCode();
             CreateChunk(chunkPos);
-            ((Chunk)chunks[hash]).GenerateChunk();
+            chunks[chunkPos].GenerateChunk();
         }
         else if (!ChunkGenerated(chunkPos)) 
         {
@@ -212,33 +211,31 @@ public class ChunkGen : Singleton<ChunkGen>
         return index;
     }
     /// <summary>
-    /// Creates biome script and adds it to chunk hashtable
+    /// Creates biome script and adds it to chunk dictionary
     /// </summary>
     /// <param name="chunkPos">biome position</param>
-    /// <param name="hash">hashcode for chunk</param>
     /// <param name="biomeIdx">index of biome</param>
-    private void GenerateBiome(Vector2Int chunkPos, int hash, int biomeIdx)
+    private void GenerateBiome(Vector2Int chunkPos, int biomeIdx)
     {
         switch(biomeIdx)
         {
             default:
             case 0:
-                chunks.Add(hash, new CommonBiome(chunkPos));
+                chunks.Add(chunkPos, new CommonBiome(chunkPos));
                 break;
             case 1:
-                chunks.Add(hash, new WaterBiome(chunkPos));
+                chunks.Add(chunkPos, new WaterBiome(chunkPos));
                 break;
         }
     }
     /// <summary>
     /// Returns true if Chunk script has already been created
     /// </summary>
-    /// <param name="chunkRelPos">Chunk position</param>
+    /// <param name="chunkPos">Chunk position</param>
     /// <returns></returns>
-    public bool ChunkCreated(Vector2Int chunkRelPos)
+    public bool ChunkCreated(Vector2Int chunkPos)
     {
-        int hash = chunkRelPos.ToString().GetHashCode();
-        return chunks.Contains(hash);
+        return chunks.ContainsKey(chunkPos);
     }
     /// <summary>
     /// Creates chunk script at given position
@@ -246,42 +243,39 @@ public class ChunkGen : Singleton<ChunkGen>
     /// <param name="chunkPos">Chunk position</param>
     public void CreateChunk(Vector2Int chunkPos)
     {
-        int hash = chunkPos.ToString().GetHashCode();
         if ((Mathf.Abs(chunkPos.x) % 2 == 0 && Mathf.Abs(chunkPos.y) % 2 == 0) || (Mathf.Abs(chunkPos.x) % 2 == 1 && Mathf.Abs(chunkPos.y % 2) == 1))
         {
             int id = DetermineBiome(chunkPos);
-            GenerateBiome(chunkPos, hash, id);
+            GenerateBiome(chunkPos, id);
         }
         else
         {
-            chunks.Add(hash, new MixedBiome(chunkPos));
+            chunks.Add(chunkPos, new MixedBiome(chunkPos));
         }
     }
     /// <summary>
     /// Returns true if Chunk has already been generated
     /// </summary>
-    /// <param name="chunkRelPos"></param>
+    /// <param name="chunkPos"></param>
     /// <returns></returns>
-    public bool ChunkGenerated(Vector2Int chunkRelPos)
+    public bool ChunkGenerated(Vector2Int chunkPos)
     {
-        int hash = chunkRelPos.ToString().GetHashCode();
-        if (chunks.Contains(hash))
+        if (chunks.ContainsKey(chunkPos))
         {
-            return ((Chunk)chunks[hash]).generated;
+            return chunks[chunkPos].generated;
         }
         return false;
     }
     /// <summary>
     /// Returns chunk script for chunk at given position
     /// </summary>
-    /// <param name="chunkRelPos">Chunk position</param>
+    /// <param name="chunkPos">Chunk position</param>
     /// <returns></returns>
-    public Chunk GetChunk(Vector2Int chunkRelPos)
+    public Chunk GetChunk(Vector2Int chunkPos)
     {
-        if (!ChunkCreated(chunkRelPos))
+        if (!ChunkCreated(chunkPos))
             return null;
-        int hash = chunkRelPos.ToString().GetHashCode();
-        return (Chunk)chunks[hash];
+        return chunks[chunkPos];
     }
     /// <summary>
     /// Determines the Vector2 Chunk for the given position
@@ -414,8 +408,7 @@ public class ChunkGen : Singleton<ChunkGen>
         startPos.y = UnityEngine.Random.Range(section.minStart.y, section.maxStart.y);
         if (section.entireChunk)
         {
-            int hash = startPos.ToString().GetHashCode();
-            GenerateBiome(startPos, hash, section.biome);
+            GenerateBiome(startPos, section.biome);
             GetChunk(startPos).specialChunk = true;
         }
         PresetTiles(startPos, section.wallMap, 0, section.entireChunk);
@@ -490,10 +483,10 @@ public class ChunkGen : Singleton<ChunkGen>
         }
     }
     /// <summary>
-    /// Return hashtable of chunks
+    /// Return dictionary of chunks
     /// </summary>
     /// <returns></returns>
-    public Hashtable GetChunks()
+    public Dictionary<Vector2Int, Chunk> GetChunks()
     {
         return chunks;
     }
@@ -514,7 +507,7 @@ public class ChunkGen : Singleton<ChunkGen>
         }
     }
     /// <summary>
-    /// Clear the chunks hashtable when script is disabled
+    /// Clear the chunks dictionary when script is disabled
     /// </summary>
     private void OnDisable()
     {

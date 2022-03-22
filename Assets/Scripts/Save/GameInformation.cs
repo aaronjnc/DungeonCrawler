@@ -81,7 +81,7 @@ public class GameInformation : ScriptableObject
     /// <param name="gen"></param>
     public void SaveWorld()
     {
-        Hashtable chunks = ChunkGen.Instance.GetChunks();
+        Dictionary<Vector2Int, Chunk> chunks = ChunkGen.Instance.GetChunks();
         foreach (Chunk chunk in chunks.Values)
         {
             if (chunk.changed)
