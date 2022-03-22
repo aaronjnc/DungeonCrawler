@@ -5,27 +5,29 @@ using UnityEngine.UI;
 
 public class EnemyInfo : MonoBehaviour
 {
-    //enemy health
-    public float health;
-    //max enemy health
-    public float maxHealth;
-    //slider displaying enemy health
-    public Slider slider;
-    //fire damage modifier
-    public float firedamage;
-    //is enemy on fire
-    bool onfire = false;
-    //how long they are on fire for
-    public float firelength;
-    //time they've been on fire
-    float firetime = 0f;
-    //chance of catching on fire
-    public float firechance;
-    //spawn weight
+    [Tooltip("Enemy health")]
+    private float health;
+    [Tooltip("Max enemy health")]
+    [SerializeField] private float maxHealth;
+    [Tooltip("Enemy health slider")]
+    [SerializeField] private Slider slider;
+    [Tooltip("Modifier for effect of fire damage")]
+    [SerializeField] private float firedamage;
+    [Tooltip("Is on fire")]
+    private bool onfire = false;
+    [Tooltip("Fire length")]
+    [SerializeField] private float firelength;
+    [Tooltip("Time on fire")]
+    private float firetime = 0f;
+    [Tooltip("Chance of catching on fire")]
+    [SerializeField] private float firechance;
+    [Tooltip("Spawn weight")]
     public float weight;
-    //spawn scale
+    [Tooltip("Spawn scale")]
     public float scale;
-    //chunk they spawn in
+    [Tooltip("Enemy ID")]
+    public byte id;
+    [Tooltip("Spawn chunk")]
     [HideInInspector] public Vector2Int chunk;
     //types of enemies
     public enum EnemyType
@@ -50,11 +52,12 @@ public class EnemyInfo : MonoBehaviour
     /// <param name="amount">Amount to reduce health by</param>
     public void ReduceHealth(float amount)
     {
+        Debug.Log("Hit");
         health = Mathf.Clamp(health-amount,0,maxHealth);
         slider.value = health;
         if (health <= 0)
         {
-            ChunkGen.currentWorld.GetChunk(chunk).KillEnemy(this.gameObject);
+            ChunkGen.Instance.GetChunk(chunk).DestroyEnemy(this.gameObject);
         }
     }
     /// <summary>
@@ -91,5 +94,13 @@ public class EnemyInfo : MonoBehaviour
         enemy += gameObject.transform.position + "\n";
         enemy += gameObject.transform.rotation + "\n";
         return enemy;
+    }
+    /// <summary>
+    /// Returns enemy health
+    /// </summary>
+    /// <returns></returns>
+    public float GetHealth()
+    {
+        return health;
     }
 }

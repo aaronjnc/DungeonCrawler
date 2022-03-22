@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2174476244100610588}
   - component: {fileID: 6443086486932837199}
   - component: {fileID: 3048237360087885941}
-  - component: {fileID: 7429500575166462022}
   m_Layer: 5
   m_Name: MarketImage
   m_TagString: Untagged
@@ -76,15 +75,3 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7429500575166462022
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7099839975533448435}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1044c347a74c594d95c91c0aceb77db, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 

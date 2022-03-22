@@ -9,48 +9,45 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class DialogAsset : MonoBehaviour
 {
-    //reference to stall which is using this script
-    public StallManager stall;
-    //game object which displays all dialog
-    public GameObject dialogBox;
-    //manager reference
-    GameManager manager;
-    //string containing all the text in the text asset
-    string fullText;
-    //current text options
-    string[] currentGroupings;
-    //integer value referencing line chosen in current groupings
-    int currentLine = 0;
-    //current line options
+    [Tooltip("Stall manager")]
+    [SerializeField] private StallManager stall;
+    [Tooltip("Dialog box object")]
+    [SerializeField] private GameObject dialogBox;
+    [Tooltip("String containing all the text in the text asset")]
+    private string fullText;
+    [Tooltip("Current text options")]
+    private string[] currentGroupings;
+    [Tooltip("Chosen line number")]
+    private int currentLine = 0;
+    [Tooltip("List of line options")]
     List<string> currentOptions;
-    //strings containing commands that must be performed
-    List<string> commandStrings = new List<string>();
-    //name of npc you are talking to
-    public string npcName;
+    [Tooltip("Lines containing commands")]
+    private List<string> commandStrings = new List<string>();
+    [Tooltip("Name of npc")]
+    [HideInInspector] public string npcName;
     /// <summary>
     /// gets the text asset and sets up lines
     /// </summary>
     void Start()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        fullText = manager.fullText;
+        fullText = GameManager.Instance.fullText;
         npcName = fullText.Split('\n')[0];
         fullText = string.Join("\n", Regex.Split(fullText, "\n").Skip(1).ToArray());
-        getLines(fullText);
+        GetLines(fullText);
     }
     /// <summary>
     /// takes the large string and separates current options
     /// </summary>
     /// <param name="text"> text asset for dialog
     /// </param> 
-    void getLines(string text)
+    void GetLines(string text)
     {
         currentOptions = new List<string>();
         currentGroupings = text.Split(currentLine.ToString()[0]);
         for (int i = 1; i < currentGroupings.Length; i++)
         {
             currentOptions.Add(currentGroupings[i].Split('\n')[0]);
-            checkForCommand(currentOptions[i-1]);
+            CheckForCommand(currentOptions[i-1]);
         }
     }
     /// <summary>
@@ -58,21 +55,21 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <param name="choice"> line number
     /// </param> 
-    public void chooseLine(int choice)
+    public void ChooseLine(int choice)
     {
         choice++;
         var newLines = Regex.Split(currentGroupings[choice], "\n").Skip(1);
         string currentGroup = string.Join("\n", newLines.ToArray());
         currentLine++;
-        performCommand(currentOptions[choice-1]);
+        PerformCommand(currentOptions[choice-1]);
         if (!currentGroup.Contains(currentLine.ToString()))
         {
             currentLine = 0;
-            getLines(fullText);
+            GetLines(fullText);
         } 
         else
         {
-            getLines(currentGroup);
+            GetLines(currentGroup);
         }
     }
     /// <summary>
@@ -80,7 +77,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <param name="lineChoice"> line to check
     /// </param> 
-    void checkForCommand(string lineChoice)
+    void CheckForCommand(string lineChoice)
     {
         if (lineChoice.Contains("[") && lineChoice.Contains("]"))
         {
@@ -92,7 +89,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <param name="chosenLine"> line chosen with command
     /// </param> 
-    void performCommand(string chosenLine)
+    void PerformCommand(string chosenLine)
     {
         if (commandStrings.Count == 0)
             return;
@@ -108,10 +105,11 @@ public class DialogAsset : MonoBehaviour
                     switch (c)
                     {
                         case "Leave":
-                            manager.loadWorld(manager.GetGameInformation());
-                            break;
+                            GameManager.Instance.reopen = true;
+                            GameManager.Instance.LoadFromFile();
+                            return;
                         case "Buy":
-                            stall.AddItems(manager.GetStallItems());
+                            stall.AddItems(GameManager.Instance.GetStallItems());
                             dialogBox.SetActive(false);
                             break;
                         default:
@@ -127,7 +125,7 @@ public class DialogAsset : MonoBehaviour
     /// </summary>
     /// <returns> string list of options
     /// </returns> 
-    public List<string> getLineOptions()
+    public List<string> GetLineOptions()
     {
         List<string> lineOptions = new List<string>();
         foreach (string option in currentOptions)
