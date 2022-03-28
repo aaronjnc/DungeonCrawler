@@ -7,7 +7,7 @@ public class WorldCreationTesting : MonoBehaviour
     [Tooltip("Width/Height of generation test")]
     [HideInInspector] public int size;
     // Start is called before the first frame update
-    void Start()
+    void OnEnable()
     {
         for(int x = 0; x < size/2; x++)
         {

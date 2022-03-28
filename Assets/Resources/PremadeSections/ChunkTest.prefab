@@ -25781,7 +25781,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7623258330086494164, guid: 3b2d5d4f13b1a094c891dd5741be74f1, type: 3}
       propertyPath: CreateAtStart
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7623258330086494164, guid: 3b2d5d4f13b1a094c891dd5741be74f1, type: 3}
       propertyPath: floorMap
