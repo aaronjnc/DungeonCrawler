@@ -106,10 +106,24 @@ public class ChunkGen : Singleton<ChunkGen>
             currentChunk = new Vector2Int(0, 0);
             if (GameManager.Instance.testingmode)
             {
-                GetComponent<WorldCreationTesting>().enabled = true;
                 GetComponent<WorldCreationTesting>().size = GameManager.Instance.testingsize;
+                GetComponent<WorldCreationTesting>().enabled = true;
             }
         }
+    }
+    public void Regenerate()
+    {
+        List<Vector2Int> keys = new List<Vector2Int>();
+        foreach (Vector2Int key in chunks.Keys) 
+        {
+            keys.Add(key);
+        }
+        for (int i = 0; i < keys.Count; i++)
+        {
+            chunks[keys[i]].DestroyMap();
+        }
+        GetComponent<WorldCreationTesting>().enabled = false;
+        StartUp();
     }
     void FixedUpdate()
     {

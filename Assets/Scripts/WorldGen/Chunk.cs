@@ -760,4 +760,10 @@ public abstract class Chunk
             enemyObj.transform.eulerAngles = enemy[i].GetRotation();
         }
     }
+
+    public void DestroyMap()
+    {
+        if (map != null)
+            GameObject.Destroy(map.gameObject);
+    }
 }
