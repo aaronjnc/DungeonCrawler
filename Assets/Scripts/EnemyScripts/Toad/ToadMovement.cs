@@ -15,7 +15,6 @@ public class ToadMovement : EnemyMovement
     /// </summary>
     void Start()
     {
-        attack = GetComponent<ToadAttack>();
         centerPos = transform.position;
         zPos = transform.position.z;
         endRot = Quaternion.identity;
@@ -25,13 +24,6 @@ public class ToadMovement : EnemyMovement
     /// </summary>
     void FixedUpdate()
     {
-        attacking = attack.spotted;
-        if (attacking)
-        {
-            nextPoint = new Vector2(attack.lastLocation.x, attack.lastLocation.y);
-            GetEndRotation();
-            moving = true;
-        }
         if (!moving && !waiting)
         {
             SetNextPoint();

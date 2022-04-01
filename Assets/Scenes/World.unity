@@ -3470,7 +3470,7 @@ PrefabInstance:
       objectReference: {fileID: 1840861989}
     - target: {fileID: 7711946254513186298, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7711946254513186298, guid: 641ef8e3d0086f94d9eab61d8e8a32e0, type: 3}
       propertyPath: enemy.m_Bits
@@ -3494,7 +3494,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 668468344}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0424cda0b0adb0649b983fde267fcaf9, type: 3}
   m_Name: 

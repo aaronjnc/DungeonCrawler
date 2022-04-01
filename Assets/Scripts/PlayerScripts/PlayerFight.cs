@@ -53,14 +53,14 @@ public class PlayerFight : MonoBehaviour
     /// <param name="ctx"></param>
     void BaseAttack(CallbackContext ctx)
     {
-        if (GameManager.Instance.fighting && !GameManager.Instance.paused)
+        /*if (GameManager.Instance.fighting && !GameManager.Instance.paused)
         {
             invItem.AddExisting(GameManager.Instance.currentItem);
             if (invItem.IsWeapon())
             {
                 invItem.GetWeaponScript().BaseAttack(gameObject.transform);
             }
-        }
+        }*/
     }
     /// <summary>
     /// Player advanced attackw when 'Right Mouse Button' is pressed
@@ -68,14 +68,14 @@ public class PlayerFight : MonoBehaviour
     /// <param name="ctx"></param>
     void AdvancedAttack(CallbackContext ctx)
     {
-        if (GameManager.Instance.fighting && !GameManager.Instance.paused)
+        /*if (GameManager.Instance.fighting && !GameManager.Instance.paused)
         {
             invItem.AddExisting(GameManager.Instance.currentItem);
             if (invItem.IsWeapon())
             {
                 invItem.GetWeaponScript().AdvancedAttack(gameObject.transform);
             }
-        }
+        }*/
     }        
     /// <summary>
     /// deals given damage to player

@@ -180,13 +180,13 @@ public class ItemRotator : MonoBehaviour
         if (!itemSlots[current].IsEmpty())
         {
             DisableBlockPlacing();
-            GameManager.Instance.fighting = false;
+            //GameManager.Instance.fighting = false;
             switch (itemSlots[current].GetItemType())
             {
-                case InventoryItem.ItemType.Weapon:
+                /*case InventoryItem.ItemType.Weapon:
                     GameManager.Instance.fighting = true;
                     itemSlots[current].GetWeaponScript().Pickup(playerRenderer);
-                    break;
+                    break;*/
                 case InventoryItem.ItemType.Consumable:
                     //consumable
                     break;
@@ -198,7 +198,7 @@ public class ItemRotator : MonoBehaviour
         else
         {
             DisableBlockPlacing();
-            GameManager.Instance.fighting = false;
+            //GameManager.Instance.fighting = false;
         }
     }
     /// <summary>

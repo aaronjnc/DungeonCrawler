@@ -14,14 +14,10 @@ public abstract class EnemyMovement : MonoBehaviour
     [SerializeField] protected float minMoveDistance;
     [Tooltip("Enemy spawn point")]
     protected Vector2 centerPos;
-    [Tooltip("Enemy attack script")]
-    protected EnemyAttack attack;
     [Tooltip("Next patrol point")]
     protected Vector2 nextPoint;
     [Tooltip("End rotation")]
     protected Quaternion endRot;
-    [Tooltip("Enemy is attacking player")]
-    protected bool attacking;
     [Tooltip("Z position")]
     protected float zPos;
     [Tooltip("Is moving")]
