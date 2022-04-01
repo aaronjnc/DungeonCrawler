@@ -755,8 +755,6 @@ public abstract class Chunk
             Vector3 enemyPos = enemy[i].GetPosition();
             Vector2Int localPos = ChunkGen.Instance.GetChunkTilePos(new Vector2Int((int)enemyPos.x, (int)enemyPos.y));
             GameObject enemyObj = GenerateEnemy(localPos.x, localPos.y, enemy[i].GetID());
-            EnemyInfo enemyInfo = enemyObj.GetComponent<EnemyInfo>();
-            enemyInfo.ReduceHealth(enemyInfo.GetHealth() - enemy[i].GetHealth());
             enemyObj.transform.eulerAngles = enemy[i].GetRotation();
         }
     }

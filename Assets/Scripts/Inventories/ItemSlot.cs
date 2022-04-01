@@ -119,16 +119,6 @@ public class ItemSlot
         return itemRef.itemSprite;
     }
     /// <summary>
-    /// returns true if slot contains a weapon
-    /// </summary>
-    /// <returns></returns>
-    public bool IsWeapon()
-    {
-        if (itemRef == null)
-            return false;
-        return itemRef.weapon;
-    }
-    /// <summary>
     /// returns cost to buy item
     /// </summary>
     /// <returns></returns>
@@ -192,16 +182,6 @@ public class ItemSlot
             return 0;
         return itemRef.damage;
     } 
-    /// <summary>
-    /// returns the weapon script associated with this item
-    /// </summary>
-    /// <returns></returns>
-    public WeaponInterface GetWeaponScript()
-    {
-        if (itemRef == null)
-            return null;
-        return itemRef.weaponScript;
-    }
     /// <summary>
     /// returns the item type
     /// </summary>

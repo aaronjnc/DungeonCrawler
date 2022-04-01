@@ -5,21 +5,15 @@ using UnityEngine;
 [System.Serializable]
 public class EnemySave
 {
-    private float enemyHealth;
     private float[] enemyPos;
     private float[] enemyRot;
     private byte id;
     public EnemySave(GameObject enemy)
     {
         EnemyInfo enemyInfo = enemy.GetComponent<EnemyInfo>();
-        enemyHealth = enemyInfo.GetHealth();
         id = enemyInfo.id;
         enemyPos = new float[] { enemy.transform.position.x, enemy.transform.position.y, enemy.transform.position.z };
         enemyRot = new float[] { enemy.transform.rotation.x, enemy.transform.rotation.y, enemy.transform.rotation.z };
-    }
-    public float GetHealth()
-    {
-        return enemyHealth;
     }
     public Vector3 GetPosition()
     {

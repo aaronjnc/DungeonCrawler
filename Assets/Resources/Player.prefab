@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 4946243522126971645}
   - component: {fileID: 4946243522126971643}
   - component: {fileID: 4946243522126971640}
-  - component: {fileID: 7711946254513186298}
   - component: {fileID: 2043034821190195736}
   - component: {fileID: 1746473814134355675}
   m_Layer: 0
@@ -133,25 +132,6 @@ MonoBehaviour:
   canMove: 1
   sprinting: 0
   sprintMod: 2
---- !u!114 &7711946254513186298
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4946243522126971641}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3877c4177d5e8d545b4378da9b1e8d15, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 100
-  healthSlider: {fileID: 0}
-  enemy:
-    serializedVersion: 2
-    m_Bits: 0
-  reach: 0
 --- !u!61 &2043034821190195736
 BoxCollider2D:
   m_ObjectHideFlags: 0

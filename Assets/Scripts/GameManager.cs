@@ -84,8 +84,6 @@ public class GameManager : Singleton<GameManager>
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
             InventoryItem invItem = item.GetComponent<InventoryItem>();
-            if (item.GetType().Equals(InventoryItem.ItemType.Weapon))
-                continue;
             itemScripts.Add(invItem.itemID, invItem);
         }
         foreach(GameObject premade in Resources.LoadAll("PremadeSections"))

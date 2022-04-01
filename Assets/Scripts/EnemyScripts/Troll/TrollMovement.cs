@@ -9,7 +9,6 @@ public class TrollMovement : EnemyMovement
     /// </summary>
     void Start()
     {
-        //attack = GetComponent<TrollAttack>();
         centerPos = transform.position;
         zPos = transform.position.z;
         endRot = Quaternion.identity;
@@ -20,13 +19,6 @@ public class TrollMovement : EnemyMovement
     /// </summary>
     void FixedUpdate()
     {
-        /*attacking = attack.spotted;
-        if (attacking)
-        {
-            nextPoint = new Vector2(attack.lastLocation.x, attack.lastLocation.y);
-            GetEndRotation();
-            moving = true;
-        }*/
         if (!moving && !waiting)
         {
             SetNextPoint();

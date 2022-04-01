@@ -11,8 +11,6 @@ public class PlayerSave
     private float[] playerRot;
     [Tooltip("Size of player object")]
     private float[] playerSize;
-    [Tooltip("Player health")]
-    private float health;
     /// <summary>
     /// Creates new PlayerSave object
     /// </summary>
@@ -22,7 +20,6 @@ public class PlayerSave
         playerPos = new float[] { player.transform.position.x, player.transform.position.y, player.transform.position.z };
         playerRot = new float[] { player.transform.rotation.x, player.transform.rotation.y, player.transform.rotation.z };
         playerSize = new float[] { player.transform.lossyScale.x, player.transform.lossyScale.y, player.transform.lossyScale.z };
-        health = player.GetComponent<PlayerFight>().health;
     }
     /// <summary>
     /// Returns player position
@@ -39,13 +36,5 @@ public class PlayerSave
     public Vector3 GetPlayerRot()
     {
         return new Vector3(playerRot[0], playerRot[1], playerRot[2]);
-    }
-    /// <summary>
-    /// Returns player health
-    /// </summary>
-    /// <returns></returns>
-    public float GetPlayerHealth()
-    {
-        return health;
     }
 }
