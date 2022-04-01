@@ -9,7 +9,6 @@ public class TrollMovement : EnemyMovement
     /// </summary>
     void Start()
     {
-        attack = GetComponent<TrollAttack>();
         centerPos = transform.position;
         zPos = transform.position.z;
         endRot = Quaternion.identity;
@@ -20,13 +19,6 @@ public class TrollMovement : EnemyMovement
     /// </summary>
     void FixedUpdate()
     {
-        attacking = attack.spotted;
-        if (attacking)
-        {
-            nextPoint = new Vector2(attack.lastLocation.x, attack.lastLocation.y);
-            GetEndRotation();
-            moving = true;
-        }
         if (!moving && !waiting)
         {
             SetNextPoint();
@@ -41,16 +33,9 @@ public class TrollMovement : EnemyMovement
             if (endRot == transform.rotation)
             {
                 Vector2 pos = new Vector2(transform.position.x, transform.position.y);
-                if (attacking && Mathf.Abs(Vector2.Distance(pos, nextPoint)) < attack.reach)
-                {
-                    moving = false;
-                    attack.Attack();
-                } else
-                {
-                    transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
-                }
+                transform.position = Vector3.MoveTowards(transform.position, target, speed * Time.deltaTime);
                 pos = new Vector2(transform.position.x, transform.position.y);
-                if (!attacking && Mathf.Abs(Vector2.Distance(pos, nextPoint)) < .5f)
+                if (Mathf.Abs(Vector2.Distance(pos, nextPoint)) < .5f)
                 {
                     waiting = true;
                     moving = false;

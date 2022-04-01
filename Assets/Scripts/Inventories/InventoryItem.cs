@@ -14,8 +14,6 @@ public class InventoryItem : MonoBehaviour
     public byte baseDurability;
     [Tooltip("Damage done by item")]
     public byte damage;
-    [Tooltip("Item is a weapon")]
-    public bool weapon;
     [Tooltip("Item level")]
     public int level;
     [Tooltip("Cost to buy item")]
@@ -28,11 +26,9 @@ public class InventoryItem : MonoBehaviour
     public List<InventoryItem> ingredients = new List<InventoryItem>();
     [Tooltip("List of counts for ingredients")]
     public List<int> ingredientCount = new List<int>();
-    public WeaponInterface weaponScript { get { return (WeaponInterface)gameObject.GetComponent(typeof(WeaponInterface)); } }
     //different types of items
     public enum ItemType
     {
-        Weapon,
         Consumable,
         Tool,
         Mineral,

@@ -25,8 +25,8 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public int mapz;
     [Tooltip("Foor z position")]
     [HideInInspector] public int floorz;
-    [Tooltip("Player is holding a weapon")]
-    [HideInInspector] public bool fighting = false;
+    //[Tooltip("Player is holding a weapon")]
+    //[HideInInspector] public bool fighting = false;
     [Tooltip("Item player is currently holding")]
     [HideInInspector] public ItemSlot currentItem;
     [Tooltip("Inventory is open")]
@@ -86,9 +86,9 @@ public class GameManager : Singleton<GameManager>
             InventoryItem invItem = item.GetComponent<InventoryItem>();
             itemScripts.Add(invItem.itemID, invItem);
         }
-        foreach(GameObject item in Resources.LoadAll("PremadeSections"))
+        foreach(GameObject premade in Resources.LoadAll("PremadeSections"))
         {
-            sections.Add(item.GetComponent<PremadeSection>());
+            sections.Add(premade.GetComponent<PremadeSection>());
         }
         foreach(GameObject enemy in Resources.LoadAll("Enemies"))
         {
