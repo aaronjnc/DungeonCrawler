@@ -163,30 +163,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Rope"",
-                    ""type"": ""Button"",
-                    ""id"": ""6c8f2d3e-9378-4448-bebc-895dd065a7ca"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Place"",
-                    ""type"": ""Button"",
-                    ""id"": ""63382f7e-8dcc-482b-aa65-b12d5ef957b6"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Destroy"",
-                    ""type"": ""Button"",
-                    ""id"": ""c306d2fb-3acf-4ebc-84b5-53eeb3ad2e50"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
                     ""name"": ""Inventory"",
                     ""type"": ""Button"",
                     ""id"": ""822fa2e9-f70b-4157-a81c-dce75af4c90d"",
@@ -203,14 +179,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Market"",
-                    ""type"": ""Button"",
-                    ""id"": ""e05a60fe-0904-4fe0-8bad-e67295f7fe17"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
                     ""name"": ""Enter"",
                     ""type"": ""Button"",
                     ""id"": ""d8b34432-c756-41e5-b320-8dd96dae9b1f"",
@@ -222,6 +190,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""name"": ""Menu"",
                     ""type"": ""Button"",
                     ""id"": ""29d77b76-e94e-400f-afbc-715f8c0e509e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Monster Log"",
+                    ""type"": ""Button"",
+                    ""id"": ""e8246465-8078-4e17-9d07-046197341e34"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -252,41 +228,8 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""9c63b114-c346-4f3b-aa77-6b0205785f2d"",
-                    ""path"": ""<Keyboard>/1"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Rope"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""7ed6dcca-1299-44c6-b312-c82b069eda19"",
-                    ""path"": ""<Keyboard>/2"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Place"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""9df8555b-9bc0-4b52-ae38-2e80abeb0cc2"",
-                    ""path"": ""<Keyboard>/3"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Destroy"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""26b252fb-7b89-4ad7-abfb-6b7512e6b8dc"",
-                    ""path"": ""<Keyboard>/i"",
+                    ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -329,17 +272,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""63f604e2-d818-4cb8-90e1-7867972ba496"",
-                    ""path"": ""<Keyboard>/m"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Market"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""7d6f8dfa-d86c-4efc-ac09-7310f8bded53"",
                     ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
@@ -357,6 +289,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Menu"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ad277be5-03d0-47c1-b2cf-f0aabb801e52"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Monster Log"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -403,115 +346,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""ItemRotator"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
-            ""name"": ""Fight"",
-            ""id"": ""b3148735-daeb-4d29-8187-3adfff16f6be"",
-            ""actions"": [
-                {
-                    ""name"": ""Magic"",
-                    ""type"": ""Button"",
-                    ""id"": ""cbc351c4-ae02-4616-896c-6d18029af207"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""MagicMenu"",
-                    ""type"": ""Button"",
-                    ""id"": ""a6376774-f7eb-44d0-921d-d3ef645ea786"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""AdvanceAttack"",
-                    ""type"": ""Button"",
-                    ""id"": ""b29dbf48-e4ba-4a4d-847c-63a5ec3b5aa6"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                }
-            ],
-            ""bindings"": [
-                {
-                    ""name"": """",
-                    ""id"": ""248ccd2a-4420-4f5b-afcb-d09fd63dc429"",
-                    ""path"": ""<Keyboard>/1"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Magic"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8d66f28c-4c67-41bb-bdba-4b8a272be281"",
-                    ""path"": ""<Keyboard>/2"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Magic"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""eb739562-b475-40c1-9f0e-691e0396cb23"",
-                    ""path"": ""<Keyboard>/3"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Magic"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""158b54d8-85f8-4122-8cf6-e54a0cab93d3"",
-                    ""path"": ""<Keyboard>/4"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Magic"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""83c13685-ee51-4082-87b4-4b6e8c337ac4"",
-                    ""path"": ""<Keyboard>/5"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Magic"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c01fc125-0fd8-46f4-aac2-38eb2cf0e0f8"",
-                    ""path"": ""<Keyboard>/x"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""MagicMenu"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""03097948-2c78-4277-97db-73e66ea713e9"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""AdvanceAttack"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -598,23 +432,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Interact = asset.FindActionMap("Interact", throwIfNotFound: true);
         m_Interact_Press = m_Interact.FindAction("Press", throwIfNotFound: true);
         m_Interact_Cancel = m_Interact.FindAction("Cancel", throwIfNotFound: true);
-        m_Interact_Rope = m_Interact.FindAction("Rope", throwIfNotFound: true);
-        m_Interact_Place = m_Interact.FindAction("Place", throwIfNotFound: true);
-        m_Interact_Destroy = m_Interact.FindAction("Destroy", throwIfNotFound: true);
         m_Interact_Inventory = m_Interact.FindAction("Inventory", throwIfNotFound: true);
         m_Interact_SwitchItem = m_Interact.FindAction("SwitchItem", throwIfNotFound: true);
-        m_Interact_Market = m_Interact.FindAction("Market", throwIfNotFound: true);
         m_Interact_Enter = m_Interact.FindAction("Enter", throwIfNotFound: true);
         m_Interact_Menu = m_Interact.FindAction("Menu", throwIfNotFound: true);
+        m_Interact_MonsterLog = m_Interact.FindAction("Monster Log", throwIfNotFound: true);
         // Inventory
         m_Inventory = asset.FindActionMap("Inventory", throwIfNotFound: true);
         m_Inventory_MousePosition = m_Inventory.FindAction("MousePosition", throwIfNotFound: true);
         m_Inventory_ItemRotator = m_Inventory.FindAction("ItemRotator", throwIfNotFound: true);
-        // Fight
-        m_Fight = asset.FindActionMap("Fight", throwIfNotFound: true);
-        m_Fight_Magic = m_Fight.FindAction("Magic", throwIfNotFound: true);
-        m_Fight_MagicMenu = m_Fight.FindAction("MagicMenu", throwIfNotFound: true);
-        m_Fight_AdvanceAttack = m_Fight.FindAction("AdvanceAttack", throwIfNotFound: true);
         // Dialog
         m_Dialog = asset.FindActionMap("Dialog", throwIfNotFound: true);
         m_Dialog_ChangeOption = m_Dialog.FindAction("Change Option", throwIfNotFound: true);
@@ -727,28 +553,22 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private IInteractActions m_InteractActionsCallbackInterface;
     private readonly InputAction m_Interact_Press;
     private readonly InputAction m_Interact_Cancel;
-    private readonly InputAction m_Interact_Rope;
-    private readonly InputAction m_Interact_Place;
-    private readonly InputAction m_Interact_Destroy;
     private readonly InputAction m_Interact_Inventory;
     private readonly InputAction m_Interact_SwitchItem;
-    private readonly InputAction m_Interact_Market;
     private readonly InputAction m_Interact_Enter;
     private readonly InputAction m_Interact_Menu;
+    private readonly InputAction m_Interact_MonsterLog;
     public struct InteractActions
     {
         private @PlayerControls m_Wrapper;
         public InteractActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Press => m_Wrapper.m_Interact_Press;
         public InputAction @Cancel => m_Wrapper.m_Interact_Cancel;
-        public InputAction @Rope => m_Wrapper.m_Interact_Rope;
-        public InputAction @Place => m_Wrapper.m_Interact_Place;
-        public InputAction @Destroy => m_Wrapper.m_Interact_Destroy;
         public InputAction @Inventory => m_Wrapper.m_Interact_Inventory;
         public InputAction @SwitchItem => m_Wrapper.m_Interact_SwitchItem;
-        public InputAction @Market => m_Wrapper.m_Interact_Market;
         public InputAction @Enter => m_Wrapper.m_Interact_Enter;
         public InputAction @Menu => m_Wrapper.m_Interact_Menu;
+        public InputAction @MonsterLog => m_Wrapper.m_Interact_MonsterLog;
         public InputActionMap Get() { return m_Wrapper.m_Interact; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -764,30 +584,21 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Cancel.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnCancel;
                 @Cancel.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnCancel;
                 @Cancel.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnCancel;
-                @Rope.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnRope;
-                @Rope.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnRope;
-                @Rope.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnRope;
-                @Place.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnPlace;
-                @Place.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnPlace;
-                @Place.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnPlace;
-                @Destroy.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnDestroy;
-                @Destroy.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnDestroy;
-                @Destroy.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnDestroy;
                 @Inventory.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnInventory;
                 @Inventory.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnInventory;
                 @Inventory.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnInventory;
                 @SwitchItem.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnSwitchItem;
                 @SwitchItem.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnSwitchItem;
                 @SwitchItem.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnSwitchItem;
-                @Market.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnMarket;
-                @Market.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnMarket;
-                @Market.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnMarket;
                 @Enter.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnEnter;
                 @Enter.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnEnter;
                 @Enter.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnEnter;
                 @Menu.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnMenu;
                 @Menu.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnMenu;
                 @Menu.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnMenu;
+                @MonsterLog.started -= m_Wrapper.m_InteractActionsCallbackInterface.OnMonsterLog;
+                @MonsterLog.performed -= m_Wrapper.m_InteractActionsCallbackInterface.OnMonsterLog;
+                @MonsterLog.canceled -= m_Wrapper.m_InteractActionsCallbackInterface.OnMonsterLog;
             }
             m_Wrapper.m_InteractActionsCallbackInterface = instance;
             if (instance != null)
@@ -798,30 +609,21 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Cancel.started += instance.OnCancel;
                 @Cancel.performed += instance.OnCancel;
                 @Cancel.canceled += instance.OnCancel;
-                @Rope.started += instance.OnRope;
-                @Rope.performed += instance.OnRope;
-                @Rope.canceled += instance.OnRope;
-                @Place.started += instance.OnPlace;
-                @Place.performed += instance.OnPlace;
-                @Place.canceled += instance.OnPlace;
-                @Destroy.started += instance.OnDestroy;
-                @Destroy.performed += instance.OnDestroy;
-                @Destroy.canceled += instance.OnDestroy;
                 @Inventory.started += instance.OnInventory;
                 @Inventory.performed += instance.OnInventory;
                 @Inventory.canceled += instance.OnInventory;
                 @SwitchItem.started += instance.OnSwitchItem;
                 @SwitchItem.performed += instance.OnSwitchItem;
                 @SwitchItem.canceled += instance.OnSwitchItem;
-                @Market.started += instance.OnMarket;
-                @Market.performed += instance.OnMarket;
-                @Market.canceled += instance.OnMarket;
                 @Enter.started += instance.OnEnter;
                 @Enter.performed += instance.OnEnter;
                 @Enter.canceled += instance.OnEnter;
                 @Menu.started += instance.OnMenu;
                 @Menu.performed += instance.OnMenu;
                 @Menu.canceled += instance.OnMenu;
+                @MonsterLog.started += instance.OnMonsterLog;
+                @MonsterLog.performed += instance.OnMonsterLog;
+                @MonsterLog.canceled += instance.OnMonsterLog;
             }
         }
     }
@@ -867,55 +669,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     }
     public InventoryActions @Inventory => new InventoryActions(this);
-
-    // Fight
-    private readonly InputActionMap m_Fight;
-    private IFightActions m_FightActionsCallbackInterface;
-    private readonly InputAction m_Fight_Magic;
-    private readonly InputAction m_Fight_MagicMenu;
-    private readonly InputAction m_Fight_AdvanceAttack;
-    public struct FightActions
-    {
-        private @PlayerControls m_Wrapper;
-        public FightActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Magic => m_Wrapper.m_Fight_Magic;
-        public InputAction @MagicMenu => m_Wrapper.m_Fight_MagicMenu;
-        public InputAction @AdvanceAttack => m_Wrapper.m_Fight_AdvanceAttack;
-        public InputActionMap Get() { return m_Wrapper.m_Fight; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(FightActions set) { return set.Get(); }
-        public void SetCallbacks(IFightActions instance)
-        {
-            if (m_Wrapper.m_FightActionsCallbackInterface != null)
-            {
-                @Magic.started -= m_Wrapper.m_FightActionsCallbackInterface.OnMagic;
-                @Magic.performed -= m_Wrapper.m_FightActionsCallbackInterface.OnMagic;
-                @Magic.canceled -= m_Wrapper.m_FightActionsCallbackInterface.OnMagic;
-                @MagicMenu.started -= m_Wrapper.m_FightActionsCallbackInterface.OnMagicMenu;
-                @MagicMenu.performed -= m_Wrapper.m_FightActionsCallbackInterface.OnMagicMenu;
-                @MagicMenu.canceled -= m_Wrapper.m_FightActionsCallbackInterface.OnMagicMenu;
-                @AdvanceAttack.started -= m_Wrapper.m_FightActionsCallbackInterface.OnAdvanceAttack;
-                @AdvanceAttack.performed -= m_Wrapper.m_FightActionsCallbackInterface.OnAdvanceAttack;
-                @AdvanceAttack.canceled -= m_Wrapper.m_FightActionsCallbackInterface.OnAdvanceAttack;
-            }
-            m_Wrapper.m_FightActionsCallbackInterface = instance;
-            if (instance != null)
-            {
-                @Magic.started += instance.OnMagic;
-                @Magic.performed += instance.OnMagic;
-                @Magic.canceled += instance.OnMagic;
-                @MagicMenu.started += instance.OnMagicMenu;
-                @MagicMenu.performed += instance.OnMagicMenu;
-                @MagicMenu.canceled += instance.OnMagicMenu;
-                @AdvanceAttack.started += instance.OnAdvanceAttack;
-                @AdvanceAttack.performed += instance.OnAdvanceAttack;
-                @AdvanceAttack.canceled += instance.OnAdvanceAttack;
-            }
-        }
-    }
-    public FightActions @Fight => new FightActions(this);
 
     // Dialog
     private readonly InputActionMap m_Dialog;
@@ -968,25 +721,16 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         void OnPress(InputAction.CallbackContext context);
         void OnCancel(InputAction.CallbackContext context);
-        void OnRope(InputAction.CallbackContext context);
-        void OnPlace(InputAction.CallbackContext context);
-        void OnDestroy(InputAction.CallbackContext context);
         void OnInventory(InputAction.CallbackContext context);
         void OnSwitchItem(InputAction.CallbackContext context);
-        void OnMarket(InputAction.CallbackContext context);
         void OnEnter(InputAction.CallbackContext context);
         void OnMenu(InputAction.CallbackContext context);
+        void OnMonsterLog(InputAction.CallbackContext context);
     }
     public interface IInventoryActions
     {
         void OnMousePosition(InputAction.CallbackContext context);
         void OnItemRotator(InputAction.CallbackContext context);
-    }
-    public interface IFightActions
-    {
-        void OnMagic(InputAction.CallbackContext context);
-        void OnMagicMenu(InputAction.CallbackContext context);
-        void OnAdvanceAttack(InputAction.CallbackContext context);
     }
     public interface IDialogActions
     {

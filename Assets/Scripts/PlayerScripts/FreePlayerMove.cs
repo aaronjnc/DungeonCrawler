@@ -58,6 +58,8 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
     private int sprintHash;
     [Tooltip("Walk state hash")]
     private int walkHash;
+    [SerializeField]
+    private GameObject monsterLog;
     void Start()
     {
         base.Awake();
@@ -88,8 +90,8 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
         controls.Interact.Enter.Enable();
         controls.Interact.Menu.performed += ActivateMenu;
         controls.Interact.Menu.Enable();
-        controls.Fight.MagicMenu.performed += SpellMenu;
-        controls.Fight.MagicMenu.Enable();
+        controls.Interact.MonsterLog.performed += MonsterLog;
+        controls.Interact.MonsterLog.Enable();
         pos.z = GameManager.Instance.mapz;
         prevpos.z = GameManager.Instance.mapz;
         if (GameManager.Instance.loadFromFile)
@@ -98,20 +100,16 @@ public class FreePlayerMove : Singleton<FreePlayerMove>
         }
         SaveSystem.Save();
     }
-    /// <summary>
-    /// Activates the spell menu when 'X' is pressed
-    /// </summary>
-    /// <param name="ctx"></param>
-    void SpellMenu(CallbackContext ctx)
+    void MonsterLog(CallbackContext ctx)
     {
-        if (magicTree.activeInHierarchy)
+        if (monsterLog.activeInHierarchy)
         {
-            magicTree.SetActive(false);
+            monsterLog.SetActive(false);
             GameManager.Instance.ResumeGame();
         }
         else if (!GameManager.Instance.paused)
         {
-            magicTree.SetActive(true);
+            monsterLog.SetActive(true);
             GameManager.Instance.PauseGame();
         }
     }

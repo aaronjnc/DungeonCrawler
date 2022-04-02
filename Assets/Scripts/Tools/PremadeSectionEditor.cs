@@ -100,7 +100,7 @@ public class PremadeSectionEditor : Editor
         StreamWriter sw = new StreamWriter(enemyPath, true);
         Tilemap tilemap = contents.GetComponentInChildren<Tilemap>();
         Vector2Int bottomLeft = new Vector2Int(tilemap.cellBounds.x, tilemap.cellBounds.y);
-        foreach (EnemyInfo enemy in contents.GetComponentsInChildren<EnemyInfo>())
+        foreach (MonsterInfo enemy in contents.GetComponentsInChildren<MonsterInfo>())
         {
             Vector2Int pos = new Vector2Int((int)enemy.gameObject.transform.position.x, (int)enemy.gameObject.transform.position.y);
             Vector2Int realPos = pos - bottomLeft;
