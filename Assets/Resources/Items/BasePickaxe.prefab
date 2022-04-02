@@ -48,7 +48,6 @@ MonoBehaviour:
   stackSize: 1
   baseDurability: 50
   damage: 15
-  weapon: 0
   level: 0
   buyCost: 10
   craftCost: 5
@@ -56,4 +55,4 @@ MonoBehaviour:
   ingredients:
   - {fileID: 7268513868254643427, guid: 708f6d524b9dabd45b0ef7656ff1277d, type: 3}
   ingredientCount: 01000000
-  itemType: 2
+  itemType: 1

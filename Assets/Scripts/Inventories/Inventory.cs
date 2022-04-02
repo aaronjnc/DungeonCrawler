@@ -64,8 +64,6 @@ public class Inventory : Singleton<Inventory>
         {
             InventoryItem item = GameManager.Instance.GetItem("Base Pickaxe");
             AddItem(item,1,item.baseDurability);
-            //item = GameManager.Instance.GetItem("Extendo Sword");
-            //AddItem(item,1, item.baseDurability);
             AddMoney(150);
         }
         gameObject.SetActive(false);
@@ -200,7 +198,6 @@ public class Inventory : Singleton<Inventory>
         if (dropPos.x >= 10)
         {
             ItemSlot slot = itemSlots[arrayPos.x, arrayPos.y];
-            int chosenType = dropPos.x / 10;
             int chosenSpot = dropPos.y;
             switch(slot.GetItemType())
             {
