@@ -25,9 +25,9 @@ public abstract class Chunk
     protected int randomFillPercent { get { return ChunkGen.Instance.randomFillPercent; } }
     protected int smooths { get { return ChunkGen.Instance.smooths; } }
     protected int biomesmooths { get { return ChunkGen.Instance.biomesmooths; } }
-    protected float enemyChance { get { return ChunkGen.Instance.enemyChance; } }
+    protected float monsterChance { get { return ChunkGen.Instance.enemyChance; } }
     protected int maxenemies { get { return ChunkGen.Instance.maxenemies; } }
-    protected Transform enemyParent { get { return ChunkGen.Instance.enemyParent; } }
+    protected Transform monsterParent { get { return ChunkGen.Instance.enemyParent; } }
     [Tooltip("Array of bytes representing chunk walls")]
     protected byte[,] blocks;
     [Tooltip("Array of bytes representing block biomes")]
@@ -327,7 +327,7 @@ public abstract class Chunk
                         Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
-                        if (rando > enemyChance && GameManager.Instance.spawnEnemies && GetSurroundingWalls(x,y,2)==0 && numEnemies > 0)
+                        if (rando > monsterChance && GameManager.Instance.spawnEnemies && GetSurroundingWalls(x,y,2)==0 && numEnemies > 0)
                         {
                             SpawnEnemy(x,y);
                         }
@@ -362,7 +362,7 @@ public abstract class Chunk
         float maxIndexWeight = 0;
         for (int i = 0; i < biomeScripts[biomes[x, y]].enemies.Count; i++)
         {
-            EnemyInfo info = biomeScripts[biomes[x, y]].enemies[i].GetComponent<EnemyInfo>();
+            MonsterInfo info = biomeScripts[biomes[x, y]].enemies[i].GetComponent<MonsterInfo>();
             float weight = Noise.Get2DPerlin(new Vector2Int(x, y), seed, info.weight);
             if (weight > maxIndexWeight)
             {
@@ -380,10 +380,10 @@ public abstract class Chunk
     /// <param name="enemyID"></param>
     protected GameObject GenerateEnemy(int x, int y, byte enemyID)
     {
-        GameObject enemy = GameObject.Instantiate(GameManager.Instance.GetEnemyObject(enemyID), enemyParent) as GameObject;
+        GameObject enemy = GameObject.Instantiate(GameManager.Instance.GetMonsterObject(enemyID), monsterParent) as GameObject;
         enemy.transform.position = GetTileWorldPos(x, y, -1);
-        enemy.GetComponent<EnemyInfo>().chunk = chunkPos;
-        enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, enemyParent.position.z);
+        enemy.GetComponent<MonsterInfo>().chunk = chunkPos;
+        enemy.transform.position = new Vector3(enemy.transform.position.x, enemy.transform.position.y, monsterParent.position.z);
         enemies.Add(enemy.GetHashCode(), enemy);
         return enemy;
     }
@@ -749,7 +749,7 @@ public abstract class Chunk
             Vector2Int tilePos = new Vector2Int(posX, posY);
             AddChange(tilePos, id);
         }
-        EnemySave[] enemy = c.GetEnemies();
+        MonsterSave[] enemy = c.GetEnemies();
         for (int i = 0; i < enemy.Length; i++)
         {
             Vector3 enemyPos = enemy[i].GetPosition();

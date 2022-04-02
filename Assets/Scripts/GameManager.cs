@@ -25,8 +25,6 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public int mapz;
     [Tooltip("Foor z position")]
     [HideInInspector] public int floorz;
-    //[Tooltip("Player is holding a weapon")]
-    //[HideInInspector] public bool fighting = false;
     [Tooltip("Item player is currently holding")]
     [HideInInspector] public ItemSlot currentItem;
     [Tooltip("Inventory is open")]
@@ -39,7 +37,7 @@ public class GameManager : Singleton<GameManager>
     [HideInInspector] public bool paused = false;
     [Tooltip("All premade sections")]
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
-    private Dictionary<byte, GameObject> enemies = new Dictionary<byte, GameObject>();
+    private Dictionary<byte, GameObject> monsters = new Dictionary<byte, GameObject>();
     [Tooltip("String of full text file for dialog")]
     [HideInInspector] public string fullText;
     [Tooltip("Load world from file")]
@@ -90,9 +88,9 @@ public class GameManager : Singleton<GameManager>
         {
             sections.Add(premade.GetComponent<PremadeSection>());
         }
-        foreach(GameObject enemy in Resources.LoadAll("Enemies"))
+        foreach(GameObject monster in Resources.LoadAll("Monsters"))
         {
-            enemies.Add(enemy.GetComponent<EnemyInfo>().id, enemy);
+            monsters.Add(monster.GetComponent<MonsterInfo>().id, monster);
         }
     }
     /// <summary>
@@ -298,12 +296,21 @@ public class GameManager : Singleton<GameManager>
         return playerMoney;
     }
     /// <summary>
-    /// Returns enemy prefab gameobjects
+    /// Returns monster prefab gameobjects
     /// </summary>
-    /// <param name="enemyID"></param>
+    /// <param name="monsterID"></param>
     /// <returns></returns>
-    public GameObject GetEnemyObject(byte enemyID)
+    public GameObject GetMonsterObject(byte monsterID)
     {
-        return enemies[enemyID];
+        return monsters[monsterID];
+    }
+    public List<GameObject> GetMonsters()
+    {
+        List<GameObject> monsterList = new List<GameObject>();
+        foreach (GameObject monster in monsters.Values)
+        {
+            monsterList.Add(monster);
+        }
+        return monsterList;
     }
 }

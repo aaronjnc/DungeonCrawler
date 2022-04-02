@@ -11,7 +11,7 @@ public class CameraTrigger : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        EnemyMovement enemy;
+        MonsterMovement enemy;
         if (collision.gameObject.TryGetComponent(out enemy))
         {
             enemy.enabled = true;
@@ -25,7 +25,7 @@ public class CameraTrigger : MonoBehaviour
     /// <param name="collision"></param>
     private void OnTriggerExit2D(Collider2D collision)
     {
-        EnemyMovement enemy;
+        MonsterMovement enemy;
         if (collision.gameObject.TryGetComponent(out enemy))
         {
             enemy.enabled = false;
