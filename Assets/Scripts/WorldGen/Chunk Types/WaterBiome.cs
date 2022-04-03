@@ -5,16 +5,17 @@ using UnityEngine.Tilemaps;
 
 public class WaterBiome : Chunk
 {
+    public WaterBiome(Vector2Int pos) : base(pos)
+    {
+        biomeId = 1;
+    }
+
     public override float chance
     {
         get
         {
             return 0.45f;
         }
-    }
-    public WaterBiome(Vector2Int pos) : base(pos)
-    {
-        biomeId = 1;
     }
 
     protected override void FillBiomeMap()
@@ -28,8 +29,9 @@ public class WaterBiome : Chunk
         }
     }
 
-    public override void GenerateChunk()
+    public override void GenerateChunk(int genNum)
     {
+        numGen = genNum;
         FillBiomeMap();
         CreateTileMaps();
         RandomFillMap();
@@ -62,7 +64,7 @@ public class WaterBiome : Chunk
                     continue;
                 if (blocks[x, y] != 1)
                 {
-                    int id = ((random.Next(0, 100) < 33) ? 1 : 0);
+                    int id = (rand.Next(0, 100) < 33) ? 1 : 0;
                     floor[x, y] = biomeScripts[biomeId].floorBlocks[id].index;
                 } 
                 else
@@ -147,7 +149,7 @@ public class WaterBiome : Chunk
                     }
                     else
                     {
-                        int rando = UnityEngine.Random.Range(0, 100);
+                        int rando = rand.Next(0, 100);
                         Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;

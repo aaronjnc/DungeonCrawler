@@ -52,6 +52,8 @@ public class ChunkGen : Singleton<ChunkGen>
     [HideInInspector] public Transform enemyParent;
     [Tooltip("Chance of special tile")]
     public int specialTileChance;
+    private System.Random rand;
+    private int generated = 0;
     public void Awake()
     {
         base.Awake();
@@ -71,7 +73,8 @@ public class ChunkGen : Singleton<ChunkGen>
         chunks = new Dictionary<Vector2Int, Chunk>();
         if (GameManager.Instance.loadFromFile)
         {
-            LoadFromFile();
+            GetSeed();
+            rand = new System.Random(seed);
             foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
@@ -79,6 +82,7 @@ public class ChunkGen : Singleton<ChunkGen>
                     PresetChunk(sections);
                 }
             }
+            LoadFromFile();
         }
         else
         {
@@ -87,7 +91,7 @@ public class ChunkGen : Singleton<ChunkGen>
                 seed = UnityEngine.Random.Range(0, int.MaxValue);
             if (randomBiomeSeed)
                 biomeseed = UnityEngine.Random.Range(0, 1000000);
-            UnityEngine.Random.InitState(seed);
+            rand = new System.Random(seed);
             foreach (PremadeSection sections in GameManager.Instance.sections)
             {
                 if (sections.CreateAtStart)
@@ -197,11 +201,13 @@ public class ChunkGen : Singleton<ChunkGen>
         if (!ChunkCreated(chunkPos))
         {
             CreateChunk(chunkPos);
-            chunks[chunkPos].GenerateChunk();
+            chunks[chunkPos].GenerateChunk(generated);
+            generated++;
         }
         else if (!ChunkGenerated(chunkPos)) 
         {
-            GetChunk(chunkPos).GenerateChunk();
+            GetChunk(chunkPos).GenerateChunk(generated);
+            generated++;
         }
     }
     /// <summary>
@@ -418,8 +424,8 @@ public class ChunkGen : Singleton<ChunkGen>
     void PresetChunk(PremadeSection section)
     {
         Vector2Int startPos = Vector2Int.zero;
-        startPos.x = UnityEngine.Random.Range(section.minStart.x, section.maxStart.x);
-        startPos.y = UnityEngine.Random.Range(section.minStart.y, section.maxStart.y);
+        startPos.x = rand.Next(section.minStart.x, section.maxStart.x);
+        startPos.y = rand.Next(section.minStart.y, section.maxStart.y);
         if (section.entireChunk)
         {
             GenerateBiome(startPos, section.biome);
@@ -511,14 +517,22 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         WorldInfo w = GameInformation.Instance.LoadGameInfo();
         List<ChunkSave> cs = GameInformation.Instance.LoadWorld();
-        seed = w.GetWorldSeed();
-        biomeseed = w.GetBiomeSeed();
         foreach (ChunkSave c in cs)
         {
             Vector2Int chunkPos = c.GetChunkPos();
-            CreateChunk(chunkPos);
+            if (!ChunkCreated(chunkPos))
+                CreateChunk(chunkPos);
             GetChunk(chunkPos).LoadFromFile(c);
+            GetChunk(chunkPos).GenerateChunk(generated);
+            generated++;
         }
+    }
+    private void GetSeed()
+    {
+        WorldInfo w = GameInformation.Instance.LoadGameInfo();
+        List<ChunkSave> cs = GameInformation.Instance.LoadWorld();
+        seed = w.GetWorldSeed();
+        biomeseed = w.GetBiomeSeed();
     }
     /// <summary>
     /// Clear the chunks dictionary when script is disabled

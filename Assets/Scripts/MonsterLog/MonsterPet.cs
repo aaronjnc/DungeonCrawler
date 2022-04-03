@@ -32,4 +32,10 @@ public class MonsterPet : MonoBehaviour
             log.Register(monsterInfo);
         }
     }
+
+    private void OnDestroy()
+    {
+        if (controls != null)
+            controls.Disable();
+    }
 }

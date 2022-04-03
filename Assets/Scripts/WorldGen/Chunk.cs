@@ -54,12 +54,13 @@ public abstract class Chunk
     protected List<GameObject> interactables = new List<GameObject>();
     [Tooltip("List of changed blocks in chunk")]
     protected Dictionary<Vector2Int, byte> changes = new Dictionary<Vector2Int, byte>();
-    [Tooltip("Random number generator")]
-    protected System.Random random;
     [Tooltip("Chunk has been changed")]
     public bool changed = false;
     [Tooltip("Used for chunks that are entirely pregenerated")]
     public bool specialChunk = false;
+    [Tooltip("Number representing order of chunk generation")]
+    protected int numGen;
+    protected System.Random rand;
     protected abstract void FillBiomeMap();
     /// <summary>
     /// Initializes chunk script at given chunk position
@@ -74,8 +75,8 @@ public abstract class Chunk
         blocks = new byte[width, height];
         biomes = new byte[width, height];
         floor = new byte[width, height];
-        UnityEngine.Random.InitState(seed);
-        numEnemies = UnityEngine.Random.Range(1, maxenemies+1);
+        rand = new System.Random(seed);
+        numEnemies = rand.Next(1, maxenemies + 1);
     }
     /// <summary>
     /// Saves the position and type of tile that should be located at that position
@@ -102,13 +103,12 @@ public abstract class Chunk
     /// <summary>
     /// Method used to call other methods and generate the chunk
     /// </summary>
-    public abstract void GenerateChunk();
+    public abstract void GenerateChunk(int genNum);
     /// <summary>
     /// Generates array of bytes determining type of block (empty or wall)
     /// </summary>
     protected void RandomFillMap()
     {
-        random = new System.Random(seed);
         for (int x = 0; x < width; x++)
         {
             for (int y = 0; y < height; y++)
@@ -124,7 +124,7 @@ public abstract class Chunk
                 }
                 else
                 {
-                    blocks[x, y] = (byte)((random.Next(0, 100) < randomFillPercent) ? 1 : 0);
+                    blocks[x, y] = (byte)((rand.Next(0, 100) < randomFillPercent) ? 1 : 0);
                 }
             }
         }
@@ -167,7 +167,7 @@ public abstract class Chunk
             byte block = ChunkGen.Instance.GetChunk(relPos).GetBlockID(newgridx, newgridY);
             blockFillVal += (block == 1) ? 10 : -10;
         }
-        blocks[gridX, gridY] = (byte)((random.Next(0, 100) < blockFillVal) ? 1 : 0);
+        blocks[gridX, gridY] = (byte)((rand.Next(0, 100) < blockFillVal) ? 1 : 0);
     }
     /// <summary>
     /// Goes through block array and smooths out the walls so it appears less random
@@ -241,12 +241,12 @@ public abstract class Chunk
                         wallCount += GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY));
                         if (calc && i == 1)
                         {
-                            return (byte)((GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY)) == 1) ? 5 : 0);
+                            wallCount += (byte)((GetBlockType(adjacentChunk.GetBlockID(newgridX, newgridY)) == 1) ? 1 : 0);
                         }
                     }
                     else
                     {
-                        wallCount += (byte)((random.Next(0, 100) < randomFillPercent) ? 1 : 0);
+                        wallCount += (byte)((rand.Next(0, 100) < randomFillPercent) ? 1 : 0);
                     }
                 }
                 else if (x != gridX || y != gridY)
@@ -323,7 +323,7 @@ public abstract class Chunk
                     }
                     else
                     {
-                        int rando = UnityEngine.Random.Range(0, 100);
+                        int rando = rand.Next(0, 100);
                         Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
@@ -424,7 +424,7 @@ public abstract class Chunk
             {
                 if (blocks[x, y] != 127 || presetTiles.Contains(new Vector3Int(x,y,mapz)))
                     continue;
-                float weight = UnityEngine.Random.Range(0, 100);
+                float weight = rand.Next(0, 100);
                 int walls = GetSurroundingWalls(x, y, 2);
                 if (walls > 3 && walls < 7)
                     weight *= 2;
@@ -436,8 +436,8 @@ public abstract class Chunk
                 }
             }
         }
-        int random = UnityEngine.Random.Range(0, biomeScripts[biomes[heighestX,heighestY]].specialBlocks.Count);
-        Blocks specialBlock = biomeScripts[biomes[heighestX, heighestY]].specialBlocks[random];
+        int val = rand.Next(0, biomeScripts[biomes[heighestX, heighestY]].specialBlocks.Count);
+        Blocks specialBlock = biomeScripts[biomes[heighestX, heighestY]].specialBlocks[val];
         if (specialBlock.blockType == Blocks.Type.Floor)
         {
             floor[heighestX, heighestY] = specialBlock.index;
@@ -470,6 +470,8 @@ public abstract class Chunk
                     SetTileMapTile(floorPos, floor[x,y]);
             }
         }
+        if (!GameManager.Instance.testingmode)
+            UnloadChunk();
     }
     /// <summary>
     /// Changes the tile at the given position using the new block index (used during inital generation)
@@ -738,6 +740,7 @@ public abstract class Chunk
     /// <param name="c"></param>
     public void LoadFromFile(ChunkSave c)
     {
+        changed = false;
         string[] changes = c.GetChanges();
         for (int i = 0; i < changes.Length; i++)
         {
@@ -749,6 +752,7 @@ public abstract class Chunk
             Vector2Int tilePos = new Vector2Int(posX, posY);
             AddChange(tilePos, id);
         }
+        DestroyMap();
         MonsterSave[] enemy = c.GetEnemies();
         for (int i = 0; i < enemy.Length; i++)
         {
@@ -759,6 +763,10 @@ public abstract class Chunk
         }
     }
 
+    public int GetChunkGenNum()
+    {
+        return numGen;
+    }
     public void DestroyMap()
     {
         if (map != null)

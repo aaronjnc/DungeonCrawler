@@ -12,8 +12,9 @@ public class MixedBiome : Chunk
     public override float chance => throw new System.NotImplementedException();
 
 
-    public override void GenerateChunk()
+    public override void GenerateChunk(int genNum)
     {
+        numGen = genNum;
         FillBiomeMap();
         CreateTileMaps();
         RandomFillMap();
@@ -61,7 +62,7 @@ public class MixedBiome : Chunk
                 chance[2] = Mathf.Clamp(100f - 2.5f * y, 0f, 100f) + chance[1]; //bottom
                 chance[3] = Mathf.Clamp(100f - 2.5f * x, 0f, 100f) + chance[2]; //left
                 byte index = 0;
-                float randomNum = UnityEngine.Random.Range(0, chance[3]);
+                float randomNum = rand.Next(0, (int)(chance[3]*100)) / 100;
                 for (int i = 0; i < 4; i++)
                 {
                     if (chance[i] >= randomNum)
