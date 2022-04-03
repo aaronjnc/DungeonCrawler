@@ -2380,6 +2380,14 @@ PrefabInstance:
       propertyPath: smooths
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: maxMonsters
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: monsterChance
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 4921779820281114924, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: m_Name
       value: GameController
@@ -2430,7 +2438,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: testingmode
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: gen
@@ -2438,11 +2446,15 @@ PrefabInstance:
       objectReference: {fileID: 2020610031}
     - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: spawnEnemies
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: testingsize
-      value: 8
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: spawnMonsters
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}

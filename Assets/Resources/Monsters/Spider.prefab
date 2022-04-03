@@ -528,7 +528,7 @@ MonoBehaviour:
   hiddenImage: {fileID: 0}
   description: Prickly
   chunk: {x: 0, y: 0}
-  monsterType: 0
+  monsterType: 2
 --- !u!58 &3997318910864496868
 CircleCollider2D:
   m_ObjectHideFlags: 0
