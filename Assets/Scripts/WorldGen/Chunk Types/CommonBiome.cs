@@ -8,14 +8,16 @@ public class CommonBiome : Chunk
     {
         biomeId = 0;
     }
+
     public override float chance {
         get 
         {
             return 1f;
         }
     }
-    public override void GenerateChunk()
+    public override void GenerateChunk(int genNum)
     {
+        numGen = genNum;
         FillBiomeMap();
         CreateTileMaps();
         RandomFillMap();

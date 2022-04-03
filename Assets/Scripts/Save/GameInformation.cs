@@ -86,7 +86,7 @@ public class GameInformation : ScriptableObject
         {
             if (chunk.changed)
             {
-                string chunkName = chunk.chunkPos.x + "_" + chunk.chunkPos.y + ".txt";
+                string chunkName = chunk.GetChunkGenNum() + "_" + chunk.chunkPos.x + "_" + chunk.chunkPos.y + ".txt";
                 string chunkPath = Path.Combine(chunkLocation, chunkName);
                 FileStream fs = new FileStream(chunkPath, FileMode.Create);
                 ChunkSave c = new ChunkSave(chunk);
