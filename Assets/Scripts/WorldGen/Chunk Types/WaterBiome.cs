@@ -149,23 +149,34 @@ public class WaterBiome : Chunk
                     }
                     else
                     {
-                        int rando = rand.Next(0, 100);
                         Vector3 worldPos = GetTileWorldPos(x, y, -1);
                         if (worldPos.x < 10 && worldPos.x > -10 && worldPos.y < 10 && worldPos.y > -10)
                             continue;
-                        if (rando > monsterChance && GameManager.Instance.spawnEnemies && GetSurroundingWalls(x, y, 2) == 0 && numEnemies > 0)
-                        {
-                            SpawnEnemy(x, y);
-                        }
-                        else
-                        {
-                            DetermineEmptyType(x, y);
-                        }
-                        if (blocks[x, y] == 0)
-                            Debug.Log(x + " " + y);
+                        emptyBlocks.Add(new Vector2Int(x, y));
                     }
                 }
             }
+        }
+        if (GameManager.Instance.spawnMonsters)
+        {
+            for (int i = 0; i < maxMonsters && i < 5; i++)
+            {
+                Vector2Int pos = emptyBlocks[rand.Next(0, emptyBlocks.Count)];
+                if (GetSurroundingWalls(pos.x, pos.y, 2) != 0)
+                {
+                    continue;
+                }
+                SpawnMonsters(pos.x, pos.y);
+                emptyBlocks.Remove(pos);
+                if (monsters.Count > 3)
+                {
+                    break;
+                }
+            }
+        }
+        foreach (Vector2Int emptyBlock in emptyBlocks)
+        {
+            DetermineEmptyType(emptyBlock.x, emptyBlock.y);
         }
     }
 }

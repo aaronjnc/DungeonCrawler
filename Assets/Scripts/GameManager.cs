@@ -16,7 +16,7 @@ public class GameManager : Singleton<GameManager>
     [Tooltip("Pregenerated mapsize (size x size)")] 
     public int testingsize;
     [Tooltip("Spawn enemies into the game")]
-    public bool spawnEnemies;
+    public bool spawnMonsters;
     [Tooltip("Breaking blocks")]
     [HideInInspector] public bool blockBreaking = false;
     [Tooltip("Reference to block breaking script")]

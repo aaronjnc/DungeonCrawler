@@ -45,11 +45,11 @@ public class ChunkGen : Singleton<ChunkGen>
     [Tooltip("Number of biome smooths to perform")]
     public int biomesmooths;
     [Tooltip("Enemy spawn chance")]
-    public float enemyChance;
+    public float monsterChance;
     [Tooltip("Maximum number of enemeis")]
-    public int maxenemies;
+    public int maxMonsters;
     [Tooltip("Enemy parent transform")]
-    [HideInInspector] public Transform enemyParent;
+    [HideInInspector] public Transform monsterParent;
     [Tooltip("Chance of special tile")]
     public int specialTileChance;
     private System.Random rand;
@@ -67,7 +67,7 @@ public class ChunkGen : Singleton<ChunkGen>
     {
         grid = GameObject.Find("Grid").transform;
         playerMovement = GameObject.Find("Player").GetComponent<FreePlayerMove>();
-        enemyParent = GameObject.Find("Enemies").transform;
+        monsterParent = GameObject.Find("Enemies").transform;
         mapz = 0;
         floorz = 1;
         chunks = new Dictionary<Vector2Int, Chunk>();

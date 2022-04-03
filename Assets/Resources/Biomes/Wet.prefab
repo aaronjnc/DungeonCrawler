@@ -53,6 +53,7 @@ MonoBehaviour:
   - {fileID: 6070446513901827791, guid: 82842d439548ee24fa9bc1d9ff847179, type: 3}
   enemies:
   - {fileID: 1644744142854790570, guid: 99dda1bfbc65ab24f82042355119c4cb, type: 3}
+  - {fileID: 3443913241716428135, guid: 368344733299f9149be16e8d927c8eda, type: 3}
   floorBlocks:
   - {fileID: 7305457819448165391, guid: 12921bcf12c74a44db4e0b5a92a08e29, type: 3}
   - {fileID: 3007942367248793798, guid: e6fbc9ffc1613f74b8e6928192331d23, type: 3}
@@ -60,3 +61,4 @@ MonoBehaviour:
   weight: 0.68
   specialBlocks:
   - {fileID: 5242018764825017894, guid: 7db953448bdfe2743bc2da0a3389be51, type: 3}
+  - {fileID: 3165912897697432854, guid: 3550867d7ae45fe4e97832626d4279af, type: 3}
