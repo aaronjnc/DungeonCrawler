@@ -29,7 +29,7 @@ public class MonsterPet : MonoBehaviour
         {
             GameObject monster = hit.collider.gameObject;
             MonsterInfo monsterInfo = monster.GetComponent<MonsterInfo>();
-            log.Register(monsterInfo.GetName());
+            log.Register(monsterInfo);
         }
     }
 }
