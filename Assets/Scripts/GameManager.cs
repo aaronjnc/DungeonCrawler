@@ -304,12 +304,12 @@ public class GameManager : Singleton<GameManager>
     {
         return monsters[monsterID];
     }
-    public List<GameObject> GetMonsters()
+    public List<MonsterInfo> GetMonsters()
     {
-        List<GameObject> monsterList = new List<GameObject>();
+        List<MonsterInfo> monsterList = new List<MonsterInfo>();
         foreach (GameObject monster in monsters.Values)
         {
-            monsterList.Add(monster);
+            monsterList.Add(monster.GetComponent<MonsterInfo>());
         }
         return monsterList;
     }

@@ -1,39 +1,81 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MonsterLog : MonoBehaviour
 {
-    Dictionary<string, MonsterLogEntry> monsterLogs = new Dictionary<string, MonsterLogEntry>();
     [SerializeField]
-    private GameObject monsterLogEntry;
+    private List<MonsterLogEntry> logs = new List<MonsterLogEntry>();
     [SerializeField]
-    private float spacing;
+    private Image leftTitle;
     [SerializeField]
-    private float top;
-    private void Awake()
+    private Image rightTitle;
+    [SerializeField]
+    private List<Sprite> leftTitleSprites = new List<Sprite>();
+    [SerializeField]
+    private List<Sprite> rightTitleSprites = new List<Sprite>();
+    private int currentPage = 0;
+    [SerializeField]
+    private int pages = 2;
+    [SerializeField]
+    private GameObject leftClick;
+    [SerializeField]
+    private GameObject rightClick;
+    private void Start()
     {
-        LoadEnemies();
+        LoadMonsters();
+        ShowPage();
         gameObject.SetActive(false);
     }
-    private void LoadEnemies()
+    private void LoadMonsters()
     {
-        List<GameObject> enemies = GameManager.Instance.GetMonsters();
-        for (int i = 0; i < enemies.Count; i++)
+        List<MonsterInfo> monsters = GameManager.Instance.GetMonsters();
+        foreach (MonsterInfo monster in monsters)
         {
-            GameObject newLog = Instantiate(monsterLogEntry, transform);
-            newLog.transform.localPosition = new Vector3(0, top - i * spacing, 0);
-            MonsterLogEntry log = newLog.GetComponent<MonsterLogEntry>();
-            log.SetValues(enemies[i]);
-            monsterLogs.Add(enemies[i].name, log);
+            logs[monster.id % 10].AddMonster(monster);
         }
     }
-    public void Register(string monsterName)
+    public void Register(MonsterInfo monster)
     {
-        MonsterLogEntry log = monsterLogs[monsterName];
-        if (!log.IsFound())
+        logs[monster.id % 10].Find(monster.id, currentPage);
+    }
+    public void ChangePage(int i)
+    {
+        currentPage += i;
+        ShowPage();
+    }
+    private void ShowPage()
+    {
+        leftTitle.sprite = leftTitleSprites[currentPage];
+        if (currentPage < rightTitleSprites.Count)
         {
-            log.Show();
+            rightTitle.enabled = true;
+            rightTitle.sprite = rightTitleSprites[currentPage];
+        }
+        else
+        {
+            rightTitle.enabled = false;
+        }
+        if (currentPage == 0)
+        {
+            leftClick.SetActive(false);
+        }
+        else if (!leftClick.activeInHierarchy)
+        {
+            leftClick.SetActive(true);
+        }
+        if (currentPage == pages - 1)
+        {
+            rightClick.SetActive(false);
+        }
+        else if (!rightClick.activeInHierarchy)
+        {
+            rightClick.SetActive(true);
+        }
+        foreach (MonsterLogEntry log in logs)
+        {
+            log.Show(currentPage);
         }
     }
 }

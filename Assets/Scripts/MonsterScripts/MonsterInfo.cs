@@ -29,6 +29,8 @@ public class MonsterInfo : MonoBehaviour
         Toad,
         Spider,
     }
+    [SerializeField]
+    private MonsterType monsterType;
     /// <summary>
     /// Gives string representing monster type and position
     /// </summary>
@@ -56,5 +58,9 @@ public class MonsterInfo : MonoBehaviour
     public string GetName()
     {
         return monsterName;
+    }
+    public MonsterType GetMonsterType()
+    {
+        return monsterType;
     }
 }

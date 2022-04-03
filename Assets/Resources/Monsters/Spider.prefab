@@ -522,12 +522,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   weight: 1
   scale: 1.2
-  id: 1
+  id: 5
   monsterName: Spider
   logImage: {fileID: 21300000, guid: 34845157a3172d846b25c5f6d9c9cf0d, type: 3}
   hiddenImage: {fileID: 0}
   description: Prickly
   chunk: {x: 0, y: 0}
+  monsterType: 0
 --- !u!58 &3997318910864496868
 CircleCollider2D:
   m_ObjectHideFlags: 0

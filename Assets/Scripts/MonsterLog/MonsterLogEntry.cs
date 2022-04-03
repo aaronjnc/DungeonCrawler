@@ -6,45 +6,59 @@ using UnityEngine.UI;
 
 public class MonsterLogEntry : MonoBehaviour
 {
+    private Image logEntry;
     [SerializeField]
-    private TextMeshProUGUI monsterNameObj;
+    private List<Sprite> foundImages = new List<Sprite>();
     [SerializeField]
-    private TextMeshProUGUI monsterDescriptionObj;
+    private List<Sprite> hiddenImages = new List<Sprite>();
+    private List<bool> MonsterFound = new List<bool>();
     [SerializeField]
-    private Image monsterImage;
-    private Sprite monsterSprite;
-    private string monsterName;
-    private string monsterDescription;
-    private Sprite monsterHiddenSprite;
-    private const string hiddenName = "????";
-    private bool found = false;
-    public void SetValues(GameObject monster)
+    private bool right;
+    private void Awake()
     {
-        monsterName = monster.name;
-        MonsterInfo info = monster.GetComponent<MonsterInfo>();
-        monsterDescription = info.GetDescription();
-        monsterHiddenSprite = info.GetHiddenImage();
-        monsterSprite = info.GetLogImage();
-        Hide();
+        logEntry = GetComponent<Image>();
     }
-    public void Hide()
+    public void AddMonster(MonsterInfo monster)
     {
-        monsterNameObj.text = hiddenName;
-        monsterDescriptionObj.text = "";
-        monsterImage.sprite = monsterHiddenSprite;
+        MonsterFound.Add(false);
     }
-    public void Show()
+    public void Show(int page)
     {
-        monsterNameObj.text = monsterName;
-        monsterDescriptionObj.text = monsterDescription;
-        monsterImage.sprite = monsterSprite;
+        if (page >= foundImages.Count || page >= hiddenImages.Count)
+        {
+            logEntry.enabled = false;
+            return;
+        }
+        if (!logEntry.isActiveAndEnabled)
+            logEntry.enabled = true;
+        if (IsFound(page))
+        {
+            logEntry.sprite = foundImages[page];
+        }
+        else
+        {
+            logEntry.sprite = hiddenImages[page];
+        }
     }
-    public bool IsFound()
+    public bool IsFound(int page)
     {
-        return found;
+        if (page >= MonsterFound.Count)
+        {
+            return false;
+        }
+        return MonsterFound[page];
     }
-    public void Find()
+    public void Find(int id, int page)
     {
-        found = true;
+        int val = (id / 5);
+        if (right)
+        {
+            val -= 1;
+        }
+        MonsterFound[val] = true;
+        if (page == val)
+        {
+            logEntry.sprite = foundImages[page];
+        }
     }
 }
