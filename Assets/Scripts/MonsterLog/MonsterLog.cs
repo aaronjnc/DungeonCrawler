@@ -78,4 +78,8 @@ public class MonsterLog : MonoBehaviour
             log.Show(currentPage);
         }
     }
+    public List<MonsterLogEntry> GetLogs()
+    {
+        return logs;
+    }
 }

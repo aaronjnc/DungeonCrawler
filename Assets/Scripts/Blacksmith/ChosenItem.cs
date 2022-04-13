@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ChosenItem : MonoBehaviour
 {
@@ -11,11 +12,11 @@ public class ChosenItem : MonoBehaviour
     [Tooltip("Image for chosen item")]
     [SerializeField] private Image chosenImage;
     [Tooltip("Textbox for chosen item name")]
-    [SerializeField] private Text itemName;
+    [SerializeField] private TextMeshProUGUI itemName;
     [Tooltip("Textbox above list of ingredients (de-activate if no ingredients)")]
-    [SerializeField] private Text ingredient;
+    [SerializeField] private TextMeshProUGUI ingredient;
     [Tooltip("Textboxes to hold ingredients")]
-    [SerializeField] private Text[] ingredients;
+    [SerializeField] private TextMeshProUGUI[] ingredients;
     [Tooltip("Button used to buy item")]
     [SerializeField] private GameObject buyButton;
     [Tooltip("Button used to sell item")]
@@ -30,7 +31,7 @@ public class ChosenItem : MonoBehaviour
         chosenImage.gameObject.SetActive(false);
         itemName.gameObject.SetActive(false);
         ingredient.gameObject.SetActive(false);
-        foreach (Text ing in ingredients)
+        foreach (TextMeshProUGUI ing in ingredients)
         {
             ing.gameObject.SetActive(false);
         }
