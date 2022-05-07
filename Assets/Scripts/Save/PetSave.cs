@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,11 +12,17 @@ public class PetSave
     public PetSave(MonsterLog log)
     {
         List<MonsterLogEntry> logs = log.GetLogs();
+        List<MonsterInfo> monsterInfo = GameManager.Instance.GetMonsters();
         found = new bool[logs.Count][];
         for (int i = 0; i < logs.Count; i++)
+            found[i] = new bool[Enum.GetNames(typeof(MonsterInfo.MonsterType)).Length];
+        foreach (MonsterInfo m in monsterInfo)
         {
-            MonsterLogEntry logEntry = logs[i];
-            //found
+            found[m.id % 10][m.id / 5] = logs[m.id % 10].IsFound(m.id / 5);
         }
+    }
+    public bool[][] GetFound()
+    {
+        return found;
     }
 }

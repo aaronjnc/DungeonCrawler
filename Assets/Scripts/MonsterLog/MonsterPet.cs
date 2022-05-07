@@ -38,4 +38,8 @@ public class MonsterPet : MonoBehaviour
         if (controls != null)
             controls.Disable();
     }
+    public MonsterLog GetLog()
+    {
+        return log;
+    }
 }

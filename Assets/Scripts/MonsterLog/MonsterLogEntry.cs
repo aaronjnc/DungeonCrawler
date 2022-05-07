@@ -50,7 +50,7 @@ public class MonsterLogEntry : MonoBehaviour
     }
     public void Find(int id, int page)
     {
-        int val = (id / 5);
+        int val = id / 5;
         if (right)
         {
             val -= 1;
@@ -60,5 +60,10 @@ public class MonsterLogEntry : MonoBehaviour
         {
             logEntry.sprite = foundImages[page];
         }
+    }
+
+    public int GetCount()
+    {
+        return MonsterFound.Count;
     }
 }
