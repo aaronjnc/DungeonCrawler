@@ -25,6 +25,8 @@ public class MonsterLog : MonoBehaviour
     private void Start()
     {
         LoadMonsters();
+        if (GameManager.Instance.loadFromFile)
+            LoadFromFile();
         ShowPage();
         gameObject.SetActive(false);
     }
@@ -39,6 +41,23 @@ public class MonsterLog : MonoBehaviour
     public void Register(MonsterInfo monster)
     {
         logs[monster.id % 10].Find(monster.id, currentPage);
+    }
+    private void LoadFromFile()
+    {
+        PetSave save = GameInformation.Instance.LoadPets();
+        bool[][] found = save.GetFound();
+        for (int i = 0; i < found.Length; i++)
+        {
+            for (int j = 0; j < found[i].Length; j++)
+            {
+                if (found[i][j])
+                    FindMonster(i, j * 5);
+            }
+        }
+    }
+    private void FindMonster(int log, int page)
+    {
+        logs[log].Find(page, currentPage);
     }
     public void ChangePage(int i)
     {

@@ -62,6 +62,7 @@ public class GameInformation : ScriptableObject
         GameObject player = GameObject.Find("Player");
         SavePlayer(player);
         SaveInventory();
+        SavePets(player);
     }
     /// <summary>
     /// Saves information contained within gamemanager
@@ -120,6 +121,18 @@ public class GameInformation : ScriptableObject
         fs.Close();
     }
     /// <summary>
+    /// Saves pet information
+    /// </summary>
+    /// <param name="player"></param>
+    public void SavePets(GameObject player)
+    {
+        string petInfo = Path.Combine(saveLocation, "pets.txt");
+        FileStream fs = new FileStream(petInfo, FileMode.Create);
+        PetSave p = new PetSave(player.GetComponent<MonsterPet>().GetLog());
+        formatter.Serialize(fs, p);
+        fs.Close();
+    }
+    /// <summary>
     /// Loads inventory
     /// </summary>
     /// <returns></returns>
@@ -170,5 +183,17 @@ public class GameInformation : ScriptableObject
         WorldInfo w = (WorldInfo)formatter.Deserialize(fs);
         fs.Close();
         return w;
+    }
+    /// <summary>
+    /// loads pets information
+    /// </summary>
+    /// <returns></returns>
+    public PetSave LoadPets()
+    {
+        string petInfo = Path.Combine(saveLocation, "pets.txt");
+        FileStream fs = new FileStream(petInfo, FileMode.Open);
+        PetSave p = (PetSave)formatter.Deserialize(fs);
+        fs.Close();
+        return p;
     }
 }
