@@ -12,7 +12,6 @@ public class SceneLoader : MonoBehaviour
     /// <param name="level">Scene name</param>
     public static void LoadScene(int level)
     {
-        AssetDatabase.Refresh();
         SceneManager.LoadScene(level);
     }
     /// <summary>

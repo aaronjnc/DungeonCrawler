@@ -77,7 +77,6 @@ public class LoadWorld : MonoBehaviour
         {
             DeleteContents(path);
             Directory.Delete(path);
-            AssetDatabase.Refresh();
             Debug.Log("Deleted");
             LoadScreen();
         }
