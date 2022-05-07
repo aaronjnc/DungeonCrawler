@@ -14,12 +14,6 @@ public class MonsterInfo : MonoBehaviour
     public byte id;
     [SerializeField]
     private string monsterName;
-    [SerializeField]
-    private Sprite logImage;
-    [SerializeField]
-    private Sprite hiddenImage;
-    [SerializeField]
-    private string description;
     [Tooltip("Spawn chunk")]
     [HideInInspector] public Vector2Int chunk;
     //types of enemies
@@ -42,18 +36,6 @@ public class MonsterInfo : MonoBehaviour
         sb.Append(new string[] { gameObject.transform.position.ToString(), "\n" });
         sb.Append(new string[] { gameObject.transform.rotation.ToString(), "\n" });
         return sb.ToString();
-    }
-    public Sprite GetHiddenImage()
-    {
-        return hiddenImage;
-    }
-    public string GetDescription()
-    {
-        return description;
-    }
-    public Sprite GetLogImage()
-    {
-        return logImage;
     }
     public string GetName()
     {
