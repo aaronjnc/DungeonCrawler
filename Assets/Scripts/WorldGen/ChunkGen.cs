@@ -428,8 +428,8 @@ public class ChunkGen : Singleton<ChunkGen>
         startPos.y = rand.Next(section.minStart.y, section.maxStart.y);
         if (section.entireChunk)
         {
-            GenerateBiome(startPos, section.biome);
-            GetChunk(startPos).specialChunk = true;
+            chunks.Add(startPos, new PregenChunk(startPos, section));
+            return;
         }
         PresetTiles(startPos, section.wallMap, 0, section.entireChunk);
         PresetTiles(startPos, section.floorMap, 1, section.entireChunk);
@@ -499,7 +499,7 @@ public class ChunkGen : Singleton<ChunkGen>
             }
             if (!ChunkCreated(chunkPos))
                 CreateChunk(chunkPos);
-            GetChunk(chunkPos).AddPresetEnemy(chunkTilePos, enemy);
+            GetChunk(chunkPos).AddPresetMonster(chunkTilePos, enemy);
         }
     }
     /// <summary>
