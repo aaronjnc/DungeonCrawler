@@ -329,7 +329,7 @@ PrefabInstance:
       objectReference: {fileID: 4900000, guid: 759968691d5290e4c896db4c0187ff35, type: 3}
     - target: {fileID: 7623258330592272342, guid: 785e9e836bda81b4d8229eb767ff43db, type: 3}
       propertyPath: CreateAtStart
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7623258330592272342, guid: 785e9e836bda81b4d8229eb767ff43db, type: 3}
       propertyPath: minStart.x

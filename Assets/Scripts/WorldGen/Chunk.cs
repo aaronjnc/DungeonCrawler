@@ -93,13 +93,13 @@ public abstract class Chunk
         presetTiles.Add(pos);
     }
     /// <summary>
-    /// Adds enemies to list of preset
+    /// Adds monsters to list of preset
     /// </summary>
     /// <param name="pos"></param>
-    /// <param name="enemy"></param>
-    public void AddPresetEnemy(Vector2Int pos, byte enemy)
+    /// <param name="monster"></param>
+    public void AddPresetMonster(Vector2Int pos, byte monster)
     {
-        presetMonsters.Add(pos, enemy);
+        presetMonsters.Add(pos, monster);
     }
     /// <summary>
     /// Method used to call other methods and generate the chunk
