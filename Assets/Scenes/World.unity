@@ -173,8 +173,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a908049768f7f043b37450df4ab8315, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  foundImages: []
-  hiddenImages: []
+  foundImages:
+  - {fileID: 21300000, guid: 85b45819a16ec19408190638196e4dea, type: 3}
+  hiddenImages:
+  - {fileID: 21300000, guid: 3880b0552b1e48445aab93721c3ccf0a, type: 3}
   right: 0
 --- !u!114 &17634334
 MonoBehaviour:
