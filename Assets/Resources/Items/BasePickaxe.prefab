@@ -47,7 +47,7 @@ MonoBehaviour:
   itemSprite: {fileID: 21300000, guid: f5eba3867edb7e842b076772b5326222, type: 3}
   stackSize: 1
   baseDurability: 50
-  damage: 15
+  damage: 50
   level: 0
   buyCost: 10
   craftCost: 5
