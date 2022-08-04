@@ -2368,6 +2368,26 @@ PrefabInstance:
       propertyPath: biomesmooths
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: randomSeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: randomBiomeSeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: smooths
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: maxMonsters
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114920, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: monsterChance
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 4921779820281114924, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: m_Name
       value: GameController
@@ -2426,6 +2446,14 @@ PrefabInstance:
       objectReference: {fileID: 2020610031}
     - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
       propertyPath: spawnEnemies
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: testingsize
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4921779820281114927, guid: 6941b8dabb94e7d49a1c25cec56cbfee, type: 3}
+      propertyPath: spawnMonsters
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -4163,6 +4191,7 @@ GameObject:
   - component: {fileID: 967378476}
   - component: {fileID: 967378475}
   - component: {fileID: 967378474}
+  - component: {fileID: 967378477}
   m_Layer: 5
   m_Name: Exit
   m_TagString: Untagged
@@ -4233,9 +4262,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: SceneLoader, Assembly-CSharp
-        m_MethodName: Exit
+      - m_Target: {fileID: 967378477}
+        m_TargetAssemblyTypeName: Menu, Assembly-CSharp
+        m_MethodName: Quit
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4283,6 +4312,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 967378472}
   m_CullTransparentMesh: 0
+--- !u!114 &967378477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 967378472}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 10a7ad1885bddd44b98a3445249a67e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &971427176
 GameObject:
   m_ObjectHideFlags: 0

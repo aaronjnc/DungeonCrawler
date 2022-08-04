@@ -9,61 +9,94 @@ using UnityEditor;
 
 public class LoadWorld : MonoBehaviour
 {
-    public GameObject[] loadPanels;
-    public GameObject[] createPanels;
-    public Text[] textBoxes;
-    public Text[] hours;
+    [Tooltip("Array of load world panel GameObjects")]
+    [SerializeField] private GameObject[] loadPanels;
+    [Tooltip("Array of create new world panel GameObjects")]
+    [SerializeField] private GameObject[] createPanels;
+    [Tooltip("World name text boxes")]
+    [SerializeField] private Text[] textBoxes;
+    [Tooltip("Hours played text boxes")]
+    [SerializeField] private Text[] hours;
     // Start is called before the first frame update
     void Start()
     {
         LoadScreen();
     }
-
+    /// <summary>
+    /// Sets up load screen with world saves
+    /// </summary>
     private void LoadScreen()
     {
         var f = new DirectoryInfo(Application.persistentDataPath + "/saves");
-        FileInfo[] fileInfo = f.GetFiles();
+        DirectoryInfo[] dirInfo = f.GetDirectories();
         for (int i = 0; i < 3; i++)
         {
-            if (i >= fileInfo.Length)
+            if (i >= dirInfo.Length)
             {
                 createPanels[i].SetActive(true);
                 loadPanels[i].SetActive(false);
                 continue;
             }
             createPanels[i].SetActive(false);
-            string fileName = fileInfo[i].Name;
-            fileName = fileName.Replace(".txt", "");
-            textBoxes[i].text = fileName;
+            string worldName = dirInfo[i].Name;
+            textBoxes[i].text = worldName;
             BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(Application.persistentDataPath + "/saves/" + fileName + ".txt", FileMode.Open);
-            GameInformation info = formatter.Deserialize(stream) as GameInformation;
-            hours[i].text = Math.Round(info.playHours, 2) + " hrs";
+            string infoPath = Path.Combine(Application.persistentDataPath, "saves", worldName, "worldInfo.txt");
+            if (!File.Exists(infoPath))
+            {
+                Debug.Log("Deleted " + dirInfo[i].FullName);
+                Directory.Delete(dirInfo[i].FullName);
+                createPanels[i].SetActive(true);
+                loadPanels[i].SetActive(false);
+                continue;
+            }
+            FileStream fs = new FileStream(infoPath, FileMode.Open);
+            WorldInfo info = (WorldInfo)formatter.Deserialize(fs);
+            hours[i].text = Math.Round(info.GetPlayTime(), 2) + " hrs";
             loadPanels[i].SetActive(true);
-            stream.Close();
+            fs.Close();
         }
     }
-
+    /// <summary>
+    /// loads world with given name
+    /// </summary>
+    /// <param name="worldFile">textbox of world name</param>
     public void LoadWorldFile(Text worldFile)
     {
-        string path = Application.persistentDataPath + "/saves/" + worldFile.text + ".txt";
-        if (File.Exists(path))
-        {
-            GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-            manager.worldName = worldFile.text;
-            SaveSystem.Load(path);
-        }
+        GameManager.Instance.worldName = worldFile.text;
+        SaveSystem.Load();
     }
-
+    /// <summary>
+    /// Deletes world with given name
+    /// </summary>
+    /// <param name="worldFile">textbox containing world name</param>
     public void DeleteWorld(Text worldFile)
     {
-        string path = Application.persistentDataPath + "/saves/" + worldFile.text + ".txt";
-        if (File.Exists(path))
+        string path = Application.persistentDataPath + "/saves/" + worldFile.text;
+        if (Directory.Exists(path))
         {
-            File.Delete(path);
-            AssetDatabase.Refresh();
+            DeleteContents(path);
+            Directory.Delete(path);
             Debug.Log("Deleted");
             LoadScreen();
+        }
+    }
+    /// <summary>
+    /// Helper method to delte contents of directories
+    /// </summary>
+    /// <param name="directory"></param>
+    private void DeleteContents(string directory)
+    {
+        string[] dirs = Directory.GetDirectories(directory);
+        for (int i = 0; i < dirs.Length; i++)
+        {
+            DeleteContents(dirs[i]);
+            Directory.Delete(dirs[i]);
+        }
+        string[] files = Directory.GetFiles(directory);
+        for (int i = 0; i < files.Length; i++)
+        {
+            File.Delete(files[i]);
         }
     }
 }

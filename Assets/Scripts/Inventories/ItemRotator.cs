@@ -7,42 +7,49 @@ using UnityEngine.InputSystem;
 
 public class ItemRotator : MonoBehaviour
 {
-    Sprite fullRotator;
-    //public ItemReference[] items = new ItemReference[5];
-    public ItemSlot[] itemSlots = new ItemSlot[5];
-    public List<Image> images = new List<Image>();
-    //public ItemReference chosenItem;
-    public Image centralImage;
-    PlayerControls controls;
-    bool open = false;
-    public FreePlayerMove playerMovement;
+    [Tooltip("Image of item rotator")]
+    [SerializeField] private Image itemRotator;
+    [Tooltip("Item slots of item rotator")]
+    [SerializeField] private ItemSlot[] itemSlots = new ItemSlot[7];
+    [Tooltip("Sprites for different item rotator stages")]
+    [SerializeField] private Sprite[] fullRotators = new Sprite[7];
+    [Tooltip("Images for chosen items on rotator")]
+    [SerializeField] private List<Image> images = new List<Image>();
+    [Tooltip("Image for chosen item")]
+    [SerializeField] private Image chosenItem;
+    [Tooltip("Player controls")]
+    private PlayerControls controls;
+    [Tooltip("Item rotator is expanded")]
+    private bool open = false;
+    [Tooltip("Player movement script")]
+    [SerializeField] private FreePlayerMove playerMovement;
+    [Tooltip("Index of chosen item in inventory chosen items")]
     public int current = 0;
-    int previous = 0;
-    Image rotatorImage;
-    SwapRotators swapRotators;
-    public Inventory inv;
-    GameManager manager;
-    [HideInInspector]
-    public int rotator = 0;
-    bool started = false;
-    // Start is called before the first frame update
+    [Tooltip("Player inventory")]
+    [SerializeField] private Inventory inv;
+    [Tooltip("Rotator has been instantiated")]
+    private bool started = false;
+    [Tooltip("Sprite renderer of player")]
+    [SerializeField] private SpriteRenderer playerRenderer;
+    /// <summary>
+    /// call start method on start up
+    /// </summary>
     void Start()
     {
         if (!started)
             StartMethod();
     }
-
+    /// <summary>
+    /// sets up item rotator
+    /// </summary>
     void StartMethod()
     {
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        rotatorImage = GetComponent<Image>();
         controls = new PlayerControls();
-        swapRotators = GetComponentInParent<SwapRotators>();
         foreach (Image img in images)
         {
             img.gameObject.SetActive(false);
         }
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 7; i++)
         {
             itemSlots[i] = new ItemSlot();
         }
@@ -50,11 +57,10 @@ public class ItemRotator : MonoBehaviour
         controls.Inventory.ItemRotator.canceled += MinimizeRotator;
         controls.Inventory.ItemRotator.Enable();
         controls.Movement.MousePosition.Enable();
-        fullRotator = swapRotators.fullRotators[current];
-        centralImage.sprite = itemSlots[current].getSprite();
-        if (swapRotators.current != rotator)
-            gameObject.SetActive(false);
+        chosenItem.sprite = itemSlots[current].GetSprite();
+        itemRotator.gameObject.SetActive(false);
         started = true;
+        current = 0;
     }
     /// <summary>
     /// Expands item rotator when 'Tab' is pressed
@@ -62,7 +68,7 @@ public class ItemRotator : MonoBehaviour
     /// <param name="ctx"></param>
     void ExpandRotator(CallbackContext ctx)
     {
-        rotatorImage.sprite = fullRotator;
+        itemRotator.gameObject.SetActive(true);
         foreach(Image img in images)
         {
             img.gameObject.SetActive(true);
@@ -79,51 +85,58 @@ public class ItemRotator : MonoBehaviour
         {
             img.gameObject.SetActive(false);
         }
-        rotatorImage.sprite = swapRotators.smallRotator;
+        itemRotator.gameObject.SetActive(false);
         open = false;
     }
-    float timechange = 0f;
+    /// <summary>
+    /// update for when rotator is open to determine chosen item
+    /// </summary>
     void FixedUpdate()
     {
         if (open)
         {
-            timechange += Time.deltaTime;
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            float angleRad = Mathf.Atan2(mousePos.y-transform.position.y, mousePos.x-transform.position.x);
-            float angleDeg = (180 / Mathf.PI) * angleRad;
-            if (angleDeg >= 23 && angleDeg < 90)
-            {
-                current = 1;
-            }
-            else if (angleDeg >= 90 && angleDeg < 160)
+            Vector2 mousePos = Mouse.current.position.ReadValue() - new Vector2(Screen.width / 2, Screen.height / 2);
+            float angleDeg = Mathf.Atan2(mousePos.y, mousePos.x) * Mathf.Rad2Deg;
+            if (angleDeg <= 90 && angleDeg > 39)
             {
                 current = 0;
             }
-            else if (angleDeg < 23 && angleDeg > -45)
+            else if (angleDeg > -12 && angleDeg < 39)
             {
-                current = 3;
+                current = 1;
             }
-            else if (angleDeg <= -45 && angleDeg > -136)
-            {
-                current = 4;
-            }
-            else
+            else if (angleDeg <= -12 && angleDeg > -63)
             {
                 current = 2;
             }
-            if (current != previous)
+            else if (angleDeg <= -64 && angleDeg > -115)
             {
-                swapRotators.chosen = current;
-                centralImage.sprite = itemSlots[current].getSprite();
-                fullRotator = swapRotators.fullRotators[current];
-                rotatorImage.sprite = fullRotator;
-                if (itemSlots[current].getSprite() != null)
-                    centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 255);
-                else
-                    centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 0);
-                CurrentItem();
+                current = 3;
             }
-            previous = current;
+            else if (angleDeg <= -115 && angleDeg > -166)
+            {
+                current = 4;
+            }
+            else if (angleDeg > 90 && angleDeg <= 141)
+            {
+                current = 6;
+            }
+            else
+            {
+                current = 5;
+            }
+            itemRotator.sprite = fullRotators[current];
+            chosenItem.sprite = itemSlots[current].GetSprite();
+            if (itemSlots[current].GetSprite() != null)
+            {
+                chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+
+            }
+            else
+            {
+                chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 0);
+            }
+            CurrentItem();
         }
     }
     /// <summary>
@@ -133,64 +146,65 @@ public class ItemRotator : MonoBehaviour
     {
         if (!started)
             StartMethod();
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 7; i++)
         {
-            Vector2Int chosenItemPos = inv.chosenPos[rotator, i];
-            if (chosenItemPos == new Vector2Int(10, 10))
+            Vector2Int chosenItemPos = inv.chosenItems[i];
+            if (chosenItemPos.x == int.MaxValue)
                 continue;
-            itemSlots[i].addExisting(inv.getItemSlot(rotator, chosenItemPos.x, chosenItemPos.y));
-            images[i].sprite = itemSlots[i].getSprite();
+            itemSlots[i].AddExisting(inv.getItemSlot(chosenItemPos.x, chosenItemPos.y));
+            images[i].sprite = itemSlots[i].GetSprite();
             if (images[i].sprite != null)
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 255);
             else
                 images[i].GetComponent<Image>().color = new Color(255, 255, 255, 0);
         }
-        centralImage.sprite = itemSlots[current].getSprite();
-        fullRotator = swapRotators.fullRotators[0];
-        if (itemSlots[current].getSprite() != null)
-            centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        chosenItem.sprite = itemSlots[current].GetSprite();
+        itemRotator.sprite = fullRotators[current];
+        if (itemSlots[current].GetSprite() != null)
+        {
+            chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 255);
+        }
         else
-            centralImage.GetComponent<Image>().color = new Color(255, 255, 255, 0);
-        if (swapRotators.current == rotator)
-            CurrentItem();
+        {
+            chosenItem.GetComponent<Image>().color = new Color(255, 255, 255, 0);
+        }
+        CurrentItem();
     }
     /// <summary>
     /// Sets certain values given currently selected item
     /// </summary>
     void CurrentItem()
     {
-        manager.currentItem.addExisting(itemSlots[current]);
-        if (!itemSlots[current].isEmpty())
+        GameManager.Instance.currentItem.AddExisting(itemSlots[current]);
+        FreePlayerMove.Instance.ResetSprite();
+        if (!itemSlots[current].IsEmpty())
         {
             DisableBlockPlacing();
-            manager.fighting = false;
-            switch (rotator)
+            //GameManager.Instance.fighting = false;
+            switch (itemSlots[current].GetItemType())
             {
-                case 0:
-                    manager.fighting = true;
+                /*case InventoryItem.ItemType.Weapon:
+                    GameManager.Instance.fighting = true;
+                    itemSlots[current].GetWeaponScript().Pickup(playerRenderer);
+                    break;*/
+                case InventoryItem.ItemType.Consumable:
+                    //consumable
                     break;
-                case 1:
-                    manager.blockplacing = true;
-                    manager.placing = true;
-                    manager.currentTileID = itemSlots[current].getItemId();
-                    break;
-                case 2:
-                    manager.blockplacing = true;
-                    manager.placing = false;
-                    break;
-                case 3:
-                    //food
-                    break;
-                default:
+                case InventoryItem.ItemType.Tool:
+                    GameManager.Instance.blockBreaking = true;
                     break;
             }
         }
         else
         {
             DisableBlockPlacing();
-            manager.fighting = false;
+            //GameManager.Instance.fighting = false;
         }
     }
+    /// <summary>
+    /// returns chosen ItemSlot
+    /// </summary>
+    /// <returns>ItemSlot reference for chosen item</returns>
     public ItemSlot getChosen()
     {
         return itemSlots[current];
@@ -200,10 +214,12 @@ public class ItemRotator : MonoBehaviour
     /// </summary>
     public void DisableBlockPlacing()
     {
-        manager.ResetPreviousTile();
-        manager.blockplacing = false;
+        GameManager.Instance.DisableBlockBreaking();
+        GameManager.Instance.blockBreaking = false;
     }
-
+    /// <summary>
+    /// Disable controls on destroy
+    /// </summary>
     private void OnDestroy()
     {
         controls.Disable();

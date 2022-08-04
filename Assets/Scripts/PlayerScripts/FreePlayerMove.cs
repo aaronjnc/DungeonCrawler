@@ -4,72 +4,113 @@ using UnityEngine;
 using static UnityEngine.InputSystem.InputAction;
 using UnityEngine.Tilemaps;
 
-[RequireComponent(typeof(BoxCollider2D))]
 [RequireComponent(typeof(Rigidbody2D))]
-public class FreePlayerMove : MonoBehaviour
+public class FreePlayerMove : Singleton<FreePlayerMove>
 {
-    Rigidbody2D player;
-    PlayerControls controls;
-    GameManager manager;
-    public Vector2 dir = Vector2.zero;
-    Vector2 previousDir = Vector2.zero;
-    public float speed = 5f;
-    public float rotSpeed = 10f;
-    DestroyandPlace blockplacing;
+    [Tooltip("player body")]
+    private Rigidbody2D player;
+    [Tooltip("player controls")]
+    private PlayerControls controls;
+    [Tooltip("Movement direction")]
+    [HideInInspector] public Vector2 dir = Vector2.zero;
+    [Tooltip("Previous look direction")]
+    private Vector2 previousDir = Vector2.zero;
+    [Tooltip("Base speed of player")]
+    [SerializeField] private float speed = 5f;
+    [Tooltip("Rotation speed of player")]
+    [SerializeField] private float rotSpeed = 10f;
+    [Tooltip("Block breaking script")]
+    private BlockBreaking blockBreaking;
+    [Tooltip("Integer position of player")]
     public Vector3Int pos = Vector3Int.zero;
-    Vector3Int prevpos = Vector3Int.zero;
-    public GameObject canvas;
-    Vector2 rotDir = Vector2.zero;
-    public GameObject menu;
-    public GameObject magicTree;
-    Vector3Int lookPos = Vector3Int.zero;
-    Vector3Int prevlookPos = Vector3Int.zero;
+    [Tooltip("Previous integer position of player")]
+    private Vector3Int prevpos = Vector3Int.zero;
+    [Tooltip("Look direction")]
+    private Vector2 rotDir = Vector2.zero;
+    [Tooltip("Menu game object")]
+    [SerializeField] private GameObject menu;
+    [Tooltip("Magic menu game object")]
+    [SerializeField] private GameObject magicTree;
+    [Tooltip("Position of tile being looked at")]
+    private Vector3Int lookPos = Vector3Int.zero;
+    [Tooltip("Position of tile previously being looked at")]
+    private Vector3Int prevlookPos = Vector3Int.zero;
+    [Tooltip("Layer of interactable objects")]
+    public LayerMask interactable;
+    [Tooltip("Current chunk player is in")]
     [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
-    public bool canMove = true;
+    [Tooltip("Player can move")]
+    [HideInInspector] public bool canMove = true;
+    [Tooltip("Player animation controller")]
+    private Animator animator;
+    [Tooltip("Player standing still sprite")]
+    private Sprite standingSprite;
+    [Tooltip("Player sprite renderer")]
+    private SpriteRenderer spriteRenderer;
+    [Tooltip("Previous sprite")]
+    private Sprite previousSprite;
+    [Tooltip("Player is sprinting")]
+    [SerializeField] private bool sprinting;
+    [SerializeField] private float sprintMod = 2f;
+    [Tooltip("Idle state hash")]
+    private int idleHash;
+    [Tooltip("Sprint state hash")]
+    private int sprintHash;
+    [Tooltip("Walk state hash")]
+    private int walkHash;
+    [SerializeField]
+    private GameObject monsterLog;
     void Start()
     {
+        base.Awake();
         GameObject grid = GameObject.Find("Grid");
         player = GetComponent<Rigidbody2D>();
+        animator = GetComponent<Animator>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        idleHash = Animator.StringToHash("Base Layer.Idle");
+        sprintHash = Animator.StringToHash("Base Layer.Running");
+        walkHash = Animator.StringToHash("Base Layer.Walking");
+        standingSprite = spriteRenderer.sprite;
+        previousSprite = standingSprite;
         controls = new PlayerControls();
-        manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        blockplacing = grid.GetComponent<DestroyandPlace>();
+        blockBreaking = grid.GetComponent<BlockBreaking>();
         controls.Movement.Horizontal.performed += ctx => dir.x += ctx.ReadValue<float>();
         controls.Movement.Horizontal.canceled += ctx => dir.x = 0;
         controls.Movement.Horizontal.Enable();
         controls.Movement.Vertical.performed += ctx => dir.y += ctx.ReadValue<float>();
         controls.Movement.Vertical.canceled += ctx => dir.y = 0;
         controls.Movement.Vertical.Enable();
-        controls.Interact.Inventory.performed += Inventory;
+        controls.Movement.Sprint.performed += ctx => sprinting = true;
+        controls.Movement.Sprint.canceled += ctx => sprinting = false;
+        controls.Movement.Sprint.Enable();
+        controls.Interact.Inventory.performed += OpenInventory;
         controls.Interact.Inventory.Enable();
         controls.Movement.MousePosition.Enable();
         controls.Interact.Enter.canceled += Interact;
         controls.Interact.Enter.Enable();
         controls.Interact.Menu.performed += ActivateMenu;
         controls.Interact.Menu.Enable();
-        controls.Fight.MagicMenu.performed += SpellMenu;
-        controls.Fight.MagicMenu.Enable();
-        pos.z = manager.mapz;
-        prevpos.z = manager.mapz;
-        if (manager.loadFromFile)
+        controls.Interact.MonsterLog.performed += MonsterLog;
+        controls.Interact.MonsterLog.Enable();
+        pos.z = GameManager.Instance.mapz;
+        prevpos.z = GameManager.Instance.mapz;
+        if (GameManager.Instance.loadFromFile)
         {
-            loadFromFile(manager.GetGameInformation());
+            LoadFromFile();
         }
+        SaveSystem.Save();
     }
-    /// <summary>
-    /// Activates the spell menu when 'X' is pressed
-    /// </summary>
-    /// <param name="ctx"></param>
-    void SpellMenu(CallbackContext ctx)
+    void MonsterLog(CallbackContext ctx)
     {
-        if (magicTree.activeInHierarchy)
+        if (monsterLog.activeInHierarchy)
         {
-            magicTree.SetActive(false);
-            manager.ResumeGame();
+            monsterLog.SetActive(false);
+            GameManager.Instance.ResumeGame();
         }
-        else if (!manager.paused)
+        else if (!GameManager.Instance.paused)
         {
-            magicTree.SetActive(true);
-            manager.PauseGame();
+            monsterLog.SetActive(true);
+            GameManager.Instance.PauseGame();
         }
     }
     /// <summary>
@@ -81,12 +122,12 @@ public class FreePlayerMove : MonoBehaviour
         if (menu.activeInHierarchy)
         {
             menu.SetActive(false);
-            manager.ResumeGame();
+            GameManager.Instance.ResumeGame();
         }
-        else if (!manager.paused)
+        else if (!GameManager.Instance.paused)
         {
             menu.SetActive(true);
-            manager.PauseGame();
+            GameManager.Instance.PauseGame();
         }
     }
     /// <summary>
@@ -94,12 +135,14 @@ public class FreePlayerMove : MonoBehaviour
     /// </summary>
     /// <param name="ctx"></param>
     void Interact(CallbackContext ctx)
-    { 
-        if (!manager.paused)
+    {
+        if (!GameManager.Instance.paused)
         {
-            if (manager.GetByte(lookPos,currentChunk) != 127)
+            RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.right, 5, interactable);
+            if (hit.collider != null)
             {
-                ChunkGen.currentWorld.Interact(lookPos, currentChunk);
+                SaveSystem.Save();
+                hit.collider.gameObject.GetComponent<InteractableTile>().Interact();
             }
         }
     }
@@ -107,23 +150,23 @@ public class FreePlayerMove : MonoBehaviour
     /// Opens inventory when 'I' is pressed
     /// </summary>
     /// <param name="ctx"></param>
-    void Inventory(CallbackContext ctx)
+    void OpenInventory(CallbackContext ctx)
     {
-        if (canvas.activeInHierarchy)
+        if (Inventory.Instance.gameObject.activeInHierarchy)
         {
-            canvas.SetActive(false);
-            manager.ResumeGame();
+            Inventory.Instance.gameObject.SetActive(false);
+            GameManager.Instance.ResumeGame();
         }
-        else if (!manager.paused)
+        else if (!GameManager.Instance.paused)
         {
-            canvas.SetActive(true);
-            manager.PauseGame();
+            Inventory.Instance.gameObject.SetActive(true);
+            GameManager.Instance.PauseGame();
         }
     }
 
     void FixedUpdate()
     {
-        if (!manager.paused && canMove)
+        if (!GameManager.Instance.paused && canMove)
         {
             Vector3 mousePos = Camera.main.ScreenToWorldPoint(controls.Movement.MousePosition.ReadValue<Vector2>());
             float angleRad = Mathf.Atan2(mousePos.y - transform.position.y, mousePos.x - transform.position.x);
@@ -132,11 +175,31 @@ public class FreePlayerMove : MonoBehaviour
             dir = dir.normalized;
             Vector3 velDir = -dir.x * transform.up + dir.y * transform.right;
             rotDir = new Vector2(Mathf.Round(transform.up.y), Mathf.Round(-transform.up.x));
+            if (sprinting)
+            {
+                velDir *= sprintMod;
+            }
+            if (dir != Vector2.zero && animator.GetCurrentAnimatorStateInfo(0).fullPathHash != walkHash && !sprinting)
+            {
+                SetState("Walking");
+            }
+            else if (dir != Vector2.zero && animator.GetCurrentAnimatorStateInfo(0).fullPathHash != sprintHash && sprinting)
+            {
+                SetState("Sprinting");
+            }
+            else if (animator.GetCurrentAnimatorStateInfo(0).fullPathHash != idleHash && dir == Vector2.zero)
+            {
+                StopAnimation();
+            }
             player.velocity = velDir * speed;
             Camera.main.transform.position = new Vector3(transform.position.x, transform.position.y, Camera.main.transform.position.z);
             Actions();
             if (pos != prevpos)
                 prevpos = pos;
+        }
+        else if (animator.GetCurrentAnimatorStateInfo(0).fullPathHash != idleHash)
+        {
+            StopAnimation();
         }
     }
     /// <summary>
@@ -145,12 +208,10 @@ public class FreePlayerMove : MonoBehaviour
     void Actions()
     {
         Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
-        currentChunk = ChunkGen.currentWorld.GetChunkPos(relPos);
-        Vector2Int newPos = ChunkGen.currentWorld.GetChunkTilePos(relPos);
+        currentChunk = ChunkGen.Instance.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.Instance.GetChunkTilePos(relPos);
         pos.x = newPos.x;
         pos.y = newPos.y;
-        manager.pos = pos;
-        manager.currentChunk = currentChunk;
         Vector3Int lookDir= Vector3Int.zero;
         if (rotDir != Vector2.zero)
             lookDir = new Vector3Int((int)rotDir.x, (int)rotDir.y, 0);
@@ -159,10 +220,10 @@ public class FreePlayerMove : MonoBehaviour
         lookPos = pos + lookDir;
         if (lookPos != prevlookPos)
         {
-            if (manager.blockplacing)
+            if (GameManager.Instance.blockBreaking)
             {
-                blockplacing.enabled = true;
-                blockplacing.Positioning(lookPos,currentChunk);
+                blockBreaking.enabled = true;
+                blockBreaking.Positioning(lookPos,currentChunk);
             }
             prevlookPos = lookPos;
         }
@@ -171,12 +232,41 @@ public class FreePlayerMove : MonoBehaviour
     }
     private void OnDestroy()
     {
-        controls.Disable();
+        if (controls != null)
+            controls.Disable();
     }
-
-    private void loadFromFile(GameInformation info)
+    /// <summary>
+    /// loads player information from file
+    /// </summary>
+    private void LoadFromFile()
     {
-        transform.position = new Vector3(info.playerPos[0], info.playerPos[1], info.playerPos[2]);
-        transform.eulerAngles = new Vector3(info.playerRot[0], info.playerRot[1], info.playerRot[2]);
+        PlayerSave p = GameInformation.Instance.LoadPlayer();
+        transform.position = p.GetPlayerPos();
+        transform.eulerAngles = p.GetPlayerRot();
+        Vector2Int relPos = new Vector2Int((int)Mathf.Round(transform.position.x - .5f), (int)Mathf.Round(transform.position.y - .5f));
+        currentChunk = ChunkGen.Instance.GetChunkPos(relPos);
+        Vector2Int newPos = ChunkGen.Instance.GetChunkTilePos(relPos);
+        pos.x = newPos.x;
+        pos.y = newPos.y;
+        ChunkGen.Instance.GenerateSurroundingChunks();
+    }
+    /// <summary>
+    /// Stops animation and resets sprite
+    /// </summary>
+    private void StopAnimation()
+    {
+        SetState("Idle");
+    }
+    /// <summary>
+    /// Resets player sprite to standing sprite
+    /// </summary>
+    public void ResetSprite()
+    {
+        if (spriteRenderer != null)
+            SetState("Idle");
+    }
+    private void SetState(string animatorState)
+    {
+        animator.SetTrigger(animatorState);
     }
 }

@@ -6,9 +6,15 @@ using UnityEngine.SceneManagement;
 
 public class CreateWorld : MonoBehaviour
 {
-    public InputField inputbox;
-    public GameObject failureText;
-    public Text[] loadedWorlds;
+    [Tooltip("Input for world name")]
+    [SerializeField] private InputField inputbox;
+    [Tooltip("Game object for invalid world name")]
+    [SerializeField] private GameObject failureText;
+    [Tooltip("Array of text objects for loaded worlds")]
+    [SerializeField] private Text[] loadedWorlds;
+    /// <summary>
+    /// Creates new world with input information
+    /// </summary>
     public void CreateNewWorld()
     {
         failureText.SetActive(false);
@@ -29,7 +35,7 @@ public class CreateWorld : MonoBehaviour
         }
         foreach (Text t in loadedWorlds)
         {
-            if (t.gameObject.active)
+            if (t.gameObject.activeInHierarchy)
             {
                 if (t.text.Trim().Equals(worldName))
                 {
@@ -38,9 +44,8 @@ public class CreateWorld : MonoBehaviour
                 }
             }
         }
-        GameManager manager = GameObject.Find("GameController").GetComponent<GameManager>();
-        manager.worldName = worldName;
-        manager.loadFromFile = false;
+        GameManager.Instance.worldName = worldName;
+        GameManager.Instance.loadFromFile = false;
         SceneManager.LoadScene(1);
     }
 }

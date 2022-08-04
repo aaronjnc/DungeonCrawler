@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Enemy
   - MapCollider
+  - Interactable
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Spells
   - Player
   - Camera
-  - 
+  - Interactable
   - 
   - 
   - 

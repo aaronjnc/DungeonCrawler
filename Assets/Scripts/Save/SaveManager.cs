@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class SaveManager : MonoBehaviour
 {
+    /// <summary>
+    /// Saves the game
+    /// </summary>
     public void SaveGame()
     {
         SaveSystem.Save();

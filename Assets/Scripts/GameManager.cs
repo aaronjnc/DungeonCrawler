@@ -6,60 +6,65 @@ using UnityEngine.Tilemaps;
 using UnityEngine.SceneManagement;
 using System.IO;
 using System;
+using static System.Collections.Generic.Dictionary<byte, InventoryItem>;
 
-public class GameManager : MonoBehaviour
+public class GameManager : Singleton<GameManager>
 {
-    public static GameManager currentManager;
-    [Tooltip("Eliminate lone tiles")] public bool revisiting = false;
-
-    [Header("Modes:")]
+    [Header("Game Testing Modes:")]
+    [Tooltip("Test world generation")]
     public bool testingmode = true;
-    [Tooltip("Pregenerated mapsize (size x size)")] public int testingsize;
-    public bool spawnEnemies;
-
-    [Header("Abilities:")]
-    [HideInInspector]
-    public bool blockplacing = false;
-    [HideInInspector]
-    public bool placing = false;
-    [HideInInspector]
-    public byte currentTileID;
-    [HideInInspector]
-    public Vector3Int pos = Vector3Int.zero;
-    [Header("Script Refs:")]
-    public DestroyandPlace destroyandPlace;
-    Sprite[] sprites;
-    Sprite[] posts;
-    List<string> spriteNames = new List<string>();
+    [Tooltip("Pregenerated mapsize (size x size)")] 
+    public int testingsize;
+    [Tooltip("Spawn enemies into the game")]
+    public bool spawnMonsters;
+    [Tooltip("Breaking blocks")]
+    [HideInInspector] public bool blockBreaking = false;
+    [Tooltip("Reference to block breaking script")]
+    [HideInInspector] public BlockBreaking blockBreakingScript;
+    [Tooltip("Map z position")]
     [HideInInspector] public int mapz;
+    [Tooltip("Foor z position")]
     [HideInInspector] public int floorz;
-    [HideInInspector] public List<InventoryItem> items = new List<InventoryItem>();
-    [HideInInspector] public Inventory inv;
-    [HideInInspector] public bool fighting = false;
+    [Tooltip("Item player is currently holding")]
     [HideInInspector] public ItemSlot currentItem;
+    [Tooltip("Inventory is open")]
     [HideInInspector] public bool invOpen = false;
-    [HideInInspector] public List<Tile[]> biomeBlocks = new List<Tile[]>();
-    public GameObject character;
-    [HideInInspector] public List<Vector3Int> markets = new List<Vector3Int>();
-    [HideInInspector] public List<Vendor> vendors = new List<Vendor>();
-    Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
-    Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
-    [HideInInspector] public Vector2Int currentChunk = Vector2Int.zero;
-    public int gold = 0;
+    [Tooltip("Dictionary of all blocks")]
+    private Dictionary<byte, Blocks> blocks = new Dictionary<byte, Blocks>();
+    [Tooltip("Dictionary of all items")]
+    private Dictionary<byte, InventoryItem> itemScripts = new Dictionary<byte, InventoryItem>();
+    [Tooltip("Game is paused")]
     [HideInInspector] public bool paused = false;
+    [Tooltip("All premade sections")]
     [HideInInspector] public List<PremadeSection> sections = new List<PremadeSection>();
+    private Dictionary<byte, GameObject> monsters = new Dictionary<byte, GameObject>();
+    [Tooltip("String of full text file for dialog")]
     [HideInInspector] public string fullText;
-    public TextAsset[] textFiles;
+    [Tooltip("Load world from file")]
     [HideInInspector] public bool loadFromFile = false;
-    GameInformation gameInfo;
+    [Tooltip("Name of world")]
     [HideInInspector] public string worldName;
+    [Tooltip("Start time of world")]
     [HideInInspector] public DateTime startTime;
+    [Tooltip("Hours in world")]
     [HideInInspector] public double hours;
-    private string previousWorld = "";
-    public ChunkGen gen;
+    [Tooltip("Stall items")]
+    private List<ItemSlot> stallItems = new List<ItemSlot>();
+    [Tooltip("Stored inventory array")]
+    private ItemSlot[,] inventory = new ItemSlot[5, 7];
+    [Tooltip("Player money")]
+    private int playerMoney;
+    [Tooltip("Transitioning from dialog to world")]
+    [HideInInspector] public bool reopen = false;
     // Start is called before the first frame update
     void Awake()
     {
+        if (Instance != this)
+        {
+            Destroy(this.gameObject);
+        }
+        base.Awake();
+        GameInformation.CreateInstance<GameInformation>();
         if (!Directory.Exists(Application.persistentDataPath + "/saves"))
         {
             Directory.CreateDirectory(Application.persistentDataPath + "/saves");
@@ -68,48 +73,25 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
         mapz = 0;
         floorz = 1;
-        currentManager = this;
         currentItem = new ItemSlot();
         foreach (GameObject block in Resources.LoadAll("Blocks"))
         {
-            InventoryItem item;
-            if (block.TryGetComponent<InventoryItem>(out item))
-            {
-                item.durability = item.baseDurability;
-                item.currentStack = 1;
-                itemScripts.Add(item.itemID, item);
-            }
             Blocks blockComp = block.GetComponent<Blocks>();
             blocks.Add(blockComp.index, blockComp);
         }
         foreach(GameObject item in Resources.LoadAll("Items"))
         {
             InventoryItem invItem = item.GetComponent<InventoryItem>();
-            invItem.durability = invItem.baseDurability;
-            invItem.currentStack = 1;
-            items.Add(invItem);
             itemScripts.Add(invItem.itemID, invItem);
         }
-        foreach(GameObject item in Resources.LoadAll("PremadeSections"))
+        foreach(GameObject premade in Resources.LoadAll("PremadeSections"))
         {
-            sections.Add(item.GetComponent<PremadeSection>());
+            sections.Add(premade.GetComponent<PremadeSection>());
         }
-        sprites = Resources.LoadAll<Sprite>("Images");
-        posts = Resources.LoadAll<Sprite>("Images/Posts");
-        foreach(Sprite sprite in sprites)
+        foreach(GameObject monster in Resources.LoadAll("Monsters"))
         {
-            spriteNames.Add(sprite.name);
+            monsters.Add(monster.GetComponent<MonsterInfo>().id, monster);
         }
-        foreach(Sprite post in posts)
-        {
-            spriteNames.Add(post.name);
-        }
-        if (testingmode)
-        {
-            GetComponent<WorldCreationTesting>().enabled = true;
-            GetComponent<WorldCreationTesting>().size = testingsize;
-        }
-        //GetTile("Post").sprite = Resources.Load<Sprite>("Images/Post");
     }
     /// <summary>
     /// Returns the tile related to the given ID
@@ -121,13 +103,13 @@ public class GameManager : MonoBehaviour
         return blocks[tileID].tile;
     }
     /// <summary>
-    /// Resets the tile to what it previously was before highlighted
+    /// Used to disable destroying blocks
     /// </summary>
-    public void ResetPreviousTile()
+    public void DisableBlockBreaking()
     {
-        if (destroyandPlace.prevmapPos != Vector3Int.zero)
-            destroyandPlace.ResetPrevious();
-        destroyandPlace.enabled = false;
+        if (blockBreakingScript.prevmapPos != Vector3Int.zero)
+            blockBreakingScript.ResetPrevious();
+        blockBreakingScript.enabled = false;
     }
     /// <summary>
     /// Returns the Script related to the Item name
@@ -136,9 +118,9 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public InventoryItem GetItem(string name)
     {
-        foreach (InventoryItem item in items)
+        foreach (InventoryItem item in itemScripts.Values)
         {
-            if (item.name.Equals(name))
+            if (item.itemName.Equals(name))
                 return item;
         }
         return null;
@@ -181,7 +163,7 @@ public class GameManager : MonoBehaviour
     /// <returns></returns>
     public byte GetByte(Vector3Int tilePos, Vector2Int currentChunk)
     {
-        return ChunkGen.currentWorld.GetBlock(new Vector2Int(tilePos.x, tilePos.y), currentChunk);
+        return ChunkGen.Instance.GetBlock(new Vector2Int(tilePos.x, tilePos.y), currentChunk);
     }
     /// <summary>
     /// Returns true if there is a block with given ID
@@ -208,41 +190,127 @@ public class GameManager : MonoBehaviour
         paused = false;
         Time.timeScale = 1;
     }
-    public void assignTextFile(string textName)
+    /// <summary>
+    /// Assigns given text file to the fullText property
+    /// </summary>
+    /// <param name="text">Text file</param>
+    public void assignTextFile(TextAsset text)
     {
-        foreach(TextAsset text in textFiles)
-        {
-            if (text.name.Equals(textName))
-            {
-                fullText = text.text;
-            }
-        }
+        fullText = text.text;
     }
-    public void loadWorld(GameInformation info)
+    /// <summary>
+    /// Sets load from file to true then loads game world scene
+    /// </summary>
+    public void LoadFromFile()
     {
         loadFromFile = true;
-        gameInfo = info;
         SceneLoader.LoadScene(1);
     }
-    public GameInformation GetGameInformation()
-    {
-        return gameInfo;
-    }
-
+    /// <summary>
+    /// Called when scene changes
+    /// </summary>
+    /// <param name="scene">New scene</param>
+    /// <param name="mode">Load type</param>
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode) 
     {
         ResumeGame();
-        if (!scene.name.Equals("World"))
+        if (!scene.name.Equals("World") && ChunkGen.Instance != null)
         {
-            gen.enabled = false;
+            ChunkGen.Instance.enabled = false;
         }
     }
-
-    public void LoadWorld()
+    /// <summary>
+    /// Sets game manager values upon loading main game world
+    /// </summary>
+    public void SetValues()
     {
-        destroyandPlace = GameObject.Find("Grid").GetComponent<DestroyandPlace>();
-        character = GameObject.Find("Player");
-        gen.enabled = true;
+        blockBreakingScript = GameObject.Find("Grid").GetComponent<BlockBreaking>();
+        ChunkGen.Instance.enabled = true;
+        ChunkGen.Instance.StartUp();
         startTime = DateTime.Now;
+    }
+    /// <summary>
+    /// Returns list of item scripts
+    /// </summary>
+    /// <returns>List of inventory items</returns>
+    public ValueCollection GetItemScripts()
+    {
+        return itemScripts.Values;
+    }
+    /// <summary>
+    /// Adds items to stallitems
+    /// </summary>
+    /// <param name="items"></param>
+    public void AddStallItems(List<ItemSlot> items)
+    {
+        foreach (ItemSlot item in items)
+        {
+            stallItems.Add(item);
+        }
+    }
+    /// <summary>
+    /// Returns list of stall items
+    /// </summary>
+    /// <returns></returns>
+    public List<ItemSlot> GetStallItems()
+    {
+        return stallItems;
+    }
+    /// <summary>
+    /// Stores the inventory in the game manager
+    /// </summary>
+    /// <param name="itemSlots">Slots to store</param>
+    public void StoreInventory(ItemSlot[,] itemSlots)
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            for (int j = 0; j < 7; j++)
+            {
+                inventory[i, j] = new ItemSlot();
+                inventory[i, j].AddExisting(itemSlots[i, j]);
+            }
+        }
+    }
+    /// <summary>
+    /// Returns the stored inventory
+    /// </summary>
+    /// <returns></returns>
+    public ItemSlot[,] GetInventory()
+    {
+        return inventory;
+    }
+    /// <summary>
+    /// Sets current amount of money
+    /// </summary>
+    /// <param name="money"></param>
+    public void SetMoney(int money)
+    {
+        playerMoney = money;
+    }
+    /// <summary>
+    /// returns current amount of money
+    /// </summary>
+    /// <returns></returns>
+    public int GetMoney()
+    {
+        return playerMoney;
+    }
+    /// <summary>
+    /// Returns monster prefab gameobjects
+    /// </summary>
+    /// <param name="monsterID"></param>
+    /// <returns></returns>
+    public GameObject GetMonsterObject(byte monsterID)
+    {
+        return monsters[monsterID];
+    }
+    public List<MonsterInfo> GetMonsters()
+    {
+        List<MonsterInfo> monsterList = new List<MonsterInfo>();
+        foreach (GameObject monster in monsters.Values)
+        {
+            monsterList.Add(monster.GetComponent<MonsterInfo>());
+        }
+        return monsterList;
     }
 }
